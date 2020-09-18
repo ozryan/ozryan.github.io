@@ -784,7 +784,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-03 12:57:58" itemprop="dateModified" datetime="2020-09-03T12:57:58+08:00">2020-09-03</time>
+                <time title="修改时间：2020-09-18 17:44:06" itemprop="dateModified" datetime="2020-09-18T17:44:06+08:00">2020-09-18</time>
               </span>
 
           
@@ -833,13 +833,13 @@
 <p>添加刚才复制的公钥，文件中可以用#开头表示注释，注意不要把公钥给注释了。保存退出。</p>
 </li>
 </ul>
-<h2 id="重启sshd服务"><a href="#重启sshd服务" class="headerlink" title="重启sshd服务"></a>重启sshd服务</h2><p>  先切换到root账号</p>
-<p>  <code>sudo -i</code></p>
-<p>  再重启sshd服务</p>
-<p>  <code>service sshd restart</code></p>
+<h2 id="重启sshd服务"><a href="#重启sshd服务" class="headerlink" title="重启sshd服务"></a>重启sshd服务</h2><p>  <code>sudo service sshd restart</code></p>
+<p>  到这里先保留网页端，后面也许还用的到。</p>
 <h2 id="建立连接"><a href="#建立连接" class="headerlink" title="建立连接"></a>建立连接</h2><p>完成后就可以在powershell输入</p>
 <p><code>ssh username@myServerIP</code></p>
 <p>直接连接主机了，这里的<code>username</code>就是上面gcp打开的shell中显示的用户名。</p>
+<p>如果连不上，可以返回刚才的网页端重启服务器</p>
+<p><code>sudo reboot</code></p>
 <h2 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h2><p>可以在powershell中配置别名等，简化登陆步骤。使用其它vps也是类似的步骤，原理都是一样的，有的服务器默认设置可能不一样，可以用<strong>root账号</strong>在<code>/etc/ssh/sshd_config</code>之类的文件中修改。</p>
 
       
