@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ozryan.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}}};
+  </script>
+
+  <meta name="description" content="prototype是函数特有的属性，一个对象的构造函数也是函数，js中没有类，只有构造函数。关于原型链的继承在这里不展开。  __proto__属性已经被标记为deprecated，可以用Object.getPrototypeOf(obj)的方式代替访问该属性，应该避免修改该属性，因为它会影响到所有跟这个属性有关的对象，性能非常低下，可以用Object.create(targetproto)的方式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Javascript中__proto__和prototype的区别">
+<meta property="og:url" content="https://ozryan.github.io/2020/07/28/Javascript%E4%B8%AD-proto-%E5%92%8Cprototype%E7%9A%84%E5%8C%BA%E5%88%AB/index.html">
+<meta property="og:site_name" content="Blogs should not always have names">
+<meta property="og:description" content="prototype是函数特有的属性，一个对象的构造函数也是函数，js中没有类，只有构造函数。关于原型链的继承在这里不展开。  __proto__属性已经被标记为deprecated，可以用Object.getPrototypeOf(obj)的方式代替访问该属性，应该避免修改该属性，因为它会影响到所有跟这个属性有关的对象，性能非常低下，可以用Object.create(targetproto)的方式">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-07-28T13:40:18.000Z">
+<meta property="article:modified_time" content="2020-08-10T09:05:52.680Z">
+<meta property="article:author" content="ozryan">
+<meta property="article:tag" content="前端">
+<meta property="article:tag" content="javascript">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://ozryan.github.io/2020/07/28/Javascript%E4%B8%AD-proto-%E5%92%8Cprototype%E7%9A%84%E5%8C%BA%E5%88%AB/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Javascript中__proto__和prototype的区别 | Blogs should not always have names</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Blogs should not always have names</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">If you get tired,learn to rest,not to quit.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section">首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section">归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Object和Function"><span class="nav-number">1.</span> <span class="nav-text">Object和Function</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">ozryan</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ozryan.github.io/2020/07/28/Javascript%E4%B8%AD-proto-%E5%92%8Cprototype%E7%9A%84%E5%8C%BA%E5%88%AB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="ozryan">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blogs should not always have names">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Javascript中__proto__和prototype的区别
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-28 21:40:18" itemprop="dateCreated datePublished" datetime="2020-07-28T21:40:18+08:00">2020-07-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-08-10 17:05:52" itemprop="dateModified" datetime="2020-08-10T17:05:52+08:00">2020-08-10</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/07/28/Javascript%E4%B8%AD-proto-%E5%92%8Cprototype%E7%9A%84%E5%8C%BA%E5%88%AB/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/07/28/Javascript%E4%B8%AD-proto-%E5%92%8Cprototype%E7%9A%84%E5%8C%BA%E5%88%AB/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>prototype是函数特有的属性，一个对象的构造函数也是函数，js中没有类，只有构造函数。关于原型链的继承在这里不展开。</p>
+<blockquote>
+<p><code>__proto__</code>属性已经被标记为deprecated，可以用<code>Object.getPrototypeOf(obj)</code>的方式代替访问该属性，应该避免修改该属性，因为它会影响到所有跟这个属性有关的对象，性能非常低下，可以用<code>Object.create(targetproto)</code>的方式直接用你希望的原型创建一个新的对象。</p>
+</blockquote>
+<a id="more"></a>
+
+<p><span style="color:red">本文以下内容仍以<code>__proto__</code>的方式表示该属性，主要为解释原理，在生产中应该避免使用</span></p>
+<p><code>__proto__</code>是对象上的属性，而js中一切皆对象，访问<code>__proto__</code>属性等同于访问该对象的构造函数的<code>prototype</code>属性，对于一个普通的构造函数及通过其构造的对象，这一点不难理解，在console中测试：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Person构造函数</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Person</span>(<span class="params">name</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.name=name;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> person1=<span class="keyword">new</span> Person();   <span class="comment">//构造一个person1对象</span></span><br><span class="line">person1.__proto__===Person.prototype    <span class="comment">//true,访问__proto__属性等同于访问该对象的构造函数的prototype属性</span></span><br><span class="line">person1.__proto__===person1.constructor.prototype   <span class="comment">//true,同上</span></span><br><span class="line"></span><br><span class="line">Person.prototype.age=<span class="number">18</span> <span class="comment">//给Person.prototype添加一个age属性</span></span><br><span class="line">person1.age <span class="comment">//18</span></span><br><span class="line"></span><br><span class="line">person1.__proto__.country=<span class="string">"china"</span>   <span class="comment">//添加一个country属性，两种方式相同，操作的是同一个原型</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> person2=<span class="keyword">new</span> Person;</span><br><span class="line">person2.country <span class="comment">//china</span></span><br><span class="line">person2.age <span class="comment">//18</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Object和Function"><a href="#Object和Function" class="headerlink" title="Object和Function"></a>Object和Function</h2><p>相比于上面的普通对象和构造函数，<code>Object</code> 和 <code>Function</code>比较难理解，在浏览器点开console,输入<code>Object.prototype</code>，在输出中随便找点点击一个函数，如<code>toString()</code>，里面有个<code>__proto__</code>，再点进去，里面还有个<code>__proto__</code>，再点进去，里面的内容跟刚才Object.prototype的输入里一样的，如此循环下去。。。</p>
+<p>想搞清楚这些，先明确几个概念：</p>
+<ul>
+<li>js中一切皆对象，person1是对象，其构造函数Person也是对象，Object，Function都是对象。<span style="color:red;font-weight:bold">所有对象的原型链尽头都是<code>Object.prototype</code></span>。对象的原型链：<code>person1 -&gt; Person.prototype -&gt; Object.protoytpe -&gt; null</code>，这其中的每一环，如<code>Person.prototype</code>也都是对象，所有对象不断的访问<strong>proto</strong>属性，都会返回自己的原型链上游，只有一个例外，<code>Object.prototype.__proto__===null</code></li>
+<li>所有函数对象的构造函数都是<code>Function</code>,所有函数对象的原型都是<code>Function.prototype</code>。</li>
+<li>一切构造函数是对象的同时，也是函数。<code>Object</code>和<code>Function</code>，既是对象又是构造函数。</li>
+<li>原型<code>Function.prototype</code>也是对象，其原型链上游为Object.prototype。</li>
+</ul>
+<p>如构造函数Person，<code>Person.__proto__===Function.prototype</code>返回true,这里的Person可以理解为一个对象：一个从Function.prototype这个原型继承而来的对象。</p>
+<p>在console中运行下面的代码来验证上述的原型之间的关系：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//构造Dog</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Dog</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line"><span class="keyword">var</span> dog1=<span class="keyword">new</span> Dog()&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//dog1是普通的对象，它的__proto__指向它的构造函数的原型，</span></span><br><span class="line">dog1.__proto__===Dog.prototype <span class="comment">//true</span></span><br><span class="line">Dog.__proto__===<span class="built_in">Function</span>.prototype  <span class="comment">//true 所有的函数对象的原型都是Function.prototype。</span></span><br><span class="line">Dog.prototype.__proto===<span class="built_in">Object</span>.prototype <span class="comment">//true Dog.prototype这个对象的原型就是Object.prototype</span></span><br><span class="line">dog1.__proto__.__proto__===<span class="built_in">Object</span>.prototype <span class="comment">//true 跟上面的表示等价</span></span><br><span class="line">dog1.__proto__.__proto__.__proto__  <span class="comment">//null Object.prototype的原型是null</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//下面的Object、Number、Dog、Function都是构造函数，所有的函数对象的原型都是Function.prototype。</span></span><br><span class="line"><span class="built_in">Object</span>.__proto__===<span class="built_in">Function</span>.prototype   <span class="comment">//true</span></span><br><span class="line"><span class="built_in">Number</span>.__proto__===<span class="built_in">Function</span>.prototype   <span class="comment">//true</span></span><br><span class="line">Dog.__proto__===<span class="built_in">Function</span>.prototype  <span class="comment">//true</span></span><br><span class="line"><span class="built_in">Function</span>.__proto__===<span class="built_in">Function</span>.prototype <span class="comment">//true</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//原型`Function.prototype`也是对象，其原型链上游为Object.prototype。</span></span><br><span class="line"><span class="built_in">Function</span>.prototype.__proto__===<span class="built_in">Object</span>.prototype <span class="comment">//true</span></span><br><span class="line"><span class="built_in">Object</span>.prototype.__proto__  <span class="comment">//null</span></span><br></pre></td></tr></table></figure>
+<p>回到上面无限循环的例子，对应每一步解释：</p>
+<ol>
+<li>在console输入Object.prototype时，返回的是所有对象的原型链顶端的Object.prototype对象，里面有一些方法</li>
+<li>点击toString()方法，该方法本质是函数，所有的函数对象的原型都是Function.prototype，即<code>toString().__proto__===Function.prototype</code>，所以点开<code>__proto__</code>就是Function.prototype对象</li>
+<li>Function.prototype对象也是对象，它的原型就是Object.prototype，即<code>Function.prototype.__proto__===Object.prototype</code>，所以点开<code>__proto__</code>又回到了1,无限循环。</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag"># 前端</a>
+              <a href="/tags/javascript/" rel="tag"># javascript</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/07/28/Windows%E8%BF%9E%E6%8E%A5GoogleCloud/" rel="prev" title="Windows连接GoogleCloud">
+      <i class="fa fa-chevron-left"></i> Windows连接GoogleCloud
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/07/28/%E5%9C%A8Wiindows%E4%B8%AD%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8Redis%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95/" rel="next" title="在Wiindows中安装使用Redis的几种方法">
+      在Wiindows中安装使用Redis的几种方法 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ozryan</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: location.pathname,
+    }, {"enable":true,"appId":"BmT2lGTnBMBj6625uiiWM1xV-MdYXbMMI","appKey":"tasHQvivyFQEjq66DERC31Ja","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"language":null,"visitor":false,"comment_count":true,"recordIP":false,"serverURLs":null}
+    ));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

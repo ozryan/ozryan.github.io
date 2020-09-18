@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ozryan.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}}};
+  </script>
+
+  <meta name="description" content="Powershell已经内置OpenSSH,用起来比Xshell还方便，并且用root账号或开启密码登陆都存在安全隐患，所以这里只介绍普通用户+ssh的登陆方式。  基本步骤： 生成key(如果已经有key，可以跳过)打开powershell,输入: ssh-keygen 一路enter,生成的秘钥默认位置在~\.ssh\下，即用户目录。 复制公钥到服务器 打开本地~\.ssh\目录下的.pub">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows连接GoogleCloud">
+<meta property="og:url" content="https://ozryan.github.io/2020/07/28/Windows%E8%BF%9E%E6%8E%A5GoogleCloud/index.html">
+<meta property="og:site_name" content="Blogs should not always have names">
+<meta property="og:description" content="Powershell已经内置OpenSSH,用起来比Xshell还方便，并且用root账号或开启密码登陆都存在安全隐患，所以这里只介绍普通用户+ssh的登陆方式。  基本步骤： 生成key(如果已经有key，可以跳过)打开powershell,输入: ssh-keygen 一路enter,生成的秘钥默认位置在~\.ssh\下，即用户目录。 复制公钥到服务器 打开本地~\.ssh\目录下的.pub">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-07-27T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-09-03T04:57:58.042Z">
+<meta property="article:author" content="ozryan">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="VPS">
+<meta property="article:tag" content="Windows Terminal">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://ozryan.github.io/2020/07/28/Windows%E8%BF%9E%E6%8E%A5GoogleCloud/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Windows连接GoogleCloud | Blogs should not always have names</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Blogs should not always have names</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">If you get tired,learn to rest,not to quit.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section">首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section">归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#生成key-如果已经有key，可以跳过"><span class="nav-number">1.</span> <span class="nav-text">生成key(如果已经有key，可以跳过)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#复制公钥到服务器"><span class="nav-number">2.</span> <span class="nav-text">复制公钥到服务器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#重启sshd服务"><span class="nav-number">3.</span> <span class="nav-text">重启sshd服务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#建立连接"><span class="nav-number">4.</span> <span class="nav-text">建立连接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其它"><span class="nav-number">5.</span> <span class="nav-text">其它</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">ozryan</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ozryan.github.io/2020/07/28/Windows%E8%BF%9E%E6%8E%A5GoogleCloud/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="ozryan">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blogs should not always have names">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Windows连接GoogleCloud
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-28 00:00:00" itemprop="dateCreated datePublished" datetime="2020-07-28T00:00:00+08:00">2020-07-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-03 12:57:58" itemprop="dateModified" datetime="2020-09-03T12:57:58+08:00">2020-09-03</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/07/28/Windows%E8%BF%9E%E6%8E%A5GoogleCloud/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/07/28/Windows%E8%BF%9E%E6%8E%A5GoogleCloud/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>Powershell已经内置OpenSSH,用起来比Xshell还方便，并且用root账号或开启密码登陆都存在安全隐患，所以这里只介绍普通用户+ssh的登陆方式。</p>
+</blockquote>
+<p>基本步骤：</p>
+<h2 id="生成key-如果已经有key，可以跳过"><a href="#生成key-如果已经有key，可以跳过" class="headerlink" title="生成key(如果已经有key，可以跳过)"></a>生成key(如果已经有key，可以跳过)</h2><p>打开<code>powershell</code>,输入:</p>
+<p><code>ssh-keygen</code></p>
+<p>一路enter,生成的秘钥默认位置在<code>~\.ssh\</code>下，即用户目录。</p>
+<h2 id="复制公钥到服务器"><a href="#复制公钥到服务器" class="headerlink" title="复制公钥到服务器"></a>复制公钥到服务器</h2><ul>
+<li><p>打开本地<code>~\.ssh\</code>目录下的.pub公钥文件，复制内容。</p>
+</li>
+<li><p>打开GCP控制面板，进入虚拟机实例管理页面，点击实例右边的连接下方的“SSH”，选择在浏览器窗口中打开。</p>
+</li>
+<li><p><strong>请记住打开的shell这里显示的用户名</strong></p>
+</li>
+<li><p>进入用户目录下的<code>.ssh</code>文件夹：<code>cd ~/.ssh/</code></p>
+</li>
+<li><p>编辑<code>authorized_keys</code>文件,</p>
+<p><code>vi authorized_keys</code></p>
+<p>添加刚才复制的公钥，文件中可以用#开头表示注释，注意不要把公钥给注释了。保存退出。</p>
+</li>
+</ul>
+<h2 id="重启sshd服务"><a href="#重启sshd服务" class="headerlink" title="重启sshd服务"></a>重启sshd服务</h2><p>  先切换到root账号</p>
+<p>  <code>sudo -i</code></p>
+<p>  再重启sshd服务</p>
+<p>  <code>service sshd restart</code></p>
+<h2 id="建立连接"><a href="#建立连接" class="headerlink" title="建立连接"></a>建立连接</h2><p>完成后就可以在powershell输入</p>
+<p><code>ssh username@myServerIP</code></p>
+<p>直接连接主机了，这里的<code>username</code>就是上面gcp打开的shell中显示的用户名。</p>
+<h2 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h2><p>可以在powershell中配置别名等，简化登陆步骤。使用其它vps也是类似的步骤，原理都是一样的，有的服务器默认设置可能不一样，可以用<strong>root账号</strong>在<code>/etc/ssh/sshd_config</code>之类的文件中修改。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/VPS/" rel="tag"># VPS</a>
+              <a href="/tags/Windows-Terminal/" rel="tag"># Windows Terminal</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2020/07/28/Javascript%E4%B8%AD-proto-%E5%92%8Cprototype%E7%9A%84%E5%8C%BA%E5%88%AB/" rel="next" title="Javascript中__proto__和prototype的区别">
+      Javascript中__proto__和prototype的区别 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ozryan</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: location.pathname,
+    }, {"enable":true,"appId":"BmT2lGTnBMBj6625uiiWM1xV-MdYXbMMI","appKey":"tasHQvivyFQEjq66DERC31Ja","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"language":null,"visitor":false,"comment_count":true,"recordIP":false,"serverURLs":null}
+    ));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

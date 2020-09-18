@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ozryan.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}}};
+  </script>
+
+  <meta name="description" content="命名方法主要分三种,效果如其名称: camelCase kebab-case PascalCase 首先，DOM模板内部元素的属性名称是不区分大小写的，比如以下三种表示是等价的：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue中的大小写">
+<meta property="og:url" content="https://ozryan.github.io/2020/08/16/Vue%E4%B8%AD%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%86%99/index.html">
+<meta property="og:site_name" content="Blogs should not always have names">
+<meta property="og:description" content="命名方法主要分三种,效果如其名称: camelCase kebab-case PascalCase 首先，DOM模板内部元素的属性名称是不区分大小写的，比如以下三种表示是等价的：">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-08-16T08:46:45.000Z">
+<meta property="article:modified_time" content="2020-09-01T02:23:59.360Z">
+<meta property="article:author" content="ozryan">
+<meta property="article:tag" content="前端">
+<meta property="article:tag" content="vue">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://ozryan.github.io/2020/08/16/Vue%E4%B8%AD%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%86%99/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Vue中的大小写 | Blogs should not always have names</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Blogs should not always have names</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">If you get tired,learn to rest,not to quit.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section">首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section">归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">ozryan</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ozryan.github.io/2020/08/16/Vue%E4%B8%AD%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%86%99/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="ozryan">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blogs should not always have names">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Vue中的大小写
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-16 16:46:45" itemprop="dateCreated datePublished" datetime="2020-08-16T16:46:45+08:00">2020-08-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-01 10:23:59" itemprop="dateModified" datetime="2020-09-01T10:23:59+08:00">2020-09-01</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/08/16/Vue%E4%B8%AD%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%86%99/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/08/16/Vue%E4%B8%AD%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%86%99/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>命名方法主要分三种,效果如其名称:</p>
+<p>camelCase</p>
+<p>kebab-case</p>
+<p>PascalCase</p>
+<p>首先，DOM模板内部元素的属性名称是不区分大小写的，比如以下三种表示是等价的：</p>
+<a id="more"></a>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;p style&#x3D;&quot;color:red&quot;&gt;红色&lt;&#x2F;p&gt;</span><br><span class="line">&lt;p sTYLe&#x3D;&quot;color:red&quot;&gt;红色&lt;&#x2F;p&gt;</span><br><span class="line">&lt;p STYLE&#x3D;&quot;color:red&quot;&gt;红色&lt;&#x2F;p&gt;</span><br></pre></td></tr></table></figure>
+<p>但在vue.js中，是大小写敏感的，所以部分名称在vue.js中定义的时候采用camelCase,PascalCase方式命名，而在dom模板内使用的时候，可以采用相应的kebab-case名称，当然前提是命名要规范，比如”myComPoNent”肯定无法与”my-component”对应。</p>
+<p style="color:red">使用字符串模板时，以下规则会有例外，用红字标出。</p>
+
+<ul>
+<li><p>组件名称</p>
+<ul>
+<li><p>在<span style="font-weight:bold">单文件组件</span>和<span style="font-weight:bold">字符串模板</span>中，组件名应该总是<strong>PascalCase</strong>,在DOM模板中总是<strong>kebab-case</strong>。<br>  使用kebab-case时，引用组件的时候只能用kebab-case。<br>  使用PascalCase时，引用组件的时候可以使用kebab-case或PascalCase，但只是引用，在DOM中（<span style="color:red">使用字符串模板时例外</span>)使用时只能用kebab-case。</p>
+<p>  尽管全部采用kebab-case也可以，但是采用PascalCase有如下优势：</p>
+<blockquote>
+<ul>
+<li>编辑器可以在模板里自动补全组件名，因为 PascalCase 同样适用于 JavaScript。</li>
+<li>&lt;MyComponent&gt; 视觉上比 &lt;my-component&gt; 更能够和单个单词的 HTML 元素区别开来，因为前者的不同之处有两个大写字母，后者只有一个横线。</li>
+<li>如果你在模板中使用任何非 Vue 的自定义元素，比如一个 Web Component，PascalCase 确保了你的 Vue 组件在视觉上仍然是易识别的。</li>
+</ul>
+</blockquote>
+</li>
+<li><p><span style="font-weight:bold">JS/JSX</span>中的组件名通常用PascalCase。但是如果你的应用只通过Vue.component定义全局组件，则建议使用kebab-case。官方原文解释：</p>
+<blockquote>
+<p>在 JavaScript 中，PascalCase 是类和构造函数 (本质上任何可以产生多份不同实例的东西) 的命名约定。Vue 组件也有多份实例，所以同样使用 PascalCase 是有意义的。额外的好处是，在 JSX (和模板) 里使用 PascalCase 使得代码的读者更容易分辨 Vue 组件和 HTML 元素。</p>
+<p>然而，对于只通过 Vue.component 定义全局组件的应用来说，我们推荐 kebab-case 作为替代。原因是：</p>
+<ul>
+<li>全局组件很少被 JavaScript 引用，所以遵守 JavaScript 的命名约定意义不大。</li>
+<li>这些应用往往包含许多 DOM 内的模板，这种情况下是必须使用 kebab-case 的。</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p>单文件组件的<span style="font-weight:bold;color:red">文件名</span></p>
+<p>  要么全部用kebab-case,用么全部用PascalCase,保持统一</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">components&#x2F;</span><br><span class="line">|- MyComponent.vue</span><br><span class="line"></span><br><span class="line">components&#x2F;</span><br><span class="line">|- my-component.vue</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>事件名称</p>
+<p>  始终使用kebab-case。官方文档说明：</p>
+<blockquote>
+<p>不同于组件和 prop，事件名不存在任何自动化的大小写转换。而是触发的事件名需要完全匹配监听这个事件所用的名称。</p>
+</blockquote>
+</li>
+<li><p>Prop名称（组件（component）中的props)）</p>
+<p>  如果在props定义时使用了camelCase,则在html中使用该属性的时候，需要手动改成kebab-case。<span style="color:red">使用字符串模板时例外。</span></p>
+<p>  官方风格指南建议在命名时采用camelCase,而在模板和JSX中使用kebab-case</p>
+  <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Vue.component(<span class="string">'blog-post'</span>, &#123;</span><br><span class="line"><span class="comment">// 在 JavaScript 中是 camelCase 的</span></span><br><span class="line">props: [<span class="string">'postTitle'</span>],</span><br><span class="line">template: <span class="string">'&lt;h3&gt;&#123;&#123; postTitle &#125;&#125;&lt;/h3&gt;'</span></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&lt;!-- 在 HTML 中是 kebab-<span class="keyword">case</span> 的 --&gt;</span><br><span class="line">&lt;blog-post post-title=<span class="string">"hello!"</span>&gt;&lt;<span class="regexp">/blog-post&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag"># 前端</a>
+              <a href="/tags/vue/" rel="tag"># vue</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/08/16/Vue%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%8B%BE%E5%AD%90/" rel="prev" title="Vue生命周期勾子">
+      <i class="fa fa-chevron-left"></i> Vue生命周期勾子
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/01/vue-element-ui-%E5%AE%9E%E7%8E%B0%E5%BC%B9%E7%AA%97%E7%99%BB%E5%BD%95/" rel="next" title="vue+element-ui 实现弹窗登录">
+      vue+element-ui 实现弹窗登录 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ozryan</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: location.pathname,
+    }, {"enable":true,"appId":"BmT2lGTnBMBj6625uiiWM1xV-MdYXbMMI","appKey":"tasHQvivyFQEjq66DERC31Ja","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"language":null,"visitor":false,"comment_count":true,"recordIP":false,"serverURLs":null}
+    ));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

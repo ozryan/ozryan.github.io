@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ozryan.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}}};
+  </script>
+
+  <meta name="description" content="官方原图：上图中红色部分为常用的实例生命周期钩子，可以用在vue实例运行的各个阶段，按大概时间线：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue生命周期勾子">
+<meta property="og:url" content="https://ozryan.github.io/2020/08/16/Vue%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%8B%BE%E5%AD%90/index.html">
+<meta property="og:site_name" content="Blogs should not always have names">
+<meta property="og:description" content="官方原图：上图中红色部分为常用的实例生命周期钩子，可以用在vue实例运行的各个阶段，按大概时间线：">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cn.vuejs.org/images/lifecycle.png">
+<meta property="article:published_time" content="2020-08-16T08:44:21.000Z">
+<meta property="article:modified_time" content="2020-08-16T09:06:27.230Z">
+<meta property="article:author" content="ozryan">
+<meta property="article:tag" content="前端">
+<meta property="article:tag" content="vue">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cn.vuejs.org/images/lifecycle.png">
+
+<link rel="canonical" href="https://ozryan.github.io/2020/08/16/Vue%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%8B%BE%E5%AD%90/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Vue生命周期勾子 | Blogs should not always have names</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Blogs should not always have names</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">If you get tired,learn to rest,not to quit.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section">首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section">归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">ozryan</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ozryan.github.io/2020/08/16/Vue%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%8B%BE%E5%AD%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="ozryan">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blogs should not always have names">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Vue生命周期勾子
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-08-16 16:44:21 / 修改时间：17:06:27" itemprop="dateCreated datePublished" datetime="2020-08-16T16:44:21+08:00">2020-08-16</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/08/16/Vue%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%8B%BE%E5%AD%90/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/08/16/Vue%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%8B%BE%E5%AD%90/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>官方原图：<br><img src="https://cn.vuejs.org/images/lifecycle.png" alt="img"><br>上图中红色部分为常用的<strong>实例生命周期钩子</strong>，可以用在vue实例运行的各个阶段，按大概时间线：</p>
+<a id="more"></a>
+
+<p>先在例子中定义html元素：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"app"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span> <span class="attr">id</span>=<span class="string">"myp"</span>&gt;</span>hehe&#123;&#123;a&#125;&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p><span style="color:red;font-weight:bold">beforeCreate</span></p>
+<p>在vue实例创建前调用，此时<strong>属性</strong>、<strong>方法</strong>都无法访问。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Vue(&#123;</span><br><span class="line">    el: <span class="string">"#app"</span>,</span><br><span class="line">    data:&#123;</span><br><span class="line">        a:<span class="string">"a"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    methods:&#123;</span><br><span class="line">        hi()&#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">"hi"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    beforeCreate()&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"beforeCreate:a="</span>+<span class="keyword">this</span>.a);<span class="comment">//beforeCreate:a=undefined</span></span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"beforeCreate:hi()="</span>);<span class="comment">//beforeCreate:hi()=</span></span><br><span class="line">        <span class="keyword">this</span>.hi();<span class="comment">//报错</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></li>
+<li><p><span style="color:red;font-weight:bold">created</span></p>
+<p>在vue实例创建后，此时实例内定义的<strong>属性</strong>和<strong>方法</strong>都可以访问到，但还没有进行渲染,无法访问<code>$el</code>属性</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Vue(&#123;</span><br><span class="line">  el: <span class="string">"#app"</span>,</span><br><span class="line">  data:&#123;</span><br><span class="line">      a:<span class="string">"aValue"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  methods:&#123;</span><br><span class="line">      hi()&#123;</span><br><span class="line">          <span class="built_in">console</span>.log(<span class="string">"hi"</span>);</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  created()&#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">"created:a="</span>+<span class="keyword">this</span>.a);<span class="comment">//created:a=aValue</span></span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">"created:hi()="</span>+<span class="keyword">this</span>.hi());<span class="comment">//created:hi()=</span></span><br><span class="line">      <span class="keyword">this</span>.hi();<span class="comment">//hi</span></span><br><span class="line">      <span class="built_in">console</span>.log(<span class="built_in">document</span>.getElementById(<span class="string">"myp"</span>).innerText);<span class="comment">//hehe&#123;&#123;a&#125;&#125;</span></span><br><span class="line">      <span class="built_in">console</span>.log(<span class="keyword">this</span>.$el);<span class="comment">//undefined</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><span style="color:red;font-weight:bold">beforeMount</span></p>
+<p>到这一步已经把<code>template</code>编译成了<code>render</code>，此时可以访问到<code>$el</code>的内容,但还没有挂载到页面(替换掉网页中的模板),</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Vue(&#123;</span><br><span class="line">  el: <span class="string">"#app"</span>,</span><br><span class="line">  data:&#123;</span><br><span class="line">      a:<span class="string">"aValue"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  beforeMount()&#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="keyword">this</span>.$el);<span class="comment">//div#app，展开以后有很多属性</span></span><br><span class="line">      <span class="built_in">console</span>.log(<span class="built_in">document</span>.getElementById(<span class="string">"myp"</span>).innerText);<span class="comment">//hehe&#123;&#123;a&#125;&#125;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><span style="color:red;font-weight:bold">mounted</span></p>
+<p>此时渲染好的内容已经挂载到网页上，所有创建工作完成</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Vue(&#123;</span><br><span class="line">  el: <span class="string">"#app"</span>,</span><br><span class="line">  data:&#123;</span><br><span class="line">      a:<span class="string">"aValue"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  mounted()&#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="built_in">document</span>.getElementById(<span class="string">"myp"</span>).innerText);<span class="comment">//heheaValue</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></li>
+<li><p><span style="color:red;font-weight:bold">beforeUpdate</span></p>
+<p>这个状态对应<strong>数据已经变更，但页面没有重新渲染之前</strong>,可以在虚拟dom中访问更新之前的dom元素值，但此时变量已经为新值</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Vue(&#123;</span><br><span class="line">    el: <span class="string">"#app"</span>,</span><br><span class="line">    data:&#123;</span><br><span class="line">        a:<span class="string">"aValue"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    beforeUpdate()&#123;</span><br><span class="line">        <span class="comment">//在浏览器vue devtool中修改a的值为newvalue</span></span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"beforeUpdate:a="</span>+<span class="keyword">this</span>.a);<span class="comment">//beforeUpdate:a=newvalue</span></span><br><span class="line">        <span class="comment">//beforeUpdate:a-dom=heheaValue</span></span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"beforeUpdate:a-dom="</span>+<span class="built_in">document</span>.getElementById(<span class="string">"myp"</span>).innerText);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></li>
+<li><p><span style="color:red;font-weight:bold">updated</span></p>
+<p>此时更新后虚拟dom已经重新渲染,官方文档建议不要在此期间更改状态，用<strong>计算属性</strong>或<strong>watcher</strong>取代。</p>
+<p>如下面的例子，在update()函数内部加入<code>this.$data.a=this.$data.a+&quot;a&quot;</code>,会导致页面无限循环渲染。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Vue(&#123;</span><br><span class="line">  el: <span class="string">"#app"</span>,</span><br><span class="line">  data:&#123;</span><br><span class="line">      a:<span class="string">"aValue"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  updated()&#123;</span><br><span class="line">      <span class="comment">//在浏览器vue devtool中修改a的值为newvalue</span></span><br><span class="line">      <span class="comment">//bupdated:a-dom=hehenewvalue</span></span><br><span class="line">      <span class="comment">//this.$data.a=this.$data.a+"a"//加入此行会无限循环渲染</span></span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">"updated:a-dom="</span>+<span class="built_in">document</span>.getElementById(<span class="string">"myp"</span>).innerText);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><span style="color:red;font-weight:bold">beforeDestroy</span>和<span style="color:red;font-weight:bold">destroyed</span></p>
+<p>beforeDestroyed这个状态下可以访问vue实例，所有跟销毁有关的操作应该在这里完成。</p>
+<p>destroyed这个状态下仍然可以访问虚拟dom，但实例已经完全销毁，可以看源码<code>*/src/core/instance/lifecyle.js</code>得知，触发<code>$destroy</code>时，先执行<code>beforeDestroy</code>勾子，再执行具体销毁过程，最后调用<code>destroyed</code>勾子，也就是说，在destroyed勾子里对实例进行任何操作都没有意义了。</p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag"># 前端</a>
+              <a href="/tags/vue/" rel="tag"># vue</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/07/28/%E5%9C%A8Wiindows%E4%B8%AD%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8Redis%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95/" rel="prev" title="在Wiindows中安装使用Redis的几种方法">
+      <i class="fa fa-chevron-left"></i> 在Wiindows中安装使用Redis的几种方法
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/08/16/Vue%E4%B8%AD%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%86%99/" rel="next" title="Vue中的大小写">
+      Vue中的大小写 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ozryan</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: location.pathname,
+    }, {"enable":true,"appId":"BmT2lGTnBMBj6625uiiWM1xV-MdYXbMMI","appKey":"tasHQvivyFQEjq66DERC31Ja","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"language":null,"visitor":false,"comment_count":true,"recordIP":false,"serverURLs":null}
+    ));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
