@@ -784,7 +784,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-18 23:20:14" itemprop="dateModified" datetime="2020-09-18T23:20:14+08:00">2020-09-18</time>
+                <time title="修改时间：2020-09-19 10:59:22" itemprop="dateModified" datetime="2020-09-19T10:59:22+08:00">2020-09-19</time>
               </span>
 
           
@@ -816,11 +816,11 @@
 <p>Powershell已经内置OpenSSH,用起来比Xshell还方便，并且用root账号或开启密码登陆都存在安全隐患，所以这里只介绍普通用户+ssh的登陆方式。</p>
 </blockquote>
 <p>基本步骤：</p>
-<h2 id="本机生成key-如果已经有key，可以跳过"><a href="#本机生成key-如果已经有key，可以跳过" class="headerlink" title="本机生成key(如果已经有key，可以跳过)"></a>本机生成key(如果已经有key，可以跳过)</h2><p>打开<code>powershell</code>,输入:</p>
+<h2 id="1-本机生成key-如果已经有key，可以跳过"><a href="#1-本机生成key-如果已经有key，可以跳过" class="headerlink" title="1.本机生成key(如果已经有key，可以跳过)"></a>1.本机生成key(如果已经有key，可以跳过)</h2><p>打开<code>powershell</code>,输入:</p>
 <p><code>ssh-keygen</code></p>
-<p>一路enter,生成的秘钥默认位置在<code>~\.ssh\</code>下，即用户目录。</p>
-<h2 id="单个服务器设置"><a href="#单个服务器设置" class="headerlink" title="单个服务器设置"></a>单个服务器设置</h2><p>这种方法是对单个服务器写入pub-key，更适合授权给别人访问的时候使用，对方把pub-key给你，你写到自己的服务器里面，对方就可以连接你的服务器了。</p>
-<h3 id="复制公钥到服务器"><a href="#复制公钥到服务器" class="headerlink" title="复制公钥到服务器"></a>复制公钥到服务器</h3><ul>
+<p>一路enter,生成的秘钥默认位置在<code>~\.ssh\</code>下，即<code>C:\Users\xxx\.ssh</code>，xxx为你的windows用户名。</p>
+<h2 id="2-单个服务器设置"><a href="#2-单个服务器设置" class="headerlink" title="2.单个服务器设置"></a>2.单个服务器设置</h2><p>这种方法是对单个服务器写入pub-key，更适合授权给别人访问的时候使用，对方把pub-key给你，你写到自己的服务器里面，对方就可以连接你的服务器了。</p>
+<h3 id="2-1复制公钥到服务器"><a href="#2-1复制公钥到服务器" class="headerlink" title="2.1复制公钥到服务器"></a>2.1复制公钥到服务器</h3><ul>
 <li><p>打开本地<code>~\.ssh\</code>目录下的.pub公钥文件，复制内容。</p>
 </li>
 <li><p>打开GCP控制面板，进入虚拟机实例管理页面，点击实例右边的连接下方的“SSH”，选择在浏览器窗口中打开。</p>
@@ -834,14 +834,15 @@
 <p>添加刚才复制的公钥，文件中可以用#开头添加注释，注意不要把公钥给注释了。保存退出。</p>
 </li>
 </ul>
-<h3 id="重启sshd服务"><a href="#重启sshd服务" class="headerlink" title="重启sshd服务"></a>重启sshd服务</h3><p>  <code>sudo service sshd restart</code></p>
+<h3 id="2-2重启sshd服务"><a href="#2-2重启sshd服务" class="headerlink" title="2.2重启sshd服务"></a>2.2重启sshd服务</h3><p>  <code>sudo service sshd restart</code></p>
 <p>  到这里先保留网页端，后面也许还用的到。</p>
-<h3 id="建立连接"><a href="#建立连接" class="headerlink" title="建立连接"></a>建立连接</h3><p>完成后就可以在powershell输入</p>
+<h3 id="2-3建立连接"><a href="#2-3建立连接" class="headerlink" title="2.3建立连接"></a>2.3建立连接</h3><p>完成后就可以在powershell输入</p>
 <p><code>ssh username@myServerIP</code></p>
 <p>直接连接主机了，这里的<code>username</code>就是上面gcp打开的shell中显示的用户名。</p>
+<p><strong>注意：如果服务器的IP以前已经连接过，记得到本机<code>~\.ssh\known_hosts</code>(跟pub-key同目录)文件中删除该IP对应的那一行，不然的话会因为跟之前的记录冲突而导致无法建立连接。</strong></p>
 <p>如果连不上，可以返回刚才的网页端重启服务器</p>
 <p><code>sudo reboot</code></p>
-<h2 id="全部实例通用连接设置-推荐"><a href="#全部实例通用连接设置-推荐" class="headerlink" title="全部实例通用连接设置(推荐)"></a>全部实例通用连接设置(推荐)</h2><p>这种方法通过把pub-key写到gcp面板的设置里面，以后你的每个实例在创建的时候都会自动写入这个pub-key，就可以直接用<code>ssh username@hostname</code>的方式连接了，适合所有实例都是自己一个人用的情况。</p>
+<h2 id="3-全部实例通用连接设置-推荐"><a href="#3-全部实例通用连接设置-推荐" class="headerlink" title="3.全部实例通用连接设置(推荐)"></a>3.全部实例通用连接设置(推荐)</h2><p>这种方法通过把pub-key写到gcp面板的设置里面，以后你的每个实例在创建的时候都会自动写入这个pub-key，就可以直接用<code>ssh username@hostname</code>的方式连接了，适合所有实例都是自己一个人用的情况。</p>
 <p>主要步骤：</p>
 <ul>
 <li><p>在gcp面板上的搜索栏直接搜索<code>metadata</code>，中文应该是<code>元数据</code>，点进去之后再选择<code>ssh keys</code>选项卡。</p>
@@ -852,7 +853,7 @@
 </li>
 </ul>
 <p><strong>注意：如果服务器的IP以前已经连接过，记得到本机<code>~\.ssh\known_hosts</code>(跟pub-key同目录)文件中删除该IP对应的那一行，不然的话会因为跟之前的记录冲突而导致无法建立连接。</strong></p>
-<h2 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h2><ul>
+<h2 id="4-其它"><a href="#4-其它" class="headerlink" title="4.其它"></a>4.其它</h2><ul>
 <li>google cloud默认是没有设置root密码的，连上以后可以<code>sudo passwd</code>第一时间设置密码，增加安全性。</li>
 <li>如果账号下的实例都是自己用，推荐使用第二种方法，设置一次以后无论创建多少次实例，都不用再设置key。</li>
 <li>还可以在powershell中配置别名等，进一步简化登陆步骤。</li>
