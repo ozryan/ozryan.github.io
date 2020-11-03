@@ -181,12 +181,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-count">17</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -218,6 +218,94 @@
 
         <div class="content index posts-expand">
           
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ozryan.github.io/2020/11/02/%E5%90%8E%E7%AB%AF%E5%A4%84%E7%90%86%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E9%AA%8C%E8%AF%81%E5%8F%8A%E7%BB%9F%E4%B8%80%E5%A4%84%E7%90%86%E5%BC%82%E5%B8%B8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="ozryan">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blogs should not always have names">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/11/02/%E5%90%8E%E7%AB%AF%E5%A4%84%E7%90%86%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E9%AA%8C%E8%AF%81%E5%8F%8A%E7%BB%9F%E4%B8%80%E5%A4%84%E7%90%86%E5%BC%82%E5%B8%B8/" class="post-title-link" itemprop="url">后端处理数据格式验证及统一处理异常</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-02 22:22:27" itemprop="dateCreated datePublished" datetime="2020-11-02T22:22:27+08:00">2020-11-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-11-03 10:50:37" itemprop="dateModified" datetime="2020-11-03T10:50:37+08:00">2020-11-03</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/11/02/%E5%90%8E%E7%AB%AF%E5%A4%84%E7%90%86%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E9%AA%8C%E8%AF%81%E5%8F%8A%E7%BB%9F%E4%B8%80%E5%A4%84%E7%90%86%E5%BC%82%E5%B8%B8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/11/02/%E5%90%8E%E7%AB%AF%E5%A4%84%E7%90%86%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E9%AA%8C%E8%AF%81%E5%8F%8A%E7%BB%9F%E4%B8%80%E5%A4%84%E7%90%86%E5%BC%82%E5%B8%B8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>对于前后端分离的项目，后端对于前端发送的数据进行验证是必要的，但这不表示前端的验证就没必要，比如一些数据的格式问题可以在前端完成验证，快速返回结果给用户，提升用户体验。</p>
+<p>这里以一个简单的用户注册服务举例，代码部分主要展示逻辑和框架。</p>
+<p>主要思路：前端发送用户注册提交的表单信息，后端接收后在service层进行格式验证，如果格式不符合要求，则抛出相应异常，最后统一在controller层进行异常的拦截处理，返回特定的json信息。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/11/02/%E5%90%8E%E7%AB%AF%E5%A4%84%E7%90%86%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E9%AA%8C%E8%AF%81%E5%8F%8A%E7%BB%9F%E4%B8%80%E5%A4%84%E7%90%86%E5%BC%82%E5%B8%B8/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   
@@ -673,7 +761,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://ozryan.github.io/2020/07/28/Javascript%E4%B8%AD-proto-%E5%92%8Cprototype%E7%9A%84%E5%8C%BA%E5%88%AB/">
+    <link itemprop="mainEntityOfPage" href="https://ozryan.github.io/2020/07/28/Javascript%E4%B8%AD__proto__%E5%92%8Cprototype%E7%9A%84%E5%8C%BA%E5%88%AB/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -687,7 +775,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/07/28/Javascript%E4%B8%AD-proto-%E5%92%8Cprototype%E7%9A%84%E5%8C%BA%E5%88%AB/" class="post-title-link" itemprop="url">Javascript中__proto__和prototype的区别</a>
+            <a href="/2020/07/28/Javascript%E4%B8%AD__proto__%E5%92%8Cprototype%E7%9A%84%E5%8C%BA%E5%88%AB/" class="post-title-link" itemprop="url">Javascript中__proto__和prototype的区别</a>
         </h2>
 
         <div class="post-meta">
@@ -716,8 +804,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2020/07/28/Javascript%E4%B8%AD-proto-%E5%92%8Cprototype%E7%9A%84%E5%8C%BA%E5%88%AB/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2020/07/28/Javascript%E4%B8%AD-proto-%E5%92%8Cprototype%E7%9A%84%E5%8C%BA%E5%88%AB/" itemprop="commentCount"></span>
+    <a title="valine" href="/2020/07/28/Javascript%E4%B8%AD__proto__%E5%92%8Cprototype%E7%9A%84%E5%8C%BA%E5%88%AB/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/07/28/Javascript%E4%B8%AD__proto__%E5%92%8Cprototype%E7%9A%84%E5%8C%BA%E5%88%AB/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -738,7 +826,7 @@
 </blockquote>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/07/28/Javascript%E4%B8%AD-proto-%E5%92%8Cprototype%E7%9A%84%E5%8C%BA%E5%88%AB/#more" rel="contents">
+              <a class="btn" href="/2020/07/28/Javascript%E4%B8%AD__proto__%E5%92%8Cprototype%E7%9A%84%E5%8C%BA%E5%88%AB/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
