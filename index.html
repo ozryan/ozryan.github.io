@@ -181,7 +181,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-count">9</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -218,6 +218,102 @@
 
         <div class="content index posts-expand">
           
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ozryan.github.io/2020/11/13/spring-boot%E7%94%A8java-bean-validation%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E9%AA%8C%E8%AF%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="ozryan">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blogs should not always have names">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/11/13/spring-boot%E7%94%A8java-bean-validation%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E9%AA%8C%E8%AF%81/" class="post-title-link" itemprop="url">spring boot用java bean validation进行数据验证</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-11-13 10:03:59 / 修改时间：15:14:38" itemprop="dateCreated datePublished" datetime="2020-11-13T10:03:59+08:00">2020-11-13</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/11/13/spring-boot%E7%94%A8java-bean-validation%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E9%AA%8C%E8%AF%81/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/11/13/spring-boot%E7%94%A8java-bean-validation%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E9%AA%8C%E8%AF%81/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>概述：以一个web项目中的用户注册服务为例子，介绍使用java bean validation进行数据验证的过程。</p>
+</blockquote>
+<h2 id="1-引入依赖"><a href="#1-引入依赖" class="headerlink" title="1.引入依赖"></a><strong>1.引入依赖</strong></h2><p>从spring boot 2.3开始，<code>spring-boot-starter-validation</code>依赖独立出来了，2.3之前的版本，validation整合在<code>spring-boot-starter-web</code>中，具体原因可以参考这个<a href="https://github.com/spring-projects/spring-boot/issues/19550" target="_blank" rel="noopener">issue</a>，所以请根据当前使用的spring boot版本选择相应依赖：</p>
+<ul>
+<li>spring boot 2.3+:  <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-validation<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li>spring boot 2.2及更早版本:<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="2-用注解对字段进行约束"><a href="#2-用注解对字段进行约束" class="headerlink" title="2.用注解对字段进行约束"></a><strong>2.用注解对字段进行约束</strong></h2>注解可以自定义，大部分时候内置的就够用。内置的注解可以参考最新的<a href="https://beanvalidation.org/2.0-jsr380/spec/#builtinconstraints" target="_blank" rel="noopener">jsr380</a>,需要jdk8+支持，更早的jdk版本可以参考jsr303,jsr349等。</li>
+</ul>
+<p>以<code>User</code>类为例,用户名和密码不能为空，用户名长度4-20位：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> uid;<span class="comment">//用户ID</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@NotEmpty</span>(message = <span class="string">"用户名不能为空"</span>)</span><br><span class="line">    <span class="meta">@Length</span>(min=<span class="number">4</span>,max=<span class="number">20</span>,message = <span class="string">"用户名长度不符合要求,4-20位"</span>)</span><br><span class="line">    <span class="keyword">private</span> String username;<span class="comment">//用户名</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@NotEmpty</span>(message = <span class="string">"密码不能为空"</span>)</span><br><span class="line">    <span class="keyword">private</span> String password;<span class="comment">//用户密码</span></span><br></pre></td></tr></table></figure>
+<p><em>注意:如果<code>User</code>类中有其它封装的对象，要在这个对象上添加<code>@Valid</code>注解来开启嵌套验证，才能让这个嵌套对象里面的<code>@NotEmpty</code>等内部注解生效，这个特性支持层层嵌套。</em></p>
+<h2 id="3-在接收参数时使用-Valid启用验证"><a href="#3-在接收参数时使用-Valid启用验证" class="headerlink" title="3.在接收参数时使用@Valid启用验证"></a><strong>3.在接收参数时使用@Valid启用验证</strong></h2><p>比如在<code>Controller</code>层接收前端发送的用户名和密码，用<code>User</code>类去接收<code>RequestBody</code>的内容，添加<code>@Valid</code>注解开启验证功能。这里也可以用<code>@Validated</code>，两者的区别是:</p>
+<ul>
+<li><code>@Valid</code>是java自带的，<code>@Validated</code>是spring提供的，后者额外支持了一个<code>group</code>特性</li>
+<li><code>@Valid</code>可以用在方法、方法参数、成员属性(支持嵌套验证)</li>
+<li><code>@Validatted</code>可以用在类、方法、方法参数，因为不能用在成员属性上，所以不支持嵌套验证，但可以配合<code>@Valid</code>使用实现。<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/user"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserController</span> </span>&#123;</span><br><span class="line">    UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">UserController</span><span class="params">(UserService userService)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.userService = userService;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostMapping</span>(<span class="string">"/register"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ResponseBean <span class="title">submitRegister</span><span class="params">(@RequestBody @Valid User user)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        userService.addUser(userDO);</span><br><span class="line">        <span class="keyword">return</span> ResponseBean.ok(<span class="string">"注册成功"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="3-处理异常"><a href="#3-处理异常" class="headerlink" title="3.处理异常"></a><strong>3.处理异常</strong></h2>如果数据验证没有问题，那么程序照常运行。如果验证不通过，则会抛出异常<code>MethodArgumentNotValidException</code>，可以在<code>@ControllerAdvice</code>中进行全局捕捉异常。<code>e.getBindingResult().getFieldError().getDefaultMessage()</code>会输出定义约束时的<code>message</code>信息，如上面的“用户名不能为空”。<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestControllerAdvice</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GlobalExceptionAdvice</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ExceptionHandler</span>(MethodArgumentNotValidException<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">    <span class="title">public</span> <span class="title">ResponseBean</span> <span class="title">handleArgumentInvalid</span>(<span class="title">MethodArgumentNotValidException</span> <span class="title">e</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ResponseBean.error(<span class="number">4001</span>,<span class="string">"数据格式不符合要求:"</span>+e.getBindingResult().getFieldError().getDefaultMessage());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="4-补充说明"><a href="#4-补充说明" class="headerlink" title="4.补充说明"></a><strong>4.补充说明</strong></h2><p>上面的例子用一个<code>User</code>类来接收前端的数据，用<code>@Valid</code>来开启验证，返回的是<code>MethodArgumentNodValidException</code>，有时候，我们只对前端发送的一个参数进行直接验证，比如前端发送了一个用户名来查询一些信息，这时候可以直接对这个参数进行验证，但需要在类上添加<code>@Validated</code>注解开启验证，如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/user"</span>)</span><br><span class="line"><span class="meta">@Validated</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserController</span> </span>&#123;</span><br><span class="line">    UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">UserController</span><span class="params">(UserService userService)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.userService = userService;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/address/&#123;id&#125;"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ResponseBean <span class="title">getAddress</span><span class="params">(@PathVariable(<span class="string">"username"</span>)</span> @NotEmpty <span class="keyword">int</span> id)</span>&#123;</span><br><span class="line">        String address=userService.getBirthdayById(id);</span><br><span class="line">        <span class="keyword">return</span> ResponseBean.ok(address);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/address"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ResponseBean <span class="title">getAddress2</span><span class="params">(@Param(<span class="string">"username"</span>)</span> @NotEmpty <span class="keyword">int</span> id)</span>&#123;</span><br><span class="line">        String address=userService.getBirthdayById(id);</span><br><span class="line">        <span class="keyword">return</span> ResponseBean.ok(address);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此时如果验证失败，则抛出<code>ConstraintViolationException</code>,需要进行相应的异常处理。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   

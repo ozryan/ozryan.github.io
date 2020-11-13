@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ozryan.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}}};
+  </script>
+
+  <meta name="description" content="概述：以一个web项目中的用户注册服务为例子，介绍使用java bean validation进行数据验证的过程。  1.引入依赖从spring boot 2.3开始，spring-boot-starter-validation依赖独立出来了，2.3之前的版本，validation整合在spring-boot-starter-web中，具体原因可以参考这个issue，所以请根据当前使用的spri">
+<meta property="og:type" content="article">
+<meta property="og:title" content="spring boot用java bean validation进行数据验证">
+<meta property="og:url" content="https://ozryan.github.io/2020/11/13/spring-boot%E7%94%A8java-bean-validation%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E9%AA%8C%E8%AF%81/index.html">
+<meta property="og:site_name" content="Blogs should not always have names">
+<meta property="og:description" content="概述：以一个web项目中的用户注册服务为例子，介绍使用java bean validation进行数据验证的过程。  1.引入依赖从spring boot 2.3开始，spring-boot-starter-validation依赖独立出来了，2.3之前的版本，validation整合在spring-boot-starter-web中，具体原因可以参考这个issue，所以请根据当前使用的spri">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-11-13T02:03:59.000Z">
+<meta property="article:modified_time" content="2020-11-13T07:14:38.308Z">
+<meta property="article:author" content="ozryan">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="web">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="前端">
+<meta property="article:tag" content="vue">
+<meta property="article:tag" content="vps">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://ozryan.github.io/2020/11/13/spring-boot%E7%94%A8java-bean-validation%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E9%AA%8C%E8%AF%81/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>spring boot用java bean validation进行数据验证 | Blogs should not always have names</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Blogs should not always have names</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">If you get tired,learn to rest,not to quit.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section">首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section">归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-引入依赖"><span class="nav-text">1.引入依赖</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-用注解对字段进行约束"><span class="nav-text">2.用注解对字段进行约束</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-在接收参数时使用-Valid启用验证"><span class="nav-text">3.在接收参数时使用@Valid启用验证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-处理异常"><span class="nav-text">3.处理异常</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-补充说明"><span class="nav-text">4.补充说明</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">ozryan</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ozryan.github.io/2020/11/13/spring-boot%E7%94%A8java-bean-validation%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E9%AA%8C%E8%AF%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="ozryan">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blogs should not always have names">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          spring boot用java bean validation进行数据验证
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-11-13 10:03:59 / 修改时间：15:14:38" itemprop="dateCreated datePublished" datetime="2020-11-13T10:03:59+08:00">2020-11-13</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/11/13/spring-boot%E7%94%A8java-bean-validation%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E9%AA%8C%E8%AF%81/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/11/13/spring-boot%E7%94%A8java-bean-validation%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E9%AA%8C%E8%AF%81/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>概述：以一个web项目中的用户注册服务为例子，介绍使用java bean validation进行数据验证的过程。</p>
+</blockquote>
+<h2 id="1-引入依赖"><a href="#1-引入依赖" class="headerlink" title="1.引入依赖"></a><strong>1.引入依赖</strong></h2><p>从spring boot 2.3开始，<code>spring-boot-starter-validation</code>依赖独立出来了，2.3之前的版本，validation整合在<code>spring-boot-starter-web</code>中，具体原因可以参考这个<a href="https://github.com/spring-projects/spring-boot/issues/19550" target="_blank" rel="noopener">issue</a>，所以请根据当前使用的spring boot版本选择相应依赖：</p>
+<ul>
+<li>spring boot 2.3+:  <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-validation<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+<li>spring boot 2.2及更早版本:<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="2-用注解对字段进行约束"><a href="#2-用注解对字段进行约束" class="headerlink" title="2.用注解对字段进行约束"></a><strong>2.用注解对字段进行约束</strong></h2>注解可以自定义，大部分时候内置的就够用。内置的注解可以参考最新的<a href="https://beanvalidation.org/2.0-jsr380/spec/#builtinconstraints" target="_blank" rel="noopener">jsr380</a>,需要jdk8+支持，更早的jdk版本可以参考jsr303,jsr349等。</li>
+</ul>
+<p>以<code>User</code>类为例,用户名和密码不能为空，用户名长度4-20位：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> uid;<span class="comment">//用户ID</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@NotEmpty</span>(message = <span class="string">"用户名不能为空"</span>)</span><br><span class="line">    <span class="meta">@Length</span>(min=<span class="number">4</span>,max=<span class="number">20</span>,message = <span class="string">"用户名长度不符合要求,4-20位"</span>)</span><br><span class="line">    <span class="keyword">private</span> String username;<span class="comment">//用户名</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@NotEmpty</span>(message = <span class="string">"密码不能为空"</span>)</span><br><span class="line">    <span class="keyword">private</span> String password;<span class="comment">//用户密码</span></span><br></pre></td></tr></table></figure>
+<p><em>注意:如果<code>User</code>类中有其它封装的对象，要在这个对象上添加<code>@Valid</code>注解来开启嵌套验证，才能让这个嵌套对象里面的<code>@NotEmpty</code>等内部注解生效，这个特性支持层层嵌套。</em></p>
+<h2 id="3-在接收参数时使用-Valid启用验证"><a href="#3-在接收参数时使用-Valid启用验证" class="headerlink" title="3.在接收参数时使用@Valid启用验证"></a><strong>3.在接收参数时使用@Valid启用验证</strong></h2><p>比如在<code>Controller</code>层接收前端发送的用户名和密码，用<code>User</code>类去接收<code>RequestBody</code>的内容，添加<code>@Valid</code>注解开启验证功能。这里也可以用<code>@Validated</code>，两者的区别是:</p>
+<ul>
+<li><code>@Valid</code>是java自带的，<code>@Validated</code>是spring提供的，后者额外支持了一个<code>group</code>特性</li>
+<li><code>@Valid</code>可以用在方法、方法参数、成员属性(支持嵌套验证)</li>
+<li><code>@Validatted</code>可以用在类、方法、方法参数，因为不能用在成员属性上，所以不支持嵌套验证，但可以配合<code>@Valid</code>使用实现。<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/user"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserController</span> </span>&#123;</span><br><span class="line">    UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">UserController</span><span class="params">(UserService userService)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.userService = userService;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostMapping</span>(<span class="string">"/register"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ResponseBean <span class="title">submitRegister</span><span class="params">(@RequestBody @Valid User user)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        userService.addUser(userDO);</span><br><span class="line">        <span class="keyword">return</span> ResponseBean.ok(<span class="string">"注册成功"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="3-处理异常"><a href="#3-处理异常" class="headerlink" title="3.处理异常"></a><strong>3.处理异常</strong></h2>如果数据验证没有问题，那么程序照常运行。如果验证不通过，则会抛出异常<code>MethodArgumentNotValidException</code>，可以在<code>@ControllerAdvice</code>中进行全局捕捉异常。<code>e.getBindingResult().getFieldError().getDefaultMessage()</code>会输出定义约束时的<code>message</code>信息，如上面的“用户名不能为空”。<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestControllerAdvice</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GlobalExceptionAdvice</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ExceptionHandler</span>(MethodArgumentNotValidException<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">    <span class="title">public</span> <span class="title">ResponseBean</span> <span class="title">handleArgumentInvalid</span>(<span class="title">MethodArgumentNotValidException</span> <span class="title">e</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ResponseBean.error(<span class="number">4001</span>,<span class="string">"数据格式不符合要求:"</span>+e.getBindingResult().getFieldError().getDefaultMessage());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="4-补充说明"><a href="#4-补充说明" class="headerlink" title="4.补充说明"></a><strong>4.补充说明</strong></h2><p>上面的例子用一个<code>User</code>类来接收前端的数据，用<code>@Valid</code>来开启验证，返回的是<code>MethodArgumentNodValidException</code>，有时候，我们只对前端发送的一个参数进行直接验证，比如前端发送了一个用户名来查询一些信息，这时候可以直接对这个参数进行验证，但需要在类上添加<code>@Validated</code>注解开启验证，如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/user"</span>)</span><br><span class="line"><span class="meta">@Validated</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserController</span> </span>&#123;</span><br><span class="line">    UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">UserController</span><span class="params">(UserService userService)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.userService = userService;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/address/&#123;id&#125;"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ResponseBean <span class="title">getAddress</span><span class="params">(@PathVariable(<span class="string">"username"</span>)</span> @NotEmpty <span class="keyword">int</span> id)</span>&#123;</span><br><span class="line">        String address=userService.getBirthdayById(id);</span><br><span class="line">        <span class="keyword">return</span> ResponseBean.ok(address);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/address"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ResponseBean <span class="title">getAddress2</span><span class="params">(@Param(<span class="string">"username"</span>)</span> @NotEmpty <span class="keyword">int</span> id)</span>&#123;</span><br><span class="line">        String address=userService.getBirthdayById(id);</span><br><span class="line">        <span class="keyword">return</span> ResponseBean.ok(address);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此时如果验证失败，则抛出<code>ConstraintViolationException</code>,需要进行相应的异常处理。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/11/02/%E5%90%8E%E7%AB%AF%E5%A4%84%E7%90%86%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E9%AA%8C%E8%AF%81%E5%8F%8A%E7%BB%9F%E4%B8%80%E5%A4%84%E7%90%86%E5%BC%82%E5%B8%B8/" rel="prev" title="后端处理数据格式验证及统一处理异常">
+      <i class="fa fa-chevron-left"></i> 后端处理数据格式验证及统一处理异常
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ozryan</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: location.pathname,
+    }, {"enable":true,"appId":"BmT2lGTnBMBj6625uiiWM1xV-MdYXbMMI","appKey":"tasHQvivyFQEjq66DERC31Ja","placeholder":"Just go go","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"language":null,"visitor":false,"comment_count":true,"recordIP":false,"serverURLs":null}
+    ));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
