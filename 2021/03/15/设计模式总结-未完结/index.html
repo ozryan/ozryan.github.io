@@ -28,7 +28,7 @@
 <meta property="og:description" content="设计模式是一种经验总结，直接学设计模式很抽象，有一定工程经验以后再来学习会更好理解。这篇文章是我在学习《设计模式-可复用面向对象软件的基础》一书后的总结，旨在用通俗易懂的语言描述每种设计模式。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-03-15T07:02:29.000Z">
-<meta property="article:modified_time" content="2021-03-17T11:32:37.971Z">
+<meta property="article:modified_time" content="2021-03-20T08:31:25.423Z">
 <meta property="article:author" content="ozryan">
 <meta property="article:tag" content="java">
 <meta property="article:tag" content="web">
@@ -175,7 +175,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-抽象工厂模式-ABSTRACT-FACTORY"><span class="nav-text">1.抽象工厂模式-ABSTRACT FACTORY</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-单例模式-SINGLETON"><span class="nav-text">2.单例模式-SINGLETON</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-创建型模式"><span class="nav-text">1 创建型模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-抽象工厂模式-ABSTRACT-FACTORY"><span class="nav-text">1.1 抽象工厂模式-ABSTRACT FACTORY</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-单例模式-SINGLETON"><span class="nav-text">1.2 单例模式-SINGLETON</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-生成器模式（建造者模式）-BUILDER"><span class="nav-text">1.3 生成器模式（建造者模式）-BUILDER</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -263,7 +263,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-17 19:32:37" itemprop="dateModified" datetime="2021-03-17T19:32:37+08:00">2021-03-17</time>
+                <time title="修改时间：2021-03-20 16:31:25" itemprop="dateModified" datetime="2021-03-20T16:31:25+08:00">2021-03-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -312,7 +312,7 @@
 </blockquote>
 <a id="more"></a>
 
-<h2 id="1-抽象工厂模式-ABSTRACT-FACTORY"><a href="#1-抽象工厂模式-ABSTRACT-FACTORY" class="headerlink" title="1.抽象工厂模式-ABSTRACT FACTORY"></a>1.抽象工厂模式-ABSTRACT FACTORY</h2><p>抽象工厂是一种创建型模式。顾名思义，抽象工厂是对“工厂”的抽象，这里的工厂指的是可以完成一系列有相关性的功能的集合。</p>
+<h2 id="1-创建型模式"><a href="#1-创建型模式" class="headerlink" title="1 创建型模式"></a>1 创建型模式</h2><h2 id="1-1-抽象工厂模式-ABSTRACT-FACTORY"><a href="#1-1-抽象工厂模式-ABSTRACT-FACTORY" class="headerlink" title="1.1 抽象工厂模式-ABSTRACT FACTORY"></a>1.1 抽象工厂模式-ABSTRACT FACTORY</h2><p>顾名思义，抽象工厂是对“工厂”的抽象，这里的工厂指的是可以完成一系列有相关性的功能的集合。</p>
 <p>为了方便理解，举个不是很准却的例子：</p>
 <p>假设在当地有多家生产汽车的工厂，它们都可以生产“发动机”、“车轮”等部件（<strong>功能</strong>），也可以完成汽车的组装，虽然发动机技术是每家不同的，但汽车的组装工艺却差不多，如果每家都自己安装汽车，那么它们都需要配置一个生产车间和组装车间。</p>
 <p>如果应用抽象工厂的思想，可以把组装工厂独立出来，再成立一个”抽象工厂”，抽象工厂自己不生产汽车配件，只是从不同的工厂拿配件。抽象工厂再告诉组装工厂，我会提供发动机、车轮这些一套配件（<strong>接口</strong>）给你，你组装成一个车。对于组装车间（<strong>客户端</strong>）来说，这个发动机或者车轮是哪家生产的，用的什么材料，这些都不重要，它们只需要知道，抽象工厂最终可以提供一套完整的汽车配件给它们，而且这些配件是同一个品牌的。</p>
@@ -327,7 +327,7 @@
 <li>1.如果抽象工厂提了新的要求，所有实现工厂依然要全部实现它，不是很灵活。这一点也算不上缺点，只能说抽象工厂模式也没法解决这个问题。</li>
 </ul>
 <p>总结：抽象工厂的目的是把一套有相关性的接口组合在一起抽象出来，如果有多个系统都实现了这套接口，可以在这些系统间方便的切换，客户端那边只需要对着这套接口编程就可以，最终根据我们提供的“实现工厂”的实例来实现接口中的功能。</p>
-<h2 id="2-单例模式-SINGLETON"><a href="#2-单例模式-SINGLETON" class="headerlink" title="2.单例模式-SINGLETON"></a>2.单例模式-SINGLETON</h2><p>单例模式是一种创建型模式。单例模式确保一个类只有一个实例，在<code>java</code>中的实现可以如下：</p>
+<h2 id="1-2-单例模式-SINGLETON"><a href="#1-2-单例模式-SINGLETON" class="headerlink" title="1.2 单例模式-SINGLETON"></a>1.2 单例模式-SINGLETON</h2><p>单例模式确保一个类只有一个实例，在<code>java</code>中的实现可以如下：</p>
 <p>第一种，用<code>Enum</code>类:</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//定义,保证Enum下只有一个枚举实例</span></span><br><span class="line"><span class="keyword">public</span> Enum MySingleton&#123;</span><br><span class="line">  INSTANCE;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">hello</span><span class="params">()</span></span>&#123;</span><br><span class="line">    System.out.println(<span class="string">"hello"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">    some methods;</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">  MySingleton.INSTANCE.hello();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -335,6 +335,15 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//定义</span></span><br><span class="line"><span class="keyword">public</span> MySingleton&#123;</span><br><span class="line">  <span class="comment">//让构造函数对外不可见。</span></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="title">MySingleton</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//在类内部生成自己的一个实例</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> MySingleton INSTANCE=<span class="keyword">new</span> MySinleton();</span><br><span class="line"></span><br><span class="line">  <span class="comment">//写一个方法让外部可以获取这个实例，当然也可以直接把上面的INSTANCE字段改成public，这里就不用写方法</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> INSTANCE;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">hello</span><span class="params">()</span></span>&#123;</span><br><span class="line">    System.out.println(<span class="string">"hello"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">    some methods;</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">  MySingleton.getInstance.hello();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>总结：在java推荐使用<code>Enum</code>类来实现，实现简单，代码清晰。单例模式更多的是在框架层面实现，生产代码中自己写的情况比较少。</p>
+<h2 id="1-3-生成器模式（建造者模式）-BUILDER"><a href="#1-3-生成器模式（建造者模式）-BUILDER" class="headerlink" title="1.3 生成器模式（建造者模式）-BUILDER"></a>1.3 生成器模式（建造者模式）-BUILDER</h2><p><code>BUIDER</code>模式是对一个复杂对象的生产过程的抽象，把构建过程和最终表示分离出来。</p>
+<p>跟<code>抽象工厂</code>模式的区别在于：</p>
+<ul>
+<li><p>两者虽然都是定义了一套接口，但<code>抽象工厂</code>模式中，客户端代码直接通过接口使用符合“工厂”要求的对象，这个对象是一次性生成的，更注重对象的完整性和一致性，节省了客户端的代码，<code>抽象工厂</code>可以有很多个实现，但是客户端始终是面向接口编程。</p>
+</li>
+<li><p>而<code>BUILDER</code>模式中，客户端使用符合<code>BULDER</code>接口的对象，借助这个对象来一步步实现自己想要的结果，结果是在最后一步获取的，更注重对过程的控制,提高了<code>BUILDER</code>中各个步骤的可复用性，客户端代码通常都不同，每个操作可能会调用多次，也可能不调用，最终的结果比较多样化，客户端有较大的操作空间，<code>BUIDER</code>的实现类只是决定了每个操作的结果。</p>
+</li>
+</ul>
+<p>总结：相比于抽象工厂模式，BUILDER模式增强了客户端对“建造过程”的控制，提高“建造过程”的可复用性。</p>
 
     </div>
 
