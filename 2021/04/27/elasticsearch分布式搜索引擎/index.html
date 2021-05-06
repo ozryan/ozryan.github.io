@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ozryan.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1 elasticsearch是什么es是一个分布式的搜索和分析数据的引擎。es是基于Apache Lucene开发的，Apache Lucene库提供了很多API，但是偏底层，没有进行封装的话在项目中直接使用是很不方便的。 es本身可以存储和读取数据，那么跟数据库有什么不同呢？这里有个概念叫反向索引(也叫倒排索引)，英文是Inverted Index，全文搜索和搜索引擎技术都依赖于这种数据结构。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="elasticsearch分布式搜索引擎">
+<meta property="og:url" content="https://ozryan.github.io/2021/04/27/elasticsearch%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/index.html">
+<meta property="og:site_name" content="Blogs should not always have names">
+<meta property="og:description" content="1 elasticsearch是什么es是一个分布式的搜索和分析数据的引擎。es是基于Apache Lucene开发的，Apache Lucene库提供了很多API，但是偏底层，没有进行封装的话在项目中直接使用是很不方便的。 es本身可以存储和读取数据，那么跟数据库有什么不同呢？这里有个概念叫反向索引(也叫倒排索引)，英文是Inverted Index，全文搜索和搜索引擎技术都依赖于这种数据结构。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ozryan.github.io/2021/04/27/elasticsearch%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/images/2021-05-03-elasticsearch-apitester.png">
+<meta property="article:published_time" content="2021-04-27T13:24:48.000Z">
+<meta property="article:modified_time" content="2021-05-05T08:28:44.973Z">
+<meta property="article:author" content="ozryan">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="web">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="前端">
+<meta property="article:tag" content="vue">
+<meta property="article:tag" content="vps">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ozryan.github.io/2021/04/27/elasticsearch%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/images/2021-05-03-elasticsearch-apitester.png">
+
+<link rel="canonical" href="https://ozryan.github.io/2021/04/27/elasticsearch%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>elasticsearch分布式搜索引擎 | Blogs should not always have names</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Blogs should not always have names</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">If you get tired,learn to rest,not to quit.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section">首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section">分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section">归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-elasticsearch是什么"><span class="nav-text">1 elasticsearch是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-运行es"><span class="nav-text">2 运行es</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-运行server端"><span class="nav-text">2.1 运行server端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-运行client"><span class="nav-text">2.2 运行client</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-在java项目中使用es"><span class="nav-text">3 在java项目中使用es</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Java-High-Level-REST-Client"><span class="nav-text">3.1 Java High Level REST Client</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#第一步：引入依赖"><span class="nav-text">第一步：引入依赖</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#第二步：初始化client"><span class="nav-text">第二步：初始化client</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#第三步：创建对应功能的Request"><span class="nav-text">第三步：创建对应功能的Request</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-spring-data-elasticsearch"><span class="nav-text">3.2 spring-data-elasticsearch</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">ozryan</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </section>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+      <div class="main-inner">
+        
+
+        <div class="content post posts-expand">
+          
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ozryan.github.io/2021/04/27/elasticsearch%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="ozryan">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blogs should not always have names">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          elasticsearch分布式搜索引擎
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-27 21:24:48" itemprop="dateCreated datePublished" datetime="2021-04-27T21:24:48+08:00">2021-04-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-05 16:28:44" itemprop="dateModified" datetime="2021-05-05T16:28:44+08:00">2021-05-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index"><span itemprop="name">web</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/%E5%90%8E%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">后端</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/04/27/elasticsearch%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/" class="post-meta-item leancloud_visitors" data-flag-title="elasticsearch分布式搜索引擎" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/04/27/elasticsearch%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/04/27/elasticsearch%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="1-elasticsearch是什么"><a href="#1-elasticsearch是什么" class="headerlink" title="1 elasticsearch是什么"></a>1 elasticsearch是什么</h2><p>es是一个分布式的搜索和分析数据的引擎。es是基于<code>Apache Lucene</code>开发的，<code>Apache Lucene</code>库提供了很多API，但是偏底层，没有进行封装的话在项目中直接使用是很不方便的。</p>
+<p>es本身可以存储和读取数据，那么跟数据库有什么不同呢？</br><br>这里有个概念叫反向索引(也叫倒排索引)，英文是<a href="https://en.wikipedia.org/wiki/Inverted_index" target="_blank" rel="noopener"><strong>Inverted Index</strong></a>，<strong>全文搜索</strong>和搜索引擎技术都依赖于这种数据结构。常规的数据库采用的是与之对应的<code>Forward Index</code>。</br><br>比如，常见的技术书籍，通常在最后几页会有一个索引表，可以让你快速定位到某个名词对应的内容在第几页，这就是反向索引。而整本书的编排就像正向索引，你可以快速翻到某一页知道上面是什么内容。这两种索引技术是互补的，一本书如果根据索引表来编写，就显得没有逻辑，同样，缺少了索引表，作为工具书查询的时候效率也很低下。</br><br>再举个例子，搜索引擎的运作也依赖反向索引，当你输入一个关键字进行搜索时，它不可能把整个网络世界的所有网页都搜一遍，从技术上来说这也不现实。一般来说，搜索引擎会利用爬虫不断的收集网络中的信息，给其中出现的关键字添加记录，指明这些关键字分别在哪些网页中出现了，当你搜索这些关键字的时候，对应的网页记录就显示出来了。当然，搜索引擎具体的工作方式还有很多影响因素，可以参考<code>Goolge</code>的科普专题：<a href="https://www.google.com/search/howsearchworks/" target="_blank" rel="noopener">How Google Search works</a>。</br><br>通过比较可以发现，数据库更偏向于存储数据，而反向索引则侧重于检索和分析数据，它的一系列操作就是为你的搜索作提前准备的，就像搜索引擎在你浏览网页之前，已经用爬虫分析了很多网页，看里面有哪些关键词，并进行分类记录，这都需要消耗资源。</p>
+<p>es就像一个小型的搜索引擎，为你的数据建立索引，然后提供搜索和分析数据的功能。</p>
+<p>web开发中，在以下场景可以使用es：</p>
+<ul>
+<li>你的网站或者APP需要添加搜索功能</li>
+<li>存储和分析日志等</li>
+<li>使用机器学习自动对数据进行实时分析和建模</li>
+</ul>
+<h2 id="2-运行es"><a href="#2-运行es" class="headerlink" title="2 运行es"></a>2 运行es</h2><p>es跟<em>redis</em>类似，本身需要先运行一个server端，然后用client去连接server。  </p>
+<h3 id="2-1-运行server端"><a href="#2-1-运行server端" class="headerlink" title="2.1 运行server端"></a>2.1 运行server端</h3><p>详见<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html" target="_blank" rel="noopener">官方文档</a>，启动server端比较简单，在windows上两种常见的运行方式：</p>
+<ul>
+<li>下载es压缩包，解压以后直接在本地运行</li>
+<li>在docker里面运行</li>
+</ul>
+<p>server端通常开放<code>9200</code>端口。</p>
+<h3 id="2-2-运行client"><a href="#2-2-运行client" class="headerlink" title="2.2 运行client"></a>2.2 运行client</h3><p>client是相对于server的称呼，实际上我们通过API就可以直接跟server端通信了。<br>比如，在<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started.html#add-data" target="_blank" rel="noopener">官方入门教程</a>中，从step3开始的那些操作，都可以用api测试软件来直接测试，不需要<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started.html#run-elasticsearch" target="_blank" rel="noopener"><em>安装并运行Kibana</em></a>这一步。<br>举个例子，step3里面的添加数据，在<em>Kibana</em>中运行代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">POST logs-my_app-default&#x2F;_doc</span><br><span class="line">&#123;</span><br><span class="line">  &quot;@timestamp&quot;: &quot;2099-05-06T16:21:15.000Z&quot;,</span><br><span class="line">  &quot;event&quot;: &#123;</span><br><span class="line">    &quot;original&quot;: &quot;192.0.2.42 - - [06&#x2F;May&#x2F;2099:16:21:15 +0000] \&quot;GET &#x2F;images&#x2F;bg.jpg HTTP&#x2F;1.0\&quot; 200 24736&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么，可以用api测试软件（如chrome应用商店里的<a href="https://chrome.google.com/webstore/detail/talend-api-tester-free-ed/aejoelaoggembcahagimdiliamlcdmfm?hl=zh-CN" target="_blank" rel="noopener">Talend API Tester - Free Edition</a>）发送<code>post</code>请求到<code>http://localhost:9200/logs-my_app-default/_doc?</code>并携带<code>{}</code>的内容。如下图所示：</p>
+<details>
+<summary>查看图片</summary>
+
+<p><img src="./images/2021-05-03-elasticsearch-apitester.png" alt="iag"></p>
+</details>
+
+<p><strong>教程中GET方法携带了json内容，而常规的GET方法不能携带内容，这里只要把GET改成POST即可。</strong></p>
+<h2 id="3-在java项目中使用es"><a href="#3-在java项目中使用es" class="headerlink" title="3 在java项目中使用es"></a>3 在java项目中使用es</h2><p>主要介绍当下流行的两种方式。</p>
+<h3 id="3-1-Java-High-Level-REST-Client"><a href="#3-1-Java-High-Level-REST-Client" class="headerlink" title="3.1 Java High Level REST Client"></a>3.1 Java High Level REST Client</h3><p>官方提供的方式，通过引入<em>Maven</em>依赖直接使用。</p>
+<h4 id="第一步：引入依赖"><a href="#第一步：引入依赖" class="headerlink" title="第一步：引入依赖"></a>第一步：引入依赖</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.elasticsearch.client&lt;&#x2F;groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;elasticsearch-rest-high-level-client&lt;&#x2F;artifactId&gt;</span><br><span class="line">    &lt;version&gt;7.12.1&lt;&#x2F;version&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<p>官方还有一个<code>Java Low Level REST Client</code>，这个更接近原版的es操作，<code>Java High Level REST Client</code>是在其基础上进一步封装。</p>
+<blockquote>
+<p>关于Jest：jest是<code>Java HTTP Rest client for ElasticSearch</code>，是java端的<code>RESTful</code>风格的client，但现在很少用了。从<a href="https://github.com/elastic/elasticsearch" target="_blank" rel="noopener">es源码</a>和<a href="https://github.com/searchbox-io/Jest" target="_blank" rel="noopener">jest源码</a>的历史分析，es最早在2010年发布，而jest在2012年发布，但es直到2016发布的5.0版本之前，官方都没有提供<code>RESTful</code>风格的java client，而是一直用的<a href="https://www.elastic.co/guide/en/elasticsearch/client/java-api/5.6/client.html" target="_blank" rel="noopener">TranspostClient</a>。5.0版本的es提供了<code>Java Rest Client</code>，而2017年的6.0进一步提供了<code>Java High Level REST Client</code>，并将原来的<code>Java Rest Client</code>更名为<code>Java Low Level REST Client</code>，至此以后，jest逐渐淡出历史舞台，最后一次<em>release</em>已经是2018年，所以本文不再介绍jest的使用。</p>
+</blockquote>
+<h4 id="第二步：初始化client"><a href="#第二步：初始化client" class="headerlink" title="第二步：初始化client"></a>第二步：初始化<code>client</code></h4><p><code>RestHighLevelClient</code>的初始化要依赖于<code>REST low-level client builder</code>,因为后者在运行时有一些连接池和线程资源，所以在使用后需要手动关闭<code>RestHighLevelClient</code>来间接释放这些资源。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">RestHighLevelClient client = <span class="keyword">new</span> RestHighLevelClient(</span><br><span class="line">        RestClient.builder(</span><br><span class="line">                <span class="keyword">new</span> HttpHost(<span class="string">"localhost"</span>, <span class="number">9200</span>, <span class="string">"http"</span>)</span><br><span class="line">        )</span><br><span class="line">);</span><br><span class="line">client.close();</span><br></pre></td></tr></table></figure>
+
+<h4 id="第三步：创建对应功能的Request"><a href="#第三步：创建对应功能的Request" class="headerlink" title="第三步：创建对应功能的Request"></a>第三步：创建对应功能的<code>Request</code></h4><p>整个<code>RestHighLevelClient</code>的使用方式就是，在上面<a href="#第二步：初始化`client`">第二步</a>的初始化后，根据不同的需求去构造对应的<code>xxxRequest</code>，然后用<code>client</code>去执行这个<code>xxxRequest</code>,并返回<code>xxxResponse</code>。<br>同步执行方式为<code>client.xxx(xxxRequest,options)</code>，异步执行方式只需在xxx后加<code>Aysnc</code>标识，如<code>client.xxxAsync(xxxRequest,options)</code>，但异步执行不能马上获取结果，需要借助回调函数处理。<br>比如，要构建<code>Index</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//示例数据</span></span><br><span class="line">String jsonString = <span class="string">"&#123;"</span> +</span><br><span class="line">        <span class="string">"\"user\":\"kimchy\","</span> +</span><br><span class="line">        <span class="string">"\"postDate\":\"2013-01-30\","</span> +</span><br><span class="line">        <span class="string">"\"message\":\"trying out Elasticsearch\""</span> +</span><br><span class="line">        <span class="string">"&#125;"</span>;</span><br><span class="line"><span class="comment">//构建IndexRequest</span></span><br><span class="line">IndexRequest request = <span class="keyword">new</span> IndexRequest(<span class="string">"posts"</span>).id(<span class="string">"1"</span>).source(jsonString,XContentType.JSON);</span><br><span class="line"><span class="comment">//执行index</span></span><br><span class="line">IndexResponse response = client.index(request, RequestOptions.DEFAULT);</span><br><span class="line"><span class="comment">//异步执行</span></span><br><span class="line"><span class="comment">//IndexResponse response = client.indexAsync(request, RequestOptions.DEFAULT);</span></span><br><span class="line"><span class="comment">// listener = new ActionListener&lt;IndexResponse&gt;() &#123;</span></span><br><span class="line"><span class="comment">//     @Override</span></span><br><span class="line"><span class="comment">//     public void onResponse(IndexResponse indexResponse) &#123;</span></span><br><span class="line">        <span class="comment">//在这里操作IndexResponse</span></span><br><span class="line"><span class="comment">//     &#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//     @Override</span></span><br><span class="line"><span class="comment">//     public void onFailure(Exception e) &#123;</span></span><br><span class="line">        </span><br><span class="line"><span class="comment">//     &#125;</span></span><br><span class="line"><span class="comment">// &#125;;</span></span><br></pre></td></tr></table></figure>
+<p>要执行<code>search</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//构建SearchRequest</span></span><br><span class="line">SearchRequest searchRequest=<span class="keyword">new</span> SearchRequest();</span><br><span class="line">SearchSourceBuilder searchSourceBuilder=<span class="keyword">new</span> SearchSourceBuilder();</span><br><span class="line">searchSourceBuilder.query(QueryBuilders.matchAllQuery());</span><br><span class="line">searchRequest.source(searchSourceBuilder);</span><br><span class="line"><span class="comment">//执行search</span></span><br><span class="line">SearchResponse searchResponse=client.search(searchRequest,RequestOptions.DEFAULT);</span><br></pre></td></tr></table></figure>
+<p>更多API使用参见<a href="https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html" target="_blank" rel="noopener">官方文档</a></p>
+<h3 id="3-2-spring-data-elasticsearch"><a href="#3-2-spring-data-elasticsearch" class="headerlink" title="3.2 spring-data-elasticsearch"></a>3.2 spring-data-elasticsearch</h3>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/04/14/Windows%E7%94%A8Docker%E9%83%A8%E7%BD%B2Redis%E9%9B%86%E7%BE%A4/" rel="prev" title="Windows用Docker部署Redis集群">
+      <i class="fa fa-chevron-left"></i> Windows用Docker部署Redis集群
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+        </div>
+        
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ozryan</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: location.pathname,
+    }, {"enable":true,"appId":"BmT2lGTnBMBj6625uiiWM1xV-MdYXbMMI","appKey":"tasHQvivyFQEjq66DERC31Ja","placeholder":"Just go go","avatar":"mm","meta":["nick"],"pageSize":10,"language":null,"visitor":true,"comment_count":true,"recordIP":false,"serverURLs":null}
+    ));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
