@@ -504,7 +504,10 @@
 <p>或者要执行<code>search</code>：</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//构建SearchRequest</span></span><br><span class="line">SearchRequest searchRequest=<span class="keyword">new</span> SearchRequest();</span><br><span class="line">SearchSourceBuilder searchSourceBuilder=<span class="keyword">new</span> SearchSourceBuilder();</span><br><span class="line">searchSourceBuilder.query(QueryBuilders.matchAllQuery());</span><br><span class="line">searchRequest.source(searchSourceBuilder);</span><br><span class="line"><span class="comment">//执行search</span></span><br><span class="line">SearchResponse searchResponse=client.search(searchRequest,RequestOptions.DEFAULT);</span><br></pre></td></tr></table></figure>
 <p>更多API使用参见<a href="https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html" target="_blank" rel="noopener">官方文档</a></p>
-<h3 id="3-2-spring-data-elasticsearch"><a href="#3-2-spring-data-elasticsearch" class="headerlink" title="3.2 spring-data-elasticsearch"></a>3.2 spring-data-elasticsearch</h3>]]></content>
+<h3 id="3-2-spring-data-elasticsearch"><a href="#3-2-spring-data-elasticsearch" class="headerlink" title="3.2 spring-data-elasticsearch"></a>3.2 spring-data-elasticsearch</h3><p><code>spring-data-elasticsearch</code>是<a href="https://spring.io/projects/spring-data" target="_blank" rel="noopener">spring-data</a>这个大项目中的一员，它的主要目的是方便在<em>spring<em>项目中使用</em>elasticsearch</em>,是对<a href="#3.1-Java-High-Level-REST-Client">上面</a>介绍的<code>Java High Level REST Client</code>的封装。因为封装也需要时间，所以<code>spring-data-elasticsearch</code>使用的不一定是最新版的elasticsearch，具体的版本依赖参见<a href="https://docs.spring.io/spring-data/elasticsearch/docs/4.2.0/reference/html/#preface.requirements" target="_blank" rel="noopener">官方说明</a>。  </p>
+<p>下面的例子假设是一个<code>springboot</code>项目：</p>
+<p>第一步：引入依赖</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>web</category>
         <category>后端</category>

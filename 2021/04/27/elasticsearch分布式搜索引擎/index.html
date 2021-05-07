@@ -31,7 +31,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://ozryan.github.io/2021/04/27/elasticsearch%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/images/2021-05-03-elasticsearch-apitester.png">
 <meta property="article:published_time" content="2021-04-27T13:24:48.000Z">
-<meta property="article:modified_time" content="2021-05-06T08:20:26.956Z">
+<meta property="article:modified_time" content="2021-05-07T11:37:37.356Z">
 <meta property="article:author" content="ozryan">
 <meta property="article:tag" content="java">
 <meta property="article:tag" content="web">
@@ -297,7 +297,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-06 16:20:26" itemprop="dateModified" datetime="2021-05-06T16:20:26+08:00">2021-05-06</time>
+                <time title="修改时间：2021-05-07 19:37:37" itemprop="dateModified" datetime="2021-05-07T19:37:37+08:00">2021-05-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -389,7 +389,10 @@
 <p>或者要执行<code>search</code>：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//构建SearchRequest</span></span><br><span class="line">SearchRequest searchRequest=<span class="keyword">new</span> SearchRequest();</span><br><span class="line">SearchSourceBuilder searchSourceBuilder=<span class="keyword">new</span> SearchSourceBuilder();</span><br><span class="line">searchSourceBuilder.query(QueryBuilders.matchAllQuery());</span><br><span class="line">searchRequest.source(searchSourceBuilder);</span><br><span class="line"><span class="comment">//执行search</span></span><br><span class="line">SearchResponse searchResponse=client.search(searchRequest,RequestOptions.DEFAULT);</span><br></pre></td></tr></table></figure>
 <p>更多API使用参见<a href="https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html" target="_blank" rel="noopener">官方文档</a></p>
-<h3 id="3-2-spring-data-elasticsearch"><a href="#3-2-spring-data-elasticsearch" class="headerlink" title="3.2 spring-data-elasticsearch"></a>3.2 spring-data-elasticsearch</h3>
+<h3 id="3-2-spring-data-elasticsearch"><a href="#3-2-spring-data-elasticsearch" class="headerlink" title="3.2 spring-data-elasticsearch"></a>3.2 spring-data-elasticsearch</h3><p><code>spring-data-elasticsearch</code>是<a href="https://spring.io/projects/spring-data" target="_blank" rel="noopener">spring-data</a>这个大项目中的一员，它的主要目的是方便在<em>spring<em>项目中使用</em>elasticsearch</em>,是对<a href="#3.1-Java-High-Level-REST-Client">上面</a>介绍的<code>Java High Level REST Client</code>的封装。因为封装也需要时间，所以<code>spring-data-elasticsearch</code>使用的不一定是最新版的elasticsearch，具体的版本依赖参见<a href="https://docs.spring.io/spring-data/elasticsearch/docs/4.2.0/reference/html/#preface.requirements" target="_blank" rel="noopener">官方说明</a>。  </p>
+<p>下面的例子假设是一个<code>springboot</code>项目：</p>
+<p>第一步：引入依赖</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
     </div>
 
     
