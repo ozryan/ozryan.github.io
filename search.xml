@@ -411,6 +411,8 @@
 <p>Powershell已经内置OpenSSH,用起来比Xshell还方便，并且用root账号或开启密码登陆都存在安全隐患，所以这里只介绍普通用户+ssh的登陆方式。</p>
 </blockquote>
 <p>基本步骤：</p>
+<a id="more"></a>
+
 <h2 id="1-本机生成key-如果已经有key，可以跳过"><a href="#1-本机生成key-如果已经有key，可以跳过" class="headerlink" title="1.本机生成key(如果已经有key，可以跳过)"></a>1.本机生成key(如果已经有key，可以跳过)</h2><p>打开<code>powershell</code>,输入:</p>
 <p><code>ssh-keygen</code></p>
 <p>一路enter,生成的秘钥默认位置在<code>~\.ssh\</code>下，即<code>C:\Users\xxx\.ssh</code>，xxx为你的windows用户名。</p>
