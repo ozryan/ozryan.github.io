@@ -1136,93 +1136,189 @@
 <li><p>attributes[1]：属性内容，根据下面的结构展开：</p>
   <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">attribute_info &#123;</span><br><span class="line">    u2 attribute_name_index;</span><br><span class="line">    u4 attribute_length;</span><br><span class="line">    u1 info[attribute_length];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>  attribute_name_index：<code>00 10</code>，第16个条目，即<code>Code</code>，说明我们的属性是<code>Code</code><br>  attribute_length：<code>00 00 00 42</code>，长度0x42=4x16+2=66个字节<br>  info[66]：根据<code>Code</code>属性的结构再展开：</p>
-  <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Code_attribute &#123;</span><br><span class="line">    u2 attribute_name_index;</span><br><span class="line">    u4 attribute_length;</span><br><span class="line">    u2 max_stack;</span><br><span class="line">    u2 max_locals;</span><br><span class="line">    u4 code_length;</span><br><span class="line">    u1 code[code_length];</span><br><span class="line">    u2 exception_table_length;</span><br><span class="line">    &#123;   u2 start_pc;</span><br><span class="line">        u2 end_pc;</span><br><span class="line">        u2 handler_pc;</span><br><span class="line">        u2 catch_type;</span><br><span class="line">    &#125; exception_table[exception_table_length];</span><br><span class="line">    u2 attributes_count;</span><br><span class="line">    attribute_info attributes[attributes_count];</span><br><span class="line">&#125;</span><br><span class="line">&#96;&#96;&#96;    </span><br><span class="line">max_stack：&#96;00 02&#96;，栈的最大值，2  </span><br><span class="line">max_locals：&#96;00 01&#96;，本地变量的最大值，1   </span><br><span class="line">code_length：&#96;00 00 00 10&#96;，code长度，16字节  </span><br><span class="line">code[16]：&#96;2A B7 00 01 2A 04 B5 00 02 2A 12 03 B5 00 04 B1&#96;，这些对应的是虚拟机指令，查规范可得分别是&#96;aload_0 invokespecial indexbyte1&#x3D;0 indexbyte2&#x3D;1 aload_0 iconst_1 putfield indexbyte1&#x3D;0 indexbyte2&#x3D;2 aload_0 ldc index&#x3D;3 putfield indexbyte1&#x3D;0 indexbyte2&#x3D;4 return&#96;,其中&#96;indexbyte&#96;是用来给它前面的指令加载常量池用的地址，地址的值是&#96;indexbyte1&lt;&lt;8 | indexbyte2&#96;，就是两个字节表示的数，上面的指令整理后如下：</span><br></pre></td></tr></table></figure>
-<p>  aload_0<br>  invokespecial #1 SuperTest.<init>()V<br>  aload_0<br>  iconst_1<br>  putfield #2 Test.a:I<br>  aload_0<br>  ldc #3 hello world<br>  putfield #4 Test.s:Ljava/lang/String;<br>  return</p>
-  <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">exception_table_length:&#96;00 00&#96;，长度0。  </span><br><span class="line">exception_table[exception_table_length]:因为上面的长度是0，所以这里是空。  </span><br><span class="line">attributes_count:&#96;00 02&#96;,属性数量，2个。</span><br><span class="line">attributes[2]：2个属性,分别展开：</span><br><span class="line">- 第一个属性：</span><br><span class="line">  - attribute_name_index：&#96;00 11&#96;，第0x11&#x3D;1x16+1&#x3D;17个条目，即&#96;LineNumberTable&#96;，其结构如下：</span><br></pre></td></tr></table></figure>
-<pre><code>LineNumberTable_attribute {
-u2 attribute_name_index;
-u4 attribute_length;
-u2 line_number_table_length;
-{   u2 start_pc;
-    u2 line_number;    
-} line_number_table[line_number_table_length];
-}
+  <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Code_attribute &#123;</span><br><span class="line">    u2 attribute_name_index;</span><br><span class="line">    u4 attribute_length;</span><br><span class="line">    u2 max_stack;</span><br><span class="line">    u2 max_locals;</span><br><span class="line">    u4 code_length;</span><br><span class="line">    u1 code[code_length];</span><br><span class="line">    u2 exception_table_length;</span><br><span class="line">    &#123;   u2 start_pc;</span><br><span class="line">        u2 end_pc;</span><br><span class="line">        u2 handler_pc;</span><br><span class="line">        u2 catch_type;</span><br><span class="line">    &#125; exception_table[exception_table_length];</span><br><span class="line">    u2 attributes_count;</span><br><span class="line">    attribute_info attributes[attributes_count];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">  - attribute_length:&#96;00 00 00 0E&#96;,长度，14个字节</span><br><span class="line">  - line_number_table_length：&#96;00 03&#96;表格长度，3</span><br><span class="line">  - line_number_table[3]:属性长度14个字节，减去上面表示表格长度的2个字节，正好12字节，&#96;00 00 00 02 00 04 00 03 00 09 00 04&#96;分别对应当前的[0,2],[4,3],[9,4]</span><br><span class="line">- 第二个属性：</span><br><span class="line">    - attribute_name_index：&#96;00 12&#96;，第0x12&#x3D;1x16+2&#x3D;18个条目，即&#96;LocalVariableTable&#96;,其结构如下:</span><br></pre></td></tr></table></figure>
-    LocalVariableTable_attribute {
-        u2 attribute_name_index;
-        u4 attribute_length;
-        u2 local_variable_table_length;
-        {   u2 start_pc;
-            u2 length;
-            u2 name_index;
-            u2 descriptor_index;
-            u2 index;
-        } local_variable_table[local_variable_table_length];
-    }
-    <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">        - attribute_length:&#96;00 00 00 0C&#96;,属性长度，12个字节</span><br><span class="line">        - local_variable_table_length:&#96;00 01&#96;，表格长度，1  </span><br><span class="line">        - local_variable_table[1]:属性长度12个字节，减去上面表示表格长度的2个字节，正好10字节，&#96;00 00 00 10 00 13 00 14 00 00&#96;，对应里面的5个属性:</span><br><span class="line">        - start_pc:&#96;00 00&#96;,0</span><br><span class="line">        - length:&#96;00 10&#96;,16</span><br><span class="line">        - name_index:&#96;00 13&#96;,第19个条目，&#96;this&#96;</span><br><span class="line">        - descriptor_index:&#96;00 14&#96;,第20个条目，&#96;LTest&#96;</span><br><span class="line">        - index:&#96;00 00&#96;,0</span><br><span class="line">    </span><br><span class="line">    回头看方法的&#96;attribute&#96;里的&#96;info&#96;是66个字节，把上面分析的内容加起来正好也是66字节。</span><br><span class="line">#### 第二个方法</span><br><span class="line">再看一遍方法的结构:</span><br></pre></td></tr></table></figure></code></pre><p>method_info {<br>  u2             access_flags;<br>  u2             name_index;<br>  u2             descriptor_index;<br>  u2             attributes_count;<br>  attribute_info attributes[attributes_count];<br>}</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">- access_flags:&#96;00 01&#96;,即&#96;ACC_PUBLIC&#96;</span><br><span class="line">- name_index：&#96;00 15&#96;，指向第21个条目，即&#96;sayHello&#96;</span><br><span class="line">- descriptor_index:&#96;00 16&#96;,第向第22个条目，即&#96;(Ljava&#x2F;lang&#x2F;String;)V&#96;</span><br><span class="line">- attributes_count：&#96;00 01&#96;，属性数量，1条</span><br><span class="line">- attributes[1]：属性内容，先看名称&#96;00 10&#96;，指向第16个条目，&#96;Code&#96;，有如下结构：</span><br></pre></td></tr></table></figure>
-<p>  Code_attribute {</p>
-<pre><code>u2 attribute_name_index;
-u4 attribute_length;
-u2 max_stack;
-u2 max_locals;
-u4 code_length;
-u1 code[code_length];
-u2 exception_table_length;
-{   u2 start_pc;
-    u2 end_pc;
-    u2 handler_pc;
-    u2 catch_type;
-} exception_table[exception_table_length];
-u2 attributes_count;
-attribute_info attributes[attributes_count];</code></pre><p>  }</p>
-  <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">- attribute_length:&#96;00 00 00 40&#96;,属性长度64字节</span><br><span class="line">- max_stack：&#96;00 02&#96;，2</span><br><span class="line">- max_locals：&#96;00 02&#96;，2</span><br><span class="line">- code_length：&#96;00 00 00 08&#96;，长度8</span><br><span class="line">- code[8]:&#96;B2 00 05 2B B6 00 06 B1&#96;,分别对应&#96;getstatic indexbyte1 indexbyte2 aload_1 invokevirtual indexbyte1 indexbyte2 return&#96;,整理得：</span><br></pre></td></tr></table></figure>
-<pre><code>getstatic #5 java/lang/System.out:Ljava/io/PrintStream;
-aload_1
-invokevirtual #6 java/io/PrintStream.println:(Ljava/lang/String;)V
-return
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">- exception_table_length:&#96;00 00&#96;  </span><br><span class="line">- exception_table[0]:空</span><br><span class="line">- attributes_count：&#96;00 02&#96;,属性数量2个  </span><br><span class="line">第一个属性：</span><br><span class="line">    - attribute_name_index：&#96;00 11&#96;，第17个条目，即&#96;LineNumberTable&#96;,有如下结构：</span><br></pre></td></tr></table></figure>
-    LineNumberTable_attribute {
-        u2 attribute_name_index;
-        u4 attribute_length;
-        u2 line_number_table_length;
-        {   u2 start_pc;
-            u2 line_number;    
-        } line_number_table[line_number_table_length];
-    }
-    <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">    - attribute_length:&#96;00 00 00 0A&#96;,属性长度10</span><br><span class="line">    - line_number_table_length：&#96;00 02&#96;，表格长度，2</span><br><span class="line">    - line_number_table[2]:&#96;00 00 00 06 00 07 00 07 &#96;,对应[0,6],[7,7]</span><br><span class="line">第二个属性：</span><br><span class="line">    - attribute_name_index：&#96;00 12&#96;，第18个条目，即&#96;LocalVariabletable&#96;,有如下结构：</span><br></pre></td></tr></table></figure>
-    LocalVariableTable_attribute {
-        u2 attribute_name_index;
-        u4 attribute_length;
-        u2 local_variable_table_length;
-        {   u2 start_pc;
-            u2 length;
-            u2 name_index;
-            u2 descriptor_index;
-            u2 index;
-        } local_variable_table[local_variable_table_length];
-    } 
-    <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">        - attribute_length:&#96;00 00 00 16&#96;,属性长度0x16&#x3D;1x16+6&#x3D;22字节</span><br><span class="line">        - local_variable_table_length：&#96;00 02&#96;表格长度，2</span><br><span class="line">        - local_variable_table[2]:表格长度2，内容如下：  </span><br><span class="line">            &#123;</span><br><span class="line">                start_pc:&#96;00 00&#96;,0</span><br><span class="line">                length：&#96;00 08&#96;，8</span><br><span class="line">                name_index：&#96;00 13&#96;,第19个条目，&#96;this&#96;</span><br><span class="line">                descriptor_index：&#96;00 14&#96;，第20个条目，&#96;LTest&#96;</span><br><span class="line">                index:&#96;00 00&#96;,0</span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                start_pc:&#96;00 00&#96;,0</span><br><span class="line">                length：&#96;00 08&#96;，8</span><br><span class="line">                name_index：&#96;00 0C&#96;,第12个条目，&#96;s&#96;</span><br><span class="line">                descriptor_index：&#96;00 0D&#96;，第13个条目，&#96;Ljava&#x2F;lang&#x2F;String;&#96;</span><br><span class="line">                index:&#96;00 01&#96;,1</span><br><span class="line">            &#125;</span><br><span class="line">### attributes_count</span><br><span class="line">&#96;00 02&#96;,&#96;class&#96;的属性数量，2个</span><br><span class="line">### attributes[attributes_count]</span><br><span class="line">2个属性的内容：</span><br><span class="line">#### 第一个属性</span><br><span class="line">- attribute_name_index:&#96;00 17&#96;,第23个条目，&#96;SourceFile&#96;,有如下结构：</span><br></pre></td></tr></table></figure></code></pre><p>  SourceFile_attribute {</p>
-<pre><code>u2 attribute_name_index;
-u4 attribute_length;
-u2 sourcefile_index;</code></pre><p>  }</p>
-  <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">- attribute_length：&#96;00 00 00 02&#96;，属性长度，2，这是固定的，因为后面的内容固定为2字节</span><br><span class="line">- sourcefile_index:&#96;00 18&#96;,源文件，第24个条目，&#96;Test.java&#96;</span><br><span class="line">#### 第二个属性</span><br><span class="line">- attribute_name_index:&#96;00 19&#96;,第25个条目，&#96;RuntimeInvisibleAnnotations&#96;,有如下结构:</span><br></pre></td></tr></table></figure>
-<p>RuntimeInvisibleAnnotations_attribute {<br>  u2         attribute_name_index;<br>  u4         attribute_length;<br>  u2         num_annotations;<br>  annotation annotations[num_annotations];<br>}</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">- attribute_length:属性长度，&#96;00 00 00 06&#96;，6个字节</span><br><span class="line">- num_annotations：&#96;00 01&#96;，注解编号，1</span><br><span class="line">- annotations[1]:注解内容，annotation有如下结构：</span><br></pre></td></tr></table></figure>
-<p>  annotation {</p>
-<pre><code>u2 type_index;
-u2 num_element_value_pairs;
-{   u2            element_name_index;
-    element_value value;
-} element_value_pairs[num_element_value_pairs];</code></pre><p>  }</p>
-  <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">    - type_index：&#96;00 1A&#96;,注解类型，第26个条目，&#96;LMyAnnotation&#96;</span><br><span class="line">    - num_element_value_pairs：&#96;00 00&#96;，注解内的value及其赋值的数量,0</span><br><span class="line">    - element_value_pairs[0]：空</span><br><span class="line"></span><br><span class="line">到这里文件内容就还原结束了，跟&#96;javap -v Test.class&#96;的内容可以进行对比，基本一致。</span><br><span class="line"></span><br><span class="line">### 3 JVM从加载class文件到Class初始化的过程</span><br><span class="line">按照虚拟机规范的分类，这个过程可以分成3个步骤，但是这3个步骤也不是简单的顺序执行，而是根据需要交织在一起。  </span><br><span class="line">先介绍一下这3个步骤，再用一个例子说明。  </span><br><span class="line">_注：class文件可以表示类或接口，jdk9以后还可以表示模块，因为模块用的不多，下文没有特殊说明的地方都默认表示类或接口。_</span><br><span class="line">#### 3.1 创建和载入(Creation and Loading)</span><br><span class="line">准确的说应该是&quot;载入和创建&quot;(为了跟类&quot;加载&quot;区分出来，这里loading译成载入而不是加载）。这个过程用&#96;classlader&#96;把&#96;class&#96;文件（或者其它表示形式如二进制数据流等）载入到虚拟机中转化成&#96;方法区&#96;内部的表现形式（具体跟虚拟机实现有关），从而完成对应Class的创建。在载入时，虚拟机会执行格式检查([format checking](https:&#x2F;&#x2F;docs.oracle.com&#x2F;javase&#x2F;specs&#x2F;jvms&#x2F;se11&#x2F;html&#x2F;jvms-4.html#jvms-4.8))，主要是检查class文件整体格式是否符合要求，常量池中的数据格式等，这只算是“表面”上的检查，因为还没有执行链接中的解析等操作，就算常量池中的引用类型对应的Class并不存在，在这个阶段也查不出来。在后面的链接阶段会执行更详细的检查。</span><br><span class="line"></span><br><span class="line">在虚拟机的角度，只有两种&#96;classloader&#96;:</span><br><span class="line">- &#96;Bootstrap Class Loader&#96;,虚拟机内部实现的类加载器</span><br><span class="line">- &#96;User-defined Class Loader&#96;,除了Bootstrap之外的其它类加载器，都是&#96;ClassLoader&#96;这个抽象类的子类</span><br><span class="line"></span><br><span class="line">在用类加载器&#96;L&#96;加载名字为&#96;N&#96;的Class（记为&#96;C&#96;）时，两种类加载器的表现有点区别：  </span><br><span class="line">第一步：两种类加载器都会首先判断当前类加载器&#96;L&#96;是否已经被记录为名字为&#96;N&#96;的类的初始化加载器（initiating loader)，如果是，说明想要的Class已经被加载过，直接返回结果&#96;C&#96;  </span><br><span class="line">第二步：如果第一步没有找到对应的记录，那么：</span><br><span class="line">- &#96;Bootstrap Class Loader&#96;：JVM把名字&#96;N&#96;这个参数传递给当前加载器的一个方法，根据&#96;N&#96;去搜索&#96;C&#96;的一个&quot;宣称合理但未经验证的表现形式&quot;（purported representation)，通常是一个文件，比如文件名是&#96;N&#96;，找到后JVM会尝试用当前加载器从这个文件生成跟&#96;N&#96;对应的&#96;C&#96;。成功后，记&#96;L&#96;为&#96;C&#96;的&#96;initiating loader&#96;&lt;sup&gt;注&lt;&#x2F;sup&gt;和&#96;defining loader&#96;&lt;sup&gt;注&lt;&#x2F;sup&gt;。这里会有两种**意外**情况：</span><br><span class="line">  - &quot;宣称合理但未经验证的表现形式&quot;找不到：抛出&#96;ClassNotFoundException&#96;异常的一个实例。</span><br><span class="line">  - &quot;宣称合理但未经验证的表现形式&quot;验证失败：有几种可能：文件结构不符合虚拟机规范、版本号不被当前虚拟机支持、文件所表示的类并不是&#96;N&#96;所表示的类（比如&#96;class&#96;文件内的&#96;this_class&#96;名字不是&#96;N&#96;），这些情况都会抛出对应的异常。</span><br><span class="line">- &#96;User-defined Class Loader&#96;：它跟&#96;bootstrap&#96;的区别在于，这个加载器可以把创建操作委托给自己的父加载器（只是委托层次上的父加载器，不是实际的父子类继承关系），当然也可以自己直接创建，如果直接创建，跟上面&#96;bootstrap&#96;的方式类拟。</span><br><span class="line">&gt;&lt;span id&#x3D;&quot;defandinit&quot;&gt;注&lt;&#x2F;span&gt;：  </span><br><span class="line">initiating loader:初始化类加载器，可以有多个，如果有委托层次L-&gt;LP，且L发起初始化，但委托给LP，LP是defining lader,完成创建，那么L和LP都是initiating loader    </span><br><span class="line">defining loader:从文件生成class的这个加载器，也就是实际完成创建的加载器，defining loader必定是initiating loader  </span><br><span class="line"></span><br><span class="line">关于数组：  </span><br><span class="line">数组类型本身是由虚拟机直接创建的，但它包含的元素类型的加载仍然是用的上面的方式。如果元素类型是引用类型，那么数组&#96;C&#96;的&#96;defining loader&#96;记录就是其元素类型的&#96;defining loader&#96;，如果元素是原始类型，那么数组&#96;C&#96;的&#96;defining loader&#96;记录就是&#96;bootstrap class loader&#96;，当然也同时包含&#96;initiating loader&#96;的记录。</span><br><span class="line"></span><br><span class="line">**载入约束（loading constraints)**  </span><br><span class="line">如果&#96;C&#96;(&lt;N1,L1&gt;确定，表示L1是&#96;C&#96;的&#96;defining loader&#96;）里面的字段（字段类型）或者方法（参数类型，返回值类型）引用了其它Class比如&#96;D&#96;(&lt;N2,L2&gt;),那么相应的字段或者方法的&#96;descriptor&#96;所涉及到的任意类型，由&#96;L1,L2&#96;作为初始类加载器加载的时候，其表示的结果应该是同一个类，即N&lt;sup&gt;L1&lt;&#x2F;sup&gt;&#x3D;N&lt;sup&gt;L2&lt;&#x2F;sup&gt;。比如，&#96;C&#96;里面的1个方法的&#96;descriptor&#96;是&#96;（LE,LF)LG&#96;，那么&#96;E,F,G&#96;这3个名字分别用&#96;L1,L2&#96;加载的时候，表示的类应该是相同的。  </span><br><span class="line">载入约束会在记录类的初始加载器的时候进行检查，后面提到的链接阶段也会触发检查。</span><br><span class="line"></span><br><span class="line">### 3.2 链接（Linking)</span><br><span class="line">链接过程可以细分为3个步骤：验证、准备、解析。虚拟机规范没有明确要求链接的操作什么时候执行，只要满足下面几个要求：</span><br><span class="line">- class在被链接前必须完全被载入</span><br><span class="line">- class在初始化之前必须完成验证、准备这两个步骤</span><br><span class="line">- 如果链接过程会报错，有class跟这个错误有关，那么异常抛出的时机必须是：应用程序执行一些操作，直接或间接的需要链接这个class的时候。这可以让异常的抛出对调用方来说更加的明显。</span><br><span class="line">- 对一个动态计算的常量的解析操作，会延迟执行，直到满足下面两种情况之一：</span><br><span class="line">  - &#96;ldc,ldc_w,ldc2_w&#96;这3个指令引用这个常量，并且执行</span><br><span class="line">  - &#96;bootstrap&#96;加载器的方法把这个常量作为一个静态参数调用</span><br><span class="line">#### 3.2.1 验证(Verification)</span><br><span class="line">这个阶段主要是检查&#96;Code_Attribute&#96;的格式，因为这个属性内包含了类中的所有方法执行的代码，都是用虚拟机指令表示，属性本身非常复杂，检查的内容也很多，具体看虚拟机规范[4.9,4.10](https:&#x2F;&#x2F;docs.oracle.com&#x2F;javase&#x2F;specs&#x2F;jvms&#x2F;se11&#x2F;html&#x2F;jvms-4.html#jvms-4.9)</span><br><span class="line">#### 3.2.2 准备(Preparation)</span><br><span class="line">这个阶段创建class的静态字段并初始化为系统的默认值，这个值是虚拟机指定的，比如&#96;int&#96;类型是0，并不是代码中的初始化赋值。在这个阶段会执行上面提到的**载入约束**检查。</span><br><span class="line"> </span><br><span class="line">准备阶段可以在创建(creation)和初始化(initialization)之间的任意时间节点出现。</span><br><span class="line">#### 3.2.3 解析(Resolution)</span><br><span class="line">这个阶段就是把常量池里面那些引用符号解析成具体的Class，在解析这些引用符号比如方法时，其中引用的类型会先完成解析。</span><br><span class="line"></span><br><span class="line">这里的解析也包括父类和实现的接口等，这些被解析的Class重复上面的流程，先被&#96;载入、创建&#96;，然后&#96;验证、准备、解析&#96;。</span><br><span class="line">### 3.3 初始化（Initialization)</span><br><span class="line">class的初始化就是执行其&#96;&lt;clinit&gt;&#96;方法，这个方法是被虚拟机直接执行的。</span><br><span class="line">&lt;span id&#x3D;&quot;jvminit&quot;&gt;只有以下情况之一才会触发初始化&lt;&#x2F;span&gt;：</span><br><span class="line">1. 执行虚拟机的以下四个指令之一：&#96;new, getstatic, putstatic,invokestatic&#96;，new是初始化类的实例，显然需要先初始化类本身，后面3个就是对类的静态字段和方法的调用，也需要类本身。</span><br><span class="line">2. 以下四种&#96;method handle&#96;：&#96;kind 2 (REF_getStatic), 4 (REF_putStatic), 6 (REF_invokeStatic), or 8 (REF_newInvokeSpecial)&#96;，对其中任何一个的解析结果是一个&#96;java.lang.invoke.MethodHandle&#96;类型的实例，那么在第一次调用这个实例时会触发初始化。这条跟上面那条本质上是一样的，只不过把指令包装在&#96;Methodhandle&#96;内。</span><br><span class="line">3. 对一些反射方法的调用，比如&#96;java.lang.reflect&#96;包内的一些方法。</span><br><span class="line">4. 对&#96;C&#96;的子类进行初始化之前，要先初始化&#96;C&#96;</span><br><span class="line">5. 如果&#96;C&#96;是一个接口，里面实现了一个&#96;non-static,non-abstract&#96;的方法(也就是提供了一个&#96;default&#96;方法时)，假设&#96;D&#96;**直接或间接**实现了&#96;C&#96;,那么对&#96;D&#96;的初始化会触发&#96;C&#96;的初始化，这跟子类初始化触发父类差不多。</span><br><span class="line">6. 作为虚拟机的启动类，比如&#96;java MyApp&#96;，这里的&#96;MyApp&#96;这个类会要求初始化。</span><br><span class="line"></span><br><span class="line">上面的4，5两条，规定了一个类在初始化时，它的父类和提供了&#96;default&#96;方法的接口也会被初始化，那么为什么普通的接口就算引用了它的静态字段也不会被初始化呢？  </span><br><span class="line">先看一下[JLS12.4.1](https:&#x2F;&#x2F;docs.oracle.com&#x2F;javase&#x2F;specs&#x2F;jls&#x2F;se11&#x2F;html&#x2F;jls-12.html#jls-12.4.1)从java语言使用层面的说明，一个class，记为T，只有下面4种情况之一会触发T的初始化：</span><br><span class="line">1. T是类，当T被实例化时</span><br><span class="line">2. T中的一个静态方法被调用时</span><br><span class="line">3. T中的一个静态字段被赋值时</span><br><span class="line">4. T中的一个静态字段被使用且这个字段不是一个&#96;constant variable&#96;(&lt;font color&#x3D;&quot;red&quot;&gt;俗称常量，被final修饰的原始类型或者String类型变量，且初始化值是一个常量表达式，如原始类型的值或者简单的四则运算或者String常量)&lt;&#x2F;font&gt;</span><br><span class="line">5. 子类的初始化会触发父类的初始化以及提供了&#96;default&#96;方法的接口的初始化，接口本身的初始化不会触发它的父接口的初始化。</span><br><span class="line">6. 一些反射调用</span><br><span class="line"></span><br><span class="line">这里除了第4条以外，其它几条跟上面的虚拟机规范的内容都能呼应上,第4条意思就是对T的**非常量字段**的引用才会触发T的初始化，什么是常量，上面已经解释了，仔细阅读几遍，很多人都没有真的明白java中定义的常量是什么，举几个反例：</span><br></pre></td></tr></table></figure>
-<p>static int a=0;//没有final修饰<br>static final Integer a=0;//不是原始类型<br>static final int=Integer.valueOf(0);//不符合常量表达式要求，返回的是Integer，还要拆箱才是int</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">常量的定义比较严格，满足这些定义以后，对于编译器来说这个值就可以确定了。  </span><br><span class="line">还有一个问题，那些&quot;普通的接口&quot;是什么时候初始化的呢？比如只有几个方法签名的接口？  </span><br><span class="line">它们不需要初始化，跟常量一样，方法签名这些信息在编译时就确定了，没有必要初始化。</span><br><span class="line"></span><br><span class="line">[JLS12.4.1](https:&#x2F;&#x2F;docs.oracle.com&#x2F;javase&#x2F;specs&#x2F;jls&#x2F;se11&#x2F;html&#x2F;jls-12.html#jls-12.4.1)中也提供了一些示例代码，大家也可以自己构造一些类来验证上面的内容。</span><br><span class="line"></span><br><span class="line">PS：上面提到的对于常量字段的使用，在&#96;class&#96;文件中可以看到对应的访问指令是&#96;iconst_n&#96;这个系列，而如果使用非常量字段，对应的指令就是&#96;getstatic&#96;，符合[前面虚拟机规范定义的情况](#jvminit)。</span><br><span class="line"></span><br><span class="line">#### 4 双亲委派模型(parent-delegation model)</span><br><span class="line">这个翻译容易让人误解，叫“父类委派模型”或许更直观。  </span><br><span class="line">简单的说，就是一个&#96;classloader&#96;加载一个类时，会先把这个加载任务委派给自己的父加载器（只是委派模型中的父子关系，不是类的继承）,父加载器也会委派给自己的父加载器。。。直到&#96;bootstrap&#96;这个最基本的类加载器，它没有父加器，如果&#96;bootstrap&#96;无法加载，那么再回退给委派给它的那个类加载器，如果这个类加载器也无法加载，再回退。。。直到回到最初的那个类加载器，调用&#96;findClass&#96;方法，这个方法内容是由具体实现类重载的，如果这个加载器也无法加载，则会报错。  </span><br><span class="line">在&#96;ClassLoader&#96;这个抽象类中，&#96;loadClass&#96;方法包含了这个模型的逻辑：</span><br><span class="line">&lt;details&gt;</span><br><span class="line">&lt;summary&gt;显示代码&lt;&#x2F;summary&gt;</span><br><span class="line"></span><br><span class="line">&#96;&#96;&#96;java</span><br><span class="line">protected Class&lt;?&gt; loadClass(String name, boolean resolve)</span><br><span class="line">    throws ClassNotFoundException</span><br><span class="line">&#123;</span><br><span class="line">    synchronized (getClassLoadingLock(name)) &#123;</span><br><span class="line">        &#x2F;&#x2F; First, check if the class has already been loaded</span><br><span class="line">        Class&lt;?&gt; c &#x3D; findLoadedClass(name);</span><br><span class="line">        if (c &#x3D;&#x3D; null) &#123;</span><br><span class="line">            long t0 &#x3D; System.nanoTime();</span><br><span class="line">            try &#123;</span><br><span class="line">                if (parent !&#x3D; null) &#123;</span><br><span class="line">                    c &#x3D; parent.loadClass(name, false);</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    c &#x3D; findBootstrapClassOrNull(name);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; catch (ClassNotFoundException e) &#123;</span><br><span class="line">                &#x2F;&#x2F; ClassNotFoundException thrown if class not found</span><br><span class="line">                &#x2F;&#x2F; from the non-null parent class loader</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            if (c &#x3D;&#x3D; null) &#123;</span><br><span class="line">                &#x2F;&#x2F; If still not found, then invoke findClass in order</span><br><span class="line">                &#x2F;&#x2F; to find the class.</span><br><span class="line">                long t1 &#x3D; System.nanoTime();</span><br><span class="line">                c &#x3D; findClass(name);</span><br><span class="line"></span><br><span class="line">                &#x2F;&#x2F; this is the defining class loader; record the stats</span><br><span class="line">                PerfCounter.getParentDelegationTime().addTime(t1 - t0);</span><br><span class="line">                PerfCounter.getFindClassTime().addElapsedTimeFrom(t1);</span><br><span class="line">                PerfCounter.getFindClasses().increment();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        if (resolve) &#123;</span><br><span class="line">            resolveClass(c);</span><br><span class="line">        &#125;</span><br><span class="line">        return c;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</details>
-
+<p>  max_stack：<code>00 02</code>，栈的最大值，2<br>  max_locals：<code>00 01</code>，本地变量的最大值，1<br>  code_length：<code>00 00 00 10</code>，code长度，16字节<br>  code[16]：<code>2A B7 00 01 2A 04 B5 00 02 2A 12 03 B5 00 04 B1</code>，这些对应的是虚拟机指令，查规范可得分别是<code>aload_0 invokespecial indexbyte1=0 indexbyte2=1 aload_0 iconst_1 putfield indexbyte1=0 indexbyte2=2 aload_0 ldc index=3 putfield indexbyte1=0 indexbyte2=4 return</code>,其中<code>indexbyte</code>是用来给它前面的指令加载常量池用的地址，地址的值是<code>indexbyte1&lt;&lt;8 | indexbyte2</code>，就是两个字节表示的数，上面的指令整理后如下：</p>
+  <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">aload_0</span><br><span class="line">invokespecial #1 SuperTest.&lt;init&gt;()V</span><br><span class="line">aload_0</span><br><span class="line">iconst_1 </span><br><span class="line">putfield #2 Test.a:I</span><br><span class="line">aload_0</span><br><span class="line">ldc #3 hello world</span><br><span class="line">putfield #4 Test.s:Ljava&#x2F;lang&#x2F;String;</span><br><span class="line">return</span><br></pre></td></tr></table></figure>
+<p>  exception_table_length:<code>00 00</code>，长度0。<br>  exception_table[exception_table_length]:因为上面的长度是0，所以这里是空。<br>  attributes_count:<code>00 02</code>,属性数量，2个。<br>  attributes[2]：2个属性,分别展开：</p>
+<ul>
+<li><p>第一个属性：</p>
+<ul>
+<li><p>attribute_name_index：<code>00 11</code>，第0x11=1x16+1=17个条目，即<code>LineNumberTable</code>，其结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">LineNumberTable_attribute &#123;</span><br><span class="line">u2 attribute_name_index;</span><br><span class="line">u4 attribute_length;</span><br><span class="line">u2 line_number_table_length;</span><br><span class="line">&#123;   u2 start_pc;</span><br><span class="line">    u2 line_number;	</span><br><span class="line">&#125; line_number_table[line_number_table_length];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>attribute_length:<code>00 00 00 0E</code>,长度，14个字节</p>
+</li>
+<li><p>line_number_table_length：<code>00 03</code>表格长度，3</p>
+</li>
+<li><p>line_number_table[3]:属性长度14个字节，减去上面表示表格长度的2个字节，正好12字节，<code>00 00 00 02 00 04 00 03 00 09 00 04</code>分别对应当前的[0,2],[4,3],[9,4]</p>
 </li>
 </ul>
+</li>
+<li><p>第二个属性：</p>
+<ul>
+<li>attribute_name_index：<code>00 12</code>，第0x12=1x16+2=18个条目，即<code>LocalVariableTable</code>,其结构如下:  <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">LocalVariableTable_attribute &#123;</span><br><span class="line">    u2 attribute_name_index;</span><br><span class="line">    u4 attribute_length;</span><br><span class="line">    u2 local_variable_table_length;</span><br><span class="line">    &#123;   u2 start_pc;</span><br><span class="line">        u2 length;</span><br><span class="line">        u2 name_index;</span><br><span class="line">        u2 descriptor_index;</span><br><span class="line">        u2 index;</span><br><span class="line">    &#125; local_variable_table[local_variable_table_length];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>attribute_length:<code>00 00 00 0C</code>,属性长度，12个字节</li>
+<li>local_variable_table_length:<code>00 01</code>，表格长度，1  </li>
+<li>local_variable_table[1]:属性长度12个字节，减去上面表示表格长度的2个字节，正好10字节，<code>00 00 00 10 00 13 00 14 00 00</code>，对应里面的5个属性:</li>
+<li>start_pc:<code>00 00</code>,0</li>
+<li>length:<code>00 10</code>,16</li>
+<li>name_index:<code>00 13</code>,第19个条目，<code>this</code></li>
+<li>descriptor_index:<code>00 14</code>,第20个条目，<code>LTest</code></li>
+<li>index:<code>00 00</code>,0</li>
+</ul>
+<p>回头看方法的<code>attribute</code>里的<code>info</code>是66个字节，把上面分析的内容加起来正好也是66字节。</p>
+<h4 id="第二个方法"><a href="#第二个方法" class="headerlink" title="第二个方法"></a>第二个方法</h4><p>再看一遍方法的结构:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">method_info &#123;</span><br><span class="line">    u2             access_flags;</span><br><span class="line">    u2             name_index;</span><br><span class="line">    u2             descriptor_index;</span><br><span class="line">    u2             attributes_count;</span><br><span class="line">    attribute_info attributes[attributes_count];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>access_flags:<code>00 01</code>,即<code>ACC_PUBLIC</code></p>
+</li>
+<li><p>name_index：<code>00 15</code>，指向第21个条目，即<code>sayHello</code></p>
+</li>
+<li><p>descriptor_index:<code>00 16</code>,第向第22个条目，即<code>(Ljava/lang/String;)V</code></p>
+</li>
+<li><p>attributes_count：<code>00 01</code>，属性数量，1条</p>
+</li>
+<li><p>attributes[1]：属性内容，先看名称<code>00 10</code>，指向第16个条目，<code>Code</code>，有如下结构：</p>
+  <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Code_attribute &#123;</span><br><span class="line">    u2 attribute_name_index;</span><br><span class="line">    u4 attribute_length;</span><br><span class="line">    u2 max_stack;</span><br><span class="line">    u2 max_locals;</span><br><span class="line">    u4 code_length;</span><br><span class="line">    u1 code[code_length];</span><br><span class="line">    u2 exception_table_length;</span><br><span class="line">    &#123;   u2 start_pc;</span><br><span class="line">        u2 end_pc;</span><br><span class="line">        u2 handler_pc;</span><br><span class="line">        u2 catch_type;</span><br><span class="line">    &#125; exception_table[exception_table_length];</span><br><span class="line">    u2 attributes_count;</span><br><span class="line">    attribute_info attributes[attributes_count];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>attribute_length:<code>00 00 00 40</code>,属性长度64字节</p>
+</li>
+<li><p>max_stack：<code>00 02</code>，2</p>
+</li>
+<li><p>max_locals：<code>00 02</code>，2</p>
+</li>
+<li><p>code_length：<code>00 00 00 08</code>，长度8</p>
+</li>
+<li><p>code[8]:<code>B2 00 05 2B B6 00 06 B1</code>,分别对应<code>getstatic indexbyte1 indexbyte2 aload_1 invokevirtual indexbyte1 indexbyte2 return</code>,整理得：</p>
+  <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">getstatic #5 java&#x2F;lang&#x2F;System.out:Ljava&#x2F;io&#x2F;PrintStream;</span><br><span class="line">aload_1</span><br><span class="line">invokevirtual #6 java&#x2F;io&#x2F;PrintStream.println:(Ljava&#x2F;lang&#x2F;String;)V</span><br><span class="line">return</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>exception_table_length:<code>00 00</code>  </p>
+</li>
+<li><p>exception_table[0]:空</p>
+</li>
+<li><p>attributes_count：<code>00 02</code>,属性数量2个  </p>
+<p>第一个属性：</p>
+<ul>
+<li><p>attribute_name_index：<code>00 11</code>，第17个条目，即<code>LineNumberTable</code>,有如下结构：</p>
+  <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">LineNumberTable_attribute &#123;</span><br><span class="line">    u2 attribute_name_index;</span><br><span class="line">    u4 attribute_length;</span><br><span class="line">    u2 line_number_table_length;</span><br><span class="line">    &#123;   u2 start_pc;</span><br><span class="line">        u2 line_number;	</span><br><span class="line">    &#125; line_number_table[line_number_table_length];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>attribute_length:<code>00 00 00 0A</code>,属性长度10</p>
+</li>
+<li><p>line_number_table_length：<code>00 02</code>，表格长度，2</p>
+</li>
+<li><p>line_number_table[2]:<code>00 00 00 06 00 07 00 07</code>,对应[0,6],[7,7]<br>第二个属性：</p>
+</li>
+<li><p>attribute_name_index：<code>00 12</code>，第18个条目，即<code>LocalVariabletable</code>,有如下结构：</p>
+  <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">LocalVariableTable_attribute &#123;</span><br><span class="line">    u2 attribute_name_index;</span><br><span class="line">    u4 attribute_length;</span><br><span class="line">    u2 local_variable_table_length;</span><br><span class="line">    &#123;   u2 start_pc;</span><br><span class="line">        u2 length;</span><br><span class="line">        u2 name_index;</span><br><span class="line">        u2 descriptor_index;</span><br><span class="line">        u2 index;</span><br><span class="line">    &#125; local_variable_table[local_variable_table_length];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>attribute_length:<code>00 00 00 16</code>,属性长度0x16=1x16+6=22字节</p>
+</li>
+<li><p>local_variable_table_length：<code>00 02</code>表格长度，2</p>
+</li>
+<li><p>local_variable_table[2]:表格长度2，内容如下：<br>  {</p>
+<pre><code>start_pc:`00 00`,0
+length：`00 08`，8
+name_index：`00 13`,第19个条目，`this`
+descriptor_index：`00 14`，第20个条目，`LTest`
+index:`00 00`,0</code></pre><p>  },<br>  {</p>
+<pre><code>start_pc:`00 00`,0
+length：`00 08`，8
+name_index：`00 0C`,第12个条目，`s`
+descriptor_index：`00 0D`，第13个条目，`Ljava/lang/String;`
+index:`00 01`,1</code></pre><p>  }</p>
+<h3 id="attributes-count-1"><a href="#attributes-count-1" class="headerlink" title="attributes_count"></a>attributes_count</h3><p><code>00 02</code>,<code>class</code>的属性数量，2个</p>
+<h3 id="attributes-attributes-count-1"><a href="#attributes-attributes-count-1" class="headerlink" title="attributes[attributes_count]"></a>attributes[attributes_count]</h3><p>2个属性的内容：</p>
+<h4 id="第一个属性"><a href="#第一个属性" class="headerlink" title="第一个属性"></a>第一个属性</h4></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>attribute_name_index:<code>00 17</code>,第23个条目，<code>SourceFile</code>,有如下结构：</p>
+  <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SourceFile_attribute &#123;</span><br><span class="line">    u2 attribute_name_index;</span><br><span class="line">    u4 attribute_length;</span><br><span class="line">    u2 sourcefile_index;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>attribute_length：<code>00 00 00 02</code>，属性长度，2，这是固定的，因为后面的内容固定为2字节</p>
+</li>
+<li><p>sourcefile_index:<code>00 18</code>,源文件，第24个条目，<code>Test.java</code></p>
+<h4 id="第二个属性"><a href="#第二个属性" class="headerlink" title="第二个属性"></a>第二个属性</h4></li>
+<li><p>attribute_name_index:<code>00 19</code>,第25个条目，<code>RuntimeInvisibleAnnotations</code>,有如下结构:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">RuntimeInvisibleAnnotations_attribute &#123;</span><br><span class="line">    u2         attribute_name_index;</span><br><span class="line">    u4         attribute_length;</span><br><span class="line">    u2         num_annotations;</span><br><span class="line">    annotation annotations[num_annotations];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>attribute_length:属性长度，<code>00 00 00 06</code>，6个字节</p>
+</li>
+<li><p>num_annotations：<code>00 01</code>，注解编号，1</p>
+</li>
+<li><p>annotations[1]:注解内容，annotation有如下结构：</p>
+  <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">annotation &#123;</span><br><span class="line">    u2 type_index;</span><br><span class="line">    u2 num_element_value_pairs;</span><br><span class="line">    &#123;   u2            element_name_index;</span><br><span class="line">        element_value value;</span><br><span class="line">    &#125; element_value_pairs[num_element_value_pairs];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>type_index：<code>00 1A</code>,注解类型，第26个条目，<code>LMyAnnotation</code></li>
+<li>num_element_value_pairs：<code>00 00</code>，注解内的value及其赋值的数量,0</li>
+<li>element_value_pairs[0]：空</li>
+</ul>
+</li>
+</ul>
+<p>到这里文件内容就还原结束了，跟<code>javap -v Test.class</code>的内容可以进行对比，基本一致。</p>
+<h2 id="3-JVM从加载class文件到Class初始化的过程"><a href="#3-JVM从加载class文件到Class初始化的过程" class="headerlink" title="3 JVM从加载class文件到Class初始化的过程"></a>3 JVM从加载class文件到Class初始化的过程</h2><p>按照虚拟机规范的分类，这个过程可以分成3个步骤，但是这3个步骤也不是简单的顺序执行，而是根据需要交织在一起。<br>先介绍一下这3个步骤，再用一个例子说明。<br><em>注：class文件可以表示类或接口，jdk9以后还可以表示模块，因为模块用的不多，下文没有特殊说明的地方都默认表示类或接口。</em></p>
+<h3 id="3-1-创建和载入-Creation-and-Loading"><a href="#3-1-创建和载入-Creation-and-Loading" class="headerlink" title="3.1 创建和载入(Creation and Loading)"></a>3.1 创建和载入(Creation and Loading)</h3><p>准确的说应该是”载入和创建”(为了跟类”加载”区分出来，这里loading译成载入而不是加载）。这个过程用<code>classlader</code>把<code>class</code>文件（或者其它表示形式如二进制数据流等）载入到虚拟机中转化成<code>方法区</code>内部的表现形式（具体跟虚拟机实现有关），从而完成对应Class的创建。在载入时，虚拟机会执行格式检查(<a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-4.html#jvms-4.8" target="_blank" rel="noopener">format checking</a>)，主要是检查class文件整体格式是否符合要求，常量池中的数据格式等，这只算是“表面”上的检查，因为还没有执行链接中的解析等操作，就算常量池中的引用类型对应的Class并不存在，在这个阶段也查不出来。在后面的链接阶段会执行更详细的检查。</p>
+<p>在虚拟机的角度，只有两种<code>classloader</code>:</p>
+<ul>
+<li><code>Bootstrap Class Loader</code>,虚拟机内部实现的类加载器</li>
+<li><code>User-defined Class Loader</code>,除了Bootstrap之外的其它类加载器，都是<code>ClassLoader</code>这个抽象类的子类</li>
+</ul>
+<p>在用类加载器<code>L</code>加载名字为<code>N</code>的Class（记为<code>C</code>）时，两种类加载器的表现有点区别：<br>第一步：两种类加载器都会首先判断当前类加载器<code>L</code>是否已经被记录为名字为<code>N</code>的类的初始化加载器（initiating loader)，如果是，说明想要的Class已经被加载过，直接返回结果<code>C</code><br>第二步：如果第一步没有找到对应的记录，那么：</p>
+<ul>
+<li><code>Bootstrap Class Loader</code>：JVM把名字<code>N</code>这个参数传递给当前加载器的一个方法，根据<code>N</code>去搜索<code>C</code>的一个”宣称合理但未经验证的表现形式”（purported representation)，通常是一个文件，比如文件名是<code>N</code>，找到后JVM会尝试用当前加载器从这个文件生成跟<code>N</code>对应的<code>C</code>。成功后，记<code>L</code>为<code>C</code>的<code>initiating loader</code><sup>注</sup>和<code>defining loader</code><sup>注</sup>。这里会有两种<strong>意外</strong>情况：<ul>
+<li>“宣称合理但未经验证的表现形式”找不到：抛出<code>ClassNotFoundException</code>异常的一个实例。</li>
+<li>“宣称合理但未经验证的表现形式”验证失败：有几种可能：文件结构不符合虚拟机规范、版本号不被当前虚拟机支持、文件所表示的类并不是<code>N</code>所表示的类（比如<code>class</code>文件内的<code>this_class</code>名字不是<code>N</code>），这些情况都会抛出对应的异常。</li>
+</ul>
+</li>
+<li><code>User-defined Class Loader</code>：它跟<code>bootstrap</code>的区别在于，这个加载器可以把创建操作委托给自己的父加载器（只是委托层次上的父加载器，不是实际的父子类继承关系），当然也可以自己直接创建，如果直接创建，跟上面<code>bootstrap</code>的方式类拟。<blockquote>
+<p><span id="defandinit">注</span>：<br>initiating loader:初始化类加载器，可以有多个，如果有委托层次L-&gt;LP，且L发起初始化，但委托给LP，LP是defining lader,完成创建，那么L和LP都是initiating loader<br>defining loader:从文件生成class的这个加载器，也就是实际完成创建的加载器，defining loader必定是initiating loader  </p>
+</blockquote>
+</li>
+</ul>
+<p>关于数组：<br>数组类型本身是由虚拟机直接创建的，但它包含的元素类型的加载仍然是用的上面的方式。如果元素类型是引用类型，那么数组<code>C</code>的<code>defining loader</code>记录就是其元素类型的<code>defining loader</code>，如果元素是原始类型，那么数组<code>C</code>的<code>defining loader</code>记录就是<code>bootstrap class loader</code>，当然也同时包含<code>initiating loader</code>的记录。</p>
+<p><strong>载入约束（loading constraints)</strong><br>如果<code>C</code>(&lt;N1,L1&gt;确定，表示L1是<code>C</code>的<code>defining loader</code>）里面的字段（字段类型）或者方法（参数类型，返回值类型）引用了其它Class比如<code>D</code>(&lt;N2,L2&gt;),那么相应的字段或者方法的<code>descriptor</code>所涉及到的任意类型，由<code>L1,L2</code>作为初始类加载器加载的时候，其表示的结果应该是同一个类，即N<sup>L1</sup>=N<sup>L2</sup>。比如，<code>C</code>里面的1个方法的<code>descriptor</code>是<code>（LE,LF)LG</code>，那么<code>E,F,G</code>这3个名字分别用<code>L1,L2</code>加载的时候，表示的类应该是相同的。<br>载入约束会在记录类的初始加载器的时候进行检查，后面提到的链接阶段也会触发检查。</p>
+<h3 id="3-2-链接（Linking"><a href="#3-2-链接（Linking" class="headerlink" title="3.2 链接（Linking)"></a>3.2 链接（Linking)</h3><p>链接过程可以细分为3个步骤：验证、准备、解析。虚拟机规范没有明确要求链接的操作什么时候执行，只要满足下面几个要求：</p>
+<ul>
+<li>class在被链接前必须完全被载入</li>
+<li>class在初始化之前必须完成验证、准备这两个步骤</li>
+<li>如果链接过程会报错，有class跟这个错误有关，那么异常抛出的时机必须是：应用程序执行一些操作，直接或间接的需要链接这个class的时候。这可以让异常的抛出对调用方来说更加的明显。</li>
+<li>对一个动态计算的常量的解析操作，会延迟执行，直到满足下面两种情况之一：<ul>
+<li><code>ldc,ldc_w,ldc2_w</code>这3个指令引用这个常量，并且执行</li>
+<li><code>bootstrap</code>加载器的方法把这个常量作为一个静态参数调用<h4 id="3-2-1-验证-Verification"><a href="#3-2-1-验证-Verification" class="headerlink" title="3.2.1 验证(Verification)"></a>3.2.1 验证(Verification)</h4>这个阶段主要是检查<code>Code_Attribute</code>的格式，因为这个属性内包含了类中的所有方法执行的代码，都是用虚拟机指令表示，属性本身非常复杂，检查的内容也很多，具体看虚拟机规范<a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-4.html#jvms-4.9" target="_blank" rel="noopener">4.9,4.10</a><h4 id="3-2-2-准备-Preparation"><a href="#3-2-2-准备-Preparation" class="headerlink" title="3.2.2 准备(Preparation)"></a>3.2.2 准备(Preparation)</h4>这个阶段创建class的静态字段并初始化为系统的默认值，这个值是虚拟机指定的，比如<code>int</code>类型是0，并不是代码中的初始化赋值。在这个阶段会执行上面提到的<strong>载入约束</strong>检查。</li>
+</ul>
+</li>
+</ul>
+<p>准备阶段可以在创建(creation)和初始化(initialization)之间的任意时间节点出现。</p>
+<h4 id="3-2-3-解析-Resolution"><a href="#3-2-3-解析-Resolution" class="headerlink" title="3.2.3 解析(Resolution)"></a>3.2.3 解析(Resolution)</h4><p>这个阶段就是把常量池里面那些引用符号解析成具体的Class，在解析这些引用符号比如方法时，其中引用的类型会先完成解析。</p>
+<p>这里的解析也包括父类和实现的接口等，这些被解析的Class重复上面的流程，先被<code>载入、创建</code>，然后<code>验证、准备、解析</code>。</p>
+<h3 id="3-3-初始化（Initialization"><a href="#3-3-初始化（Initialization" class="headerlink" title="3.3 初始化（Initialization)"></a>3.3 初始化（Initialization)</h3><p>class的初始化就是执行其<code>&lt;clinit&gt;</code>方法，这个方法是被虚拟机直接执行的。<br><span id="jvminit">只有以下情况之一才会触发初始化</span>：</p>
+<ol>
+<li>执行虚拟机的以下四个指令之一：<code>new, getstatic, putstatic,invokestatic</code>，new是初始化类的实例，显然需要先初始化类本身，后面3个就是对类的静态字段和方法的调用，也需要类本身。</li>
+<li>以下四种<code>method handle</code>：<code>kind 2 (REF_getStatic), 4 (REF_putStatic), 6 (REF_invokeStatic), or 8 (REF_newInvokeSpecial)</code>，对其中任何一个的解析结果是一个<code>java.lang.invoke.MethodHandle</code>类型的实例，那么在第一次调用这个实例时会触发初始化。这条跟上面那条本质上是一样的，只不过把指令包装在<code>Methodhandle</code>内。</li>
+<li>对一些反射方法的调用，比如<code>java.lang.reflect</code>包内的一些方法。</li>
+<li>对<code>C</code>的子类进行初始化之前，要先初始化<code>C</code></li>
+<li>如果<code>C</code>是一个接口，里面实现了一个<code>non-static,non-abstract</code>的方法(也就是提供了一个<code>default</code>方法时)，假设<code>D</code><strong>直接或间接</strong>实现了<code>C</code>,那么对<code>D</code>的初始化会触发<code>C</code>的初始化，这跟子类初始化触发父类差不多。</li>
+<li>作为虚拟机的启动类，比如<code>java MyApp</code>，这里的<code>MyApp</code>这个类会要求初始化。</li>
+</ol>
+<p>上面的4，5两条，规定了一个类在初始化时，它的父类和提供了<code>default</code>方法的接口也会被初始化，那么为什么普通的接口就算引用了它的静态字段也不会被初始化呢？<br>先看一下<a href="https://docs.oracle.com/javase/specs/jls/se11/html/jls-12.html#jls-12.4.1" target="_blank" rel="noopener">JLS12.4.1</a>从java语言使用层面的说明，一个class，记为T，只有下面4种情况之一会触发T的初始化：</p>
+<ol>
+<li>T是类，当T被实例化时</li>
+<li>T中的一个静态方法被调用时</li>
+<li>T中的一个静态字段被赋值时</li>
+<li>T中的一个静态字段被使用且这个字段不是一个<code>constant variable</code>(<font color="red">俗称常量，被final修饰的原始类型或者String类型变量，且初始化值是一个常量表达式，如原始类型的值或者简单的四则运算或者String常量)</font></li>
+<li>子类的初始化会触发父类的初始化以及提供了<code>default</code>方法的接口的初始化，接口本身的初始化不会触发它的父接口的初始化。</li>
+<li>一些反射调用</li>
+</ol>
+<p>这里除了第4条以外，其它几条跟上面的虚拟机规范的内容都能呼应上,第4条意思就是对T的<strong>非常量字段</strong>的引用才会触发T的初始化，什么是常量，上面已经解释了，仔细阅读几遍，很多人都没有真的明白java中定义的常量是什么，举几个反例：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">static int a&#x3D;0;&#x2F;&#x2F;没有final修饰</span><br><span class="line">static final Integer a&#x3D;0;&#x2F;&#x2F;不是原始类型</span><br><span class="line">static final int&#x3D;Integer.valueOf(0);&#x2F;&#x2F;不符合常量表达式要求，返回的是Integer，还要拆箱才是int</span><br></pre></td></tr></table></figure>
+<p>常量的定义比较严格，满足这些定义以后，对于编译器来说这个值就可以确定了。<br>还有一个问题，那些”普通的接口”是什么时候初始化的呢？比如只有几个方法签名的接口？<br>它们不需要初始化，跟常量一样，方法签名这些信息在编译时就确定了，没有必要初始化。</p>
+<p><a href="https://docs.oracle.com/javase/specs/jls/se11/html/jls-12.html#jls-12.4.1" target="_blank" rel="noopener">JLS12.4.1</a>中也提供了一些示例代码，大家也可以自己构造一些类来验证上面的内容。</p>
+<p>PS：上面提到的对于常量字段的使用，在<code>class</code>文件中可以看到对应的访问指令是<code>iconst_n</code>这个系列，而如果使用非常量字段，对应的指令就是<code>getstatic</code>，符合<a href="#jvminit">前面虚拟机规范定义的情况</a>。</p>
+<h2 id="4-双亲委派模型-parent-delegation-model"><a href="#4-双亲委派模型-parent-delegation-model" class="headerlink" title="4 双亲委派模型(parent-delegation model)"></a>4 双亲委派模型(parent-delegation model)</h2><p>这个翻译容易让人误解，叫“父类委派模型”或许更直观。<br>简单的说，就是一个<code>classloader</code>加载一个类时，会先把这个加载任务委派给自己的父加载器（只是委派模型中的父子关系，不是类的继承）,父加载器也会委派给自己的父加载器。。。直到<code>bootstrap</code>这个最基本的类加载器，它没有父加器，如果<code>bootstrap</code>无法加载，那么再回退给委派给它的那个类加载器，如果这个类加载器也无法加载，再回退。。。直到回到最初的那个类加载器，调用<code>findClass</code>方法，这个方法内容是由具体实现类重载的，如果这个加载器也无法加载，则会报错。<br>在<code>ClassLoader</code>这个抽象类中，<code>loadClass</code>方法包含了这个模型的逻辑：</p>
+<details>
+<summary>显示代码</summary>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">protected</span> Class&lt;?&gt; loadClass(String name, <span class="keyword">boolean</span> resolve)</span><br><span class="line">    <span class="keyword">throws</span> ClassNotFoundException</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">synchronized</span> (getClassLoadingLock(name)) &#123;</span><br><span class="line">        <span class="comment">// First, check if the class has already been loaded</span></span><br><span class="line">        Class&lt;?&gt; c = findLoadedClass(name);</span><br><span class="line">        <span class="keyword">if</span> (c == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">long</span> t0 = System.nanoTime();</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (parent != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    c = parent.loadClass(name, <span class="keyword">false</span>);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    c = findBootstrapClassOrNull(name);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">                <span class="comment">// ClassNotFoundException thrown if class not found</span></span><br><span class="line">                <span class="comment">// from the non-null parent class loader</span></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (c == <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="comment">// If still not found, then invoke findClass in order</span></span><br><span class="line">                <span class="comment">// to find the class.</span></span><br><span class="line">                <span class="keyword">long</span> t1 = System.nanoTime();</span><br><span class="line">                c = findClass(name);</span><br><span class="line"></span><br><span class="line">                <span class="comment">// this is the defining class loader; record the stats</span></span><br><span class="line">                PerfCounter.getParentDelegationTime().addTime(t1 - t0);</span><br><span class="line">                PerfCounter.getFindClassTime().addElapsedTimeFrom(t1);</span><br><span class="line">                PerfCounter.getFindClasses().increment();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (resolve) &#123;</span><br><span class="line">            resolveClass(c);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> c;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</details>
+
 <p>上面的<code>parent!=null</code>用来判断是否是<code>bootstrap</code>类加载器，<code>null</code>代表<code>bootstrap</code>加载器。</p>
 <p><strong>Java9引入模块化以后，类加载器的部分也发生了变化，其中的<code>PlatformClassLoader</code>（取代了以前的<code>ExtClassLoader</code>），<code>AppClassLoader</code>都是继承自<code>BuiltinClassLoader</code>，而<code>BuiltinClassLoader</code>内的<code>loadClassOrNull</code>方法加入了先判断类是否属于某个模块的逻辑，然后再执行父类委派，某种程度上已经破坏了双亲委派，所以后面不针对JAVA11，只是对传统意义上的双亲委派进行优缺点分析</strong><br>下面这段代码可以查看jdk中所有模块对应的加载器，有兴趣的可以看一下模块化以后的类加载情况：</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> ClassNotFoundException </span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(Module m:ModuleLayer.boot().modules())&#123;</span><br><span class="line">            System.out.println(m.getName()+<span class="string">"====&gt;"</span>+m.getClassLoader());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
