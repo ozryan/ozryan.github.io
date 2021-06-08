@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
+<meta name="generator" content="Hexo 5.4.0">
 <meta name="google-site-verification" content="osOkugzCWuahI6P1mfhNF6rQrRSvhr6DwiEkUr2a7gU" />
 <meta name="msvalidate.01" content="B2BE9B2FB02F45936A44E96E1FB88C02" />
 <script data-ad-client="ca-pub-9786889114957630" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -20,7 +20,7 @@
 
 <script class="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"ozryan.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"ozryan.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml"};
   </script>
 
   <meta name="description" content="Powershell已经内置OpenSSH,用起来比Xshell还方便，并且用root账号或开启密码登陆都存在安全隐患，所以这里只介绍普通用户+ssh的登陆方式。  基本步骤：">
@@ -30,8 +30,8 @@
 <meta property="og:site_name" content="1&#x2F;1024">
 <meta property="og:description" content="Powershell已经内置OpenSSH,用起来比Xshell还方便，并且用root账号或开启密码登陆都存在安全隐患，所以这里只介绍普通用户+ssh的登陆方式。  基本步骤：">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-07-27T16:00:00.000Z">
-<meta property="article:modified_time" content="2021-05-25T09:14:31.845Z">
+<meta property="article:published_time" content="2020-07-28T00:00:00.000Z">
+<meta property="article:modified_time" content="2021-06-08T07:41:41.381Z">
 <meta property="article:author" content="ozryan">
 <meta property="article:tag" content="java">
 <meta property="article:tag" content="web">
@@ -208,7 +208,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-本机生成key-如果已经有key，可以跳过"><span class="nav-text">1.本机生成key(如果已经有key，可以跳过)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-单个服务器设置"><span class="nav-text">2.单个服务器设置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1复制公钥到服务器"><span class="nav-text">2.1复制公钥到服务器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2重启sshd服务"><span class="nav-text">2.2重启sshd服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3建立连接"><span class="nav-text">2.3建立连接</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-全部实例通用连接设置-推荐"><span class="nav-text">3.全部实例通用连接设置(推荐)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-其它"><span class="nav-text">4.其它</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%9C%AC%E6%9C%BA%E7%94%9F%E6%88%90key-%E5%A6%82%E6%9E%9C%E5%B7%B2%E7%BB%8F%E6%9C%89key%EF%BC%8C%E5%8F%AF%E4%BB%A5%E8%B7%B3%E8%BF%87"><span class="nav-text">1.本机生成key(如果已经有key，可以跳过)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%8D%95%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AE%BE%E7%BD%AE"><span class="nav-text">2.单个服务器设置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1%E5%A4%8D%E5%88%B6%E5%85%AC%E9%92%A5%E5%88%B0%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-text">2.1复制公钥到服务器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2%E9%87%8D%E5%90%AFsshd%E6%9C%8D%E5%8A%A1"><span class="nav-text">2.2重启sshd服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3%E5%BB%BA%E7%AB%8B%E8%BF%9E%E6%8E%A5"><span class="nav-text">2.3建立连接</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%85%A8%E9%83%A8%E5%AE%9E%E4%BE%8B%E9%80%9A%E7%94%A8%E8%BF%9E%E6%8E%A5%E8%AE%BE%E7%BD%AE-%E6%8E%A8%E8%8D%90"><span class="nav-text">3.全部实例通用连接设置(推荐)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%85%B6%E5%AE%83"><span class="nav-text">4.其它</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -217,7 +217,7 @@
     <img class="site-author-image" itemprop="image" alt="ozryan"
       src="/images/avatar.jpg">
   <p class="site-author-name" itemprop="name">ozryan</p>
-  <div class="site-description" itemprop="description">If you get tired, learn to rest, not to quit</div>
+  <div class="site-description" itemprop="description">If you get tired, learn to rest, not to quit.</div>
 </div>
   
 
@@ -292,7 +292,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
       <meta itemprop="name" content="ozryan">
-      <meta itemprop="description" content="If you get tired, learn to rest, not to quit">
+      <meta itemprop="description" content="If you get tired, learn to rest, not to quit.">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -310,14 +310,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-07-28 00:00:00" itemprop="dateCreated datePublished" datetime="2020-07-28T00:00:00+08:00">2020-07-28</time>
+              <time title="创建时间：2020-07-28 00:00:00" itemprop="dateCreated datePublished" datetime="2020-07-28T00:00:00+00:00">2020-07-28</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-25 17:14:31" itemprop="dateModified" datetime="2021-05-25T17:14:31+08:00">2021-05-25</time>
+                <time title="修改时间：2021-06-08 07:41:41" itemprop="dateModified" datetime="2021-06-08T07:41:41+00:00">2021-06-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -379,7 +379,7 @@
 <p>Powershell已经内置OpenSSH,用起来比Xshell还方便，并且用root账号或开启密码登陆都存在安全隐患，所以这里只介绍普通用户+ssh的登陆方式。</p>
 </blockquote>
 <p>基本步骤：</p>
-<a id="more"></a>
+<span id="more"></span>
 
 <h2 id="1-本机生成key-如果已经有key，可以跳过"><a href="#1-本机生成key-如果已经有key，可以跳过" class="headerlink" title="1.本机生成key(如果已经有key，可以跳过)"></a>1.本机生成key(如果已经有key，可以跳过)</h2><p>打开<code>powershell</code>,输入:</p>
 <p><code>ssh-keygen</code></p>
@@ -504,12 +504,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">87k</span>
+    <span title="站点总字数">89k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:19</span>
+    <span title="站点阅读时长">1:21</span>
 </div>
 
         

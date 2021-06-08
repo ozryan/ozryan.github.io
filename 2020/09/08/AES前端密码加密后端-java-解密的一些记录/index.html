@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
+<meta name="generator" content="Hexo 5.4.0">
 <meta name="google-site-verification" content="osOkugzCWuahI6P1mfhNF6rQrRSvhr6DwiEkUr2a7gU" />
 <meta name="msvalidate.01" content="B2BE9B2FB02F45936A44E96E1FB88C02" />
 <script data-ad-client="ca-pub-9786889114957630" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -20,7 +20,7 @@
 
 <script class="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"ozryan.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"ozryan.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml"};
   </script>
 
   <meta name="description" content="本文主要讲前端传输时的密码加密及后端收到密文后解密的过程，避免明文传输密码，文中内容都比较浅显，加密原理部分需要查阅其它资料。至于前端加密是否有意义，见仁见智。 环境前端用的vue，纯JS也可以，引入crypto-js库，后端用java。 加密方法、MODE、PADDING的选择这几个参数之间相互有关联，且前后端加密、解密时的参数必须一致。 有的参数前端有A选项，但是后端没有对应的选项，反之也存在">
@@ -30,8 +30,8 @@
 <meta property="og:site_name" content="1&#x2F;1024">
 <meta property="og:description" content="本文主要讲前端传输时的密码加密及后端收到密文后解密的过程，避免明文传输密码，文中内容都比较浅显，加密原理部分需要查阅其它资料。至于前端加密是否有意义，见仁见智。 环境前端用的vue，纯JS也可以，引入crypto-js库，后端用java。 加密方法、MODE、PADDING的选择这几个参数之间相互有关联，且前后端加密、解密时的参数必须一致。 有的参数前端有A选项，但是后端没有对应的选项，反之也存在">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-09-08T11:41:34.000Z">
-<meta property="article:modified_time" content="2021-04-27T13:33:56.853Z">
+<meta property="article:published_time" content="2020-09-08T19:41:34.000Z">
+<meta property="article:modified_time" content="2021-06-08T07:41:41.381Z">
 <meta property="article:author" content="ozryan">
 <meta property="article:tag" content="java">
 <meta property="article:tag" content="web">
@@ -208,7 +208,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#环境"><span class="nav-text">环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#加密方法、MODE、PADDING的选择"><span class="nav-text">加密方法、MODE、PADDING的选择</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现工具类"><span class="nav-text">实现工具类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#前端"><span class="nav-text">前端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#后端"><span class="nav-text">后端</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用"><span class="nav-text">应用</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83"><span class="nav-text">环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E5%AF%86%E6%96%B9%E6%B3%95%E3%80%81MODE%E3%80%81PADDING%E7%9A%84%E9%80%89%E6%8B%A9"><span class="nav-text">加密方法、MODE、PADDING的选择</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E5%B7%A5%E5%85%B7%E7%B1%BB"><span class="nav-text">实现工具类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E7%AB%AF"><span class="nav-text">前端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8E%E7%AB%AF"><span class="nav-text">后端</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8"><span class="nav-text">应用</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -217,7 +217,7 @@
     <img class="site-author-image" itemprop="image" alt="ozryan"
       src="/images/avatar.jpg">
   <p class="site-author-name" itemprop="name">ozryan</p>
-  <div class="site-description" itemprop="description">If you get tired, learn to rest, not to quit</div>
+  <div class="site-description" itemprop="description">If you get tired, learn to rest, not to quit.</div>
 </div>
   
 
@@ -292,7 +292,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
       <meta itemprop="name" content="ozryan">
-      <meta itemprop="description" content="If you get tired, learn to rest, not to quit">
+      <meta itemprop="description" content="If you get tired, learn to rest, not to quit.">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -310,14 +310,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-09-08 19:41:34" itemprop="dateCreated datePublished" datetime="2020-09-08T19:41:34+08:00">2020-09-08</time>
+              <time title="创建时间：2020-09-08 19:41:34" itemprop="dateCreated datePublished" datetime="2020-09-08T19:41:34+00:00">2020-09-08</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-27 21:33:56" itemprop="dateModified" datetime="2021-04-27T21:33:56+08:00">2021-04-27</time>
+                <time title="修改时间：2021-06-08 07:41:41" itemprop="dateModified" datetime="2021-06-08T07:41:41+00:00">2021-06-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -329,11 +329,11 @@
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/web/%E5%90%8E%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">后端</span></a>
+                  <a href="/categories/web/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">前端</span></a>
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/web/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">前端</span></a>
+                  <a href="/categories/web/%E5%90%8E%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">后端</span></a>
                 </span>
             </span>
 
@@ -364,7 +364,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3k</span>
+              <span>3.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -389,25 +389,25 @@
 <p>有的参数前端有A选项，但是后端没有对应的选项，反之也存在后端有B选项，但前端没有的，选择的时候只能选前后端都有的。</p>
 <p>具体可以从下面两篇文档中看到：</p>
 <ul>
-<li><p><a href="https://cryptojs.gitbook.io/docs/#pbkdf2" target="_blank" rel="noopener">前端cypto-js参考文档</a></p>
+<li><p><a target="_blank" rel="noopener" href="https://cryptojs.gitbook.io/docs/#pbkdf2">前端cypto-js参考文档</a></p>
 </li>
-<li><p><a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html" target="_blank" rel="noopener">后端java参考文档</a></p>
+<li><p><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html">后端java参考文档</a></p>
 </li>
 </ul>
 <p>三个参数前后端共有的选项分别是：</p>
 <ul>
 <li>加密方法：<code>AES</code>、<code>DES</code>、 <code>Triple DES</code>(java对应<code>DESede</code>)、<code>RC4</code></li>
 <li>mode：<code>CBC</code>、<code>CFB</code>、<code>CTR</code>、<code>OFB</code>、<code>ECB</code></li>
-<li>padding:<code>NoPadding</code>、<code>Iso10126</code>、<code>Pkcs7</code>(java对应<code>PKCS5Padding</code>)</li>
+<li>padding:<code>NoPadding</code>、<code>Iso10126</code>、<code>Pkcs7 </code>(java对应<code>PKCS5Padding</code>)</li>
 </ul>
-<a id="more"></a>
+<span id="more"></span>
 <p>选择的话,每一个方法、MODE、padding的实现都有点复杂，上面的java参考文档里有写具体的技术性文档链接，这里只说使用，不说原理。</p>
 <ul>
-<li>加密方法通常选<code>AES</code>，参考：<a href="https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf" target="_blank" rel="noopener">FIPS 197</a>。</li>
-<li>mode: <code>crypto-js</code>默认是<code>CBC</code>，参考：<a href="https://csrc.nist.gov/publications/fips/fips81/fips81.htm" target="_blank" rel="noopener">FIPS 81</a></li>
+<li>加密方法通常选<code>AES</code>，参考：<a target="_blank" rel="noopener" href="https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf">FIPS 197</a>。</li>
+<li>mode: <code>crypto-js</code>默认是<code>CBC</code>，参考：<a target="_blank" rel="noopener" href="https://csrc.nist.gov/publications/fips/fips81/fips81.htm">FIPS 81</a></li>
 <li>padding：如果上面选的是<code>AES/CBC</code>,那么<code>padding</code>可以选<code>Iso10126</code>或者<code>Pkcs7</code>。<ul>
 <li><font color="red">NoPadding不能用</font>，因为AES只支持128bit、192bit、256bit几种大小的分块(block)，取决于key的位数，除非要加密的密文正好是上面这个块的大小，否则就不能解密，这显然是不合理的。</li>
-<li>前端的<code>Pkcs7</code>和java的<code>PKCS5Padding</code>是对应的，参考<a href="https://en.wikipedia.org/wiki/Padding_(cryptography)" target="_blank" rel="noopener">wiki</a>上的解释,两者基本等价：<blockquote>
+<li>前端的<code>Pkcs7</code>和java的<code>PKCS5Padding</code>是对应的，参考<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Padding_(cryptography)">wiki</a>上的解释,两者基本等价：<blockquote>
 <p>PKCS#5 padding is identical to PKCS#7 padding, except that it has only been defined for block ciphers that use a 64-bit (8-byte) block size. In practice the two can be used interchangeably.</p>
 </blockquote>
 </li>
@@ -418,15 +418,15 @@
 <p>密钥<code>key</code>和初始向量<code>iv</code>都设置成固定值，前后端一致即可。</p>
 <p><code>key</code>用于<code>AES</code>方法加密，<code>iv</code>用于<code>CBC</code>MODE，<code>iv</code>的大小要跟<code>block</code>一样，在这里就是128bit，跟<code>key</code>一样</p>
 <p>前端引入<code>crypto-js</code>：<code>npm install crypto-js</code></p>
-<h3 id="前端"><a href="#前端" class="headerlink" title="前端"></a>前端</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//aesutils.js</span></span><br><span class="line"><span class="keyword">import</span> CryptoJs <span class="keyword">from</span> <span class="string">'crypto-js'</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//把key、iv设置成固定值，前后端的值要一致</span></span><br><span class="line"><span class="keyword">let</span> key = CryptoJs.enc.Utf8.parse(<span class="string">"onlinemenukey123"</span>);</span><br><span class="line"><span class="keyword">let</span> iv = CryptoJs.enc.Utf8.parse(<span class="string">"onlinemenuiv1234"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param </span>word 原始文本</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@returns <span class="type">&#123;*&#125;</span> </span>Base64的文本</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@constructor</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">Encrypt</span>(<span class="params">word</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> srcs = CryptoJs.enc.Utf8.parse(word);</span><br><span class="line">    <span class="keyword">var</span> encrypted = CryptoJs.AES.encrypt(srcs, key, &#123;</span><br><span class="line">        iv: iv,</span><br><span class="line">        mode: CryptoJs.mode.CBC,</span><br><span class="line">        padding: CryptoJs.pad.Pkcs7</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> CryptoJs.enc.Base64.stringify(encrypted.ciphertext);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="前端"><a href="#前端" class="headerlink" title="前端"></a>前端</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//aesutils.js</span></span><br><span class="line"><span class="keyword">import</span> CryptoJs <span class="keyword">from</span> <span class="string">&#x27;crypto-js&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//把key、iv设置成固定值，前后端的值要一致</span></span><br><span class="line"><span class="keyword">let</span> key = CryptoJs.enc.Utf8.parse(<span class="string">&quot;onlinemenukey123&quot;</span>);</span><br><span class="line"><span class="keyword">let</span> iv = CryptoJs.enc.Utf8.parse(<span class="string">&quot;onlinemenuiv1234&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param </span>word 原始文本</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@returns <span class="type">&#123;*&#125;</span> </span>Base64的文本</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@constructor</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">Encrypt</span>(<span class="params">word</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> srcs = CryptoJs.enc.Utf8.parse(word);</span><br><span class="line">    <span class="keyword">var</span> encrypted = CryptoJs.AES.encrypt(srcs, key, &#123;</span><br><span class="line">        <span class="attr">iv</span>: iv,</span><br><span class="line">        <span class="attr">mode</span>: CryptoJs.mode.CBC,</span><br><span class="line">        <span class="attr">padding</span>: CryptoJs.pad.Pkcs7</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> CryptoJs.enc.Base64.stringify(encrypted.ciphertext);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="后端"><a href="#后端" class="headerlink" title="后端"></a>后端</h3><p>涉及到<code>String</code>和<code>byte[]</code>转换时，最好指定编码类型，可以避免</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.lyuww.bgmanager.Utils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.tomcat.util.codec.binary.Base64;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.crypto.Cipher;</span><br><span class="line"><span class="keyword">import</span> javax.crypto.spec.IvParameterSpec;</span><br><span class="line"><span class="keyword">import</span> javax.crypto.spec.SecretKeySpec;</span><br><span class="line"><span class="keyword">import</span> java.nio.charset.StandardCharsets;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AESUtils</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 解密前端发送的AES加密处理后的密码文本</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> text 前端发送的加密后的密文</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> key 跟前端设置的key一致,只能是128bit、192bit、256bit</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> iv 初始向量，跟前端设置的iv一致</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String key=<span class="string">"onlinemenukey123"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String iv=<span class="string">"onlinemenuiv1234"</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">DecoderAES</span><span class="params">(String text)</span></span>&#123;</span><br><span class="line">        <span class="keyword">try</span>&#123;</span><br><span class="line">            <span class="keyword">byte</span>[] encrypted=<span class="keyword">new</span> Base64().decode(text);<span class="comment">//把base64编码的文本转换成byte数组</span></span><br><span class="line"></span><br><span class="line">            Cipher cipher=Cipher.getInstance(<span class="string">"AES/CBC/PKCS5Padding "</span>);</span><br><span class="line">            SecretKeySpec secretKey=<span class="keyword">new</span> SecretKeySpec(key.getBytes(StandardCharsets.UTF_8),<span class="string">"AES"</span>);</span><br><span class="line">            IvParameterSpec ivParameter=<span class="keyword">new</span> IvParameterSpec(iv.getBytes(StandardCharsets.UTF_8));</span><br><span class="line"></span><br><span class="line">            cipher.init(Cipher.DECRYPT_MODE,secretKey,ivParameter);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">byte</span>[] decrypted=cipher.doFinal(encrypted);</span><br><span class="line">            String oriringalString=<span class="keyword">new</span> String(decrypted,StandardCharsets.UTF_8);</span><br><span class="line">            <span class="keyword">return</span> oriringalString;</span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            <span class="comment">//解密失败时的操作</span></span><br><span class="line">            <span class="keyword">return</span> e.toString();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.lyuww.bgmanager.Utils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.tomcat.util.codec.binary.Base64;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.crypto.Cipher;</span><br><span class="line"><span class="keyword">import</span> javax.crypto.spec.IvParameterSpec;</span><br><span class="line"><span class="keyword">import</span> javax.crypto.spec.SecretKeySpec;</span><br><span class="line"><span class="keyword">import</span> java.nio.charset.StandardCharsets;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AESUtils</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 解密前端发送的AES加密处理后的密码文本</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> text 前端发送的加密后的密文</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> key 跟前端设置的key一致,只能是128bit、192bit、256bit</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> iv 初始向量，跟前端设置的iv一致</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String key=<span class="string">&quot;onlinemenukey123&quot;</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String iv=<span class="string">&quot;onlinemenuiv1234&quot;</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">DecoderAES</span><span class="params">(String text)</span></span>&#123;</span><br><span class="line">        <span class="keyword">try</span>&#123;</span><br><span class="line">            <span class="keyword">byte</span>[] encrypted=<span class="keyword">new</span> Base64().decode(text);<span class="comment">//把base64编码的文本转换成byte数组</span></span><br><span class="line"></span><br><span class="line">            Cipher cipher=Cipher.getInstance(<span class="string">&quot;AES/CBC/PKCS5Padding &quot;</span>);</span><br><span class="line">            SecretKeySpec secretKey=<span class="keyword">new</span> SecretKeySpec(key.getBytes(StandardCharsets.UTF_8),<span class="string">&quot;AES&quot;</span>);</span><br><span class="line">            IvParameterSpec ivParameter=<span class="keyword">new</span> IvParameterSpec(iv.getBytes(StandardCharsets.UTF_8));</span><br><span class="line"></span><br><span class="line">            cipher.init(Cipher.DECRYPT_MODE,secretKey,ivParameter);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">byte</span>[] decrypted=cipher.doFinal(encrypted);</span><br><span class="line">            String oriringalString=<span class="keyword">new</span> String(decrypted,StandardCharsets.UTF_8);</span><br><span class="line">            <span class="keyword">return</span> oriringalString;</span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            <span class="comment">//解密失败时的操作</span></span><br><span class="line">            <span class="keyword">return</span> e.toString();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><p>主要步骤：</p>
 <p>前端</p>
 <ul>
 <li><p>引入工具类：</p>
-<p><code>import {Decrypt, Encrypt} from &quot;@/utils/aesutils&quot;;</code></p>
+<p><code>import &#123;Decrypt, Encrypt&#125; from &quot;@/utils/aesutils&quot;;</code></p>
 </li>
 <li><p>用<code>axios</code>等方法传输数据，比如密码，在传输前加工具类加密即可</p>
 <p><code>Encrypt(this.$data.formData.password)</code></p>
@@ -521,12 +521,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">87k</span>
+    <span title="站点总字数">89k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:19</span>
+    <span title="站点阅读时长">1:21</span>
 </div>
 
         
