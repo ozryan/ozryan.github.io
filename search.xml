@@ -1295,7 +1295,7 @@ index:`00 01`,1</code></pre><p>  }</p>
 <p>准备阶段可以在创建(creation)和初始化(initialization)之间的任意时间节点出现。</p>
 <h4 id="3-2-3-解析-Resolution"><a href="#3-2-3-解析-Resolution" class="headerlink" title="3.2.3 解析(Resolution)"></a>3.2.3 解析(Resolution)</h4><p>这个阶段就是把常量池里面那些引用符号解析成具体的Class，在解析这些引用符号比如方法时，其中引用的类型会先完成解析。</p>
 <p>这里的解析也包括父类和实现的接口等，这些被解析的Class重复上面的流程，先被<code>载入、创建</code>，然后<code>验证、准备、解析</code>。</p>
-<h3 id="3-3-初始化（Initialization"><a href="#3-3-初始化（Initialization" class="headerlink" title="3.3 初始化（Initialization)"></a>3.3 初始化（Initialization)</h3><p>class的初始化就是执行其<code>&lt;clinit&gt;</code>方法，这个方法是被虚拟机直接执行的。<br><span id="jvminit">只有以下情况之一才会触发初始化</span>：</p>
+<h3 id="3-3-初始化（Initialization"><a href="#3-3-初始化（Initialization" class="headerlink" title="3.3 初始化（Initialization)"></a>3.3 初始化（Initialization)</h3><p>class的初始化就是执行其<code>&lt;clinit&gt;</code>方法，这个方法是被虚拟机直接执行的，这一步结束就代表类已经初始化，类中的静态字段和静态方法等已经可用。<br><span id="jvminit">只有以下情况之一才会触发初始化</span>：</p>
 <ol>
 <li>执行虚拟机的以下四个指令之一：<code>new, getstatic, putstatic,invokestatic</code>，new是初始化类的实例，显然需要先初始化类本身，后面3个就是对类的静态字段和方法的调用，也需要类本身。</li>
 <li>以下四种<code>method handle</code>：<code>kind 2 (REF_getStatic), 4 (REF_putStatic), 6 (REF_invokeStatic), or 8 (REF_newInvokeSpecial)</code>，对其中任何一个的解析结果是一个<code>java.lang.invoke.MethodHandle</code>类型的实例，那么在第一次调用这个实例时会触发初始化。这条跟上面那条本质上是一样的，只不过把指令包装在<code>Methodhandle</code>内。</li>
