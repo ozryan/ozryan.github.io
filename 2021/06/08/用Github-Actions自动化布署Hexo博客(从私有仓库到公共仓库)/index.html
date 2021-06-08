@@ -31,7 +31,7 @@
 <meta property="og:description" content="常规的hexo使用方式如下：写markdown文件保存-&gt;hexo generate生成文件-&gt;hexo deploy部署到github仓库-&gt;把源文件备份到博客仓库的source分支或者备份到一个私有仓库 用本文的方法做一些准备工作，以后写博客的流程就简化为：写markdown文件保存-&gt;打开powershell，输入pushhexo指令完成上面的所有步骤">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-06-08T15:44:46.000Z">
-<meta property="article:modified_time" content="2021-06-08T08:58:30.978Z">
+<meta property="article:modified_time" content="2021-06-08T09:03:00.041Z">
 <meta property="article:author" content="ozryan">
 <meta property="article:tag" content="java">
 <meta property="article:tag" content="web">
@@ -311,7 +311,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-06-08 15:44:46 / 修改时间：08:58:30" itemprop="dateCreated datePublished" datetime="2021-06-08T15:44:46+00:00">2021-06-08</time>
+              <time title="创建时间：2021-06-08 15:44:46 / 修改时间：09:03:00" itemprop="dateCreated datePublished" datetime="2021-06-08T15:44:46+00:00">2021-06-08</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -350,7 +350,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.6k</span>
+              <span>2.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -393,7 +393,7 @@
 <h2 id="5-写Powershell脚本"><a href="#5-写Powershell脚本" class="headerlink" title="5 写Powershell脚本"></a>5 写Powershell脚本</h2><p>上面的步骤完成以后，我们仍然需要手动的执行<code>git add,git commit,git push</code>这些操作，这里借助<code>powershell</code>脚本实现简化。</p>
 <p>先找开<code>powershell</code>，执行<code>$profile</code>,会显示配置文件位置，打开这个配置文件，添加下面的内容：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">#hexo 备份到github</span><br><span class="line">function pushhexo&#123;</span><br><span class="line">    $currpath=$pwd.path;</span><br><span class="line">    $hexopath=&quot;C:\Users\xxx\Documents\GitHub\blog&quot;;</span><br><span class="line">    Set-Location $hexopath;</span><br><span class="line">    git add ./;</span><br><span class="line">    git commit -m &quot;script backup&quot;;</span><br><span class="line">    git push;</span><br><span class="line">    Set-Location $currpath;</span><br><span class="line">    Write-Output &quot;Push hexo files to github successfully&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>其中<code>$hexopath=&quot;C:\Users\xxx\Documents\GitHub\blog&quot;;</code>这一行需要修改路径为你的博客根目录。</p>
+<p>其中<code>$hexopath=&quot;C:\Users\xxx\Documents\GitHub\blog&quot;;</code>这一行需要修改路径为你的博客根目录，保存后需要重启powershell才能生效。</p>
 <p>上面的步骤全部完成以后，在<code>powershell</code>中输入<code>pushehxo</code>就可以实现标题所说的功能了。</p>
 
     </div>

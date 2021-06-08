@@ -860,7 +860,7 @@
 <h2 id="5-写Powershell脚本"><a href="#5-写Powershell脚本" class="headerlink" title="5 写Powershell脚本"></a>5 写Powershell脚本</h2><p>上面的步骤完成以后，我们仍然需要手动的执行<code>git add,git commit,git push</code>这些操作，这里借助<code>powershell</code>脚本实现简化。</p>
 <p>先找开<code>powershell</code>，执行<code>$profile</code>,会显示配置文件位置，打开这个配置文件，添加下面的内容：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#hexo 备份到github</span><br><span class="line">function pushhexo&#123;</span><br><span class="line">    $currpath=$pwd.path;</span><br><span class="line">    $hexopath=&quot;C:\Users\xxx\Documents\GitHub\blog&quot;;</span><br><span class="line">    Set-Location $hexopath;</span><br><span class="line">    git add ./;</span><br><span class="line">    git commit -m &quot;script backup&quot;;</span><br><span class="line">    git push;</span><br><span class="line">    Set-Location $currpath;</span><br><span class="line">    Write-Output &quot;Push hexo files to github successfully&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>其中<code>$hexopath=&quot;C:\Users\xxx\Documents\GitHub\blog&quot;;</code>这一行需要修改路径为你的博客根目录。</p>
+<p>其中<code>$hexopath=&quot;C:\Users\xxx\Documents\GitHub\blog&quot;;</code>这一行需要修改路径为你的博客根目录，保存后需要重启powershell才能生效。</p>
 <p>上面的步骤全部完成以后，在<code>powershell</code>中输入<code>pushehxo</code>就可以实现标题所说的功能了。</p>
 ]]></content>
       <categories>
