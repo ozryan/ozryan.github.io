@@ -32,7 +32,7 @@
 <meta property="og:description" content="主要介绍内部类，顺便提一下接口中的嵌套接口和嵌套类。 1.内部类内部类是定义在其它类中的类。这个定义很宽泛，因为内部类也可以定义在类中的方法里，可以用匿名内部类，还可以声明为public、private、protected、static，不同的情形下，内部类表现也不一致，分别举例说明。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-11-17T10:54:40.000Z">
-<meta property="article:modified_time" content="2021-06-19T09:20:15.978Z">
+<meta property="article:modified_time" content="2021-06-20T11:02:32.478Z">
 <meta property="article:author" content="ozryan">
 <meta property="article:tag" content="java">
 <meta property="article:tag" content="web">
@@ -318,7 +318,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-19 09:20:15" itemprop="dateModified" datetime="2021-06-19T09:20:15+00:00">2021-06-19</time>
+                <time title="修改时间：2021-06-20 11:02:32" itemprop="dateModified" datetime="2021-06-20T11:02:32+00:00">2021-06-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -357,7 +357,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>6.2k</span>
+              <span>6.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -408,7 +408,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> firstpackage;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.swing.*;</span><br><span class="line"><span class="keyword">import</span> java.awt.event.ActionEvent;</span><br><span class="line"><span class="keyword">import</span> java.awt.event.ActionListener;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">A</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        A a=<span class="keyword">new</span> A(<span class="string">&quot;这是构造A的对象时传入的字符串&quot;</span>);</span><br><span class="line">        a.say(<span class="string">&quot;这是通过方法传递的字符串&quot;</span>);</span><br><span class="line">        <span class="comment">//这里只是为了让程序保持运行</span></span><br><span class="line">        Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">        System.exit(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> String propA;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">A</span><span class="params">()</span></span>&#123;&#125;;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">A</span><span class="params">(String s)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.propA=s;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">say</span><span class="params">(String s)</span></span>&#123;</span><br><span class="line">        Timer timer=<span class="keyword">new</span> Timer(<span class="number">1000</span>, <span class="keyword">new</span> ActionListener() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">actionPerformed</span><span class="params">(ActionEvent e)</span> </span>&#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;这是内部类，但能获取外部类的属性========&gt;&quot;</span>+propA+<span class="string">&quot;\n还可以获取方法的参数并保存为本地变量========&gt;&quot;</span>+s);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        timer.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>后来，<code>java</code>引入<code>lambda</code>表达式进一步简化了这种写法，上面的<code>say()</code>方法可以改为：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">say</span><span class="params">(String s)</span></span>&#123;</span><br><span class="line">    Timer timer=<span class="keyword">new</span> Timer(<span class="number">1000</span>, (ActionEvent e)-&gt;&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;这是内部类，但能获取外部类的属性========&gt;&quot;</span>+propA+<span class="string">&quot;\n还可以获取方法的参数并保存为本地变量========&gt;&quot;</span>+s);</span><br><span class="line">    &#125;);</span><br><span class="line">    timer.start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><span style="color:red"><strong>请注意：<code>lambda</code>表达式只能用于代替实现<code>FunctionalInterface</code>的内部类，就是内部只有一个方法的接口</strong></span></p>
+<p><strong>PS：<code>lambda</code>表达式只能用于代替实现<code>FunctionalInterface</code>接口的内部类，就是内部只有一个抽象方法的接口（default方法数量不限）</strong></p>
 <h3 id="1-5-static内部类"><a href="#1-5-static内部类" class="headerlink" title="1.5 static内部类"></a><strong>1.5 static内部类</strong></h3><p><code>static</code>内部类和别的内部类有几点区别：</p>
 <ul>
 <li>因为是static,所以使用该类时不需要外部类的实例</li>
@@ -416,7 +416,7 @@
 <li>可以声明<code>static</code>的变量和方法</li>
 </ul>
 <p><code>static</code>内部类的作用类似package，只是让内部类更深了一层，可以让代码的结构更清晰，减少重名问题等，所以<code>static</code>内部类跟普通的类很像，很多地方称之为”嵌套类”。</p>
-<p>这里提一下<code>static</code>和其它内部类实例化的区别：跟类中的<code>static</code>属性一样，在外部类加载完成后，<code>static</code>内部类也加载完成了，所以如果要实例化<code>static</code>内部类，只要用<code>new Outer.Inner()</code>的表达方式就可以了。而普通的非<code>static</code>内部类，因为是定义在类中，属于”对象属性”级别，在外部类加载完成时，这些”对象属性”还不存在，等到外部类实例化时，内部类才作为这个外部类实例对象的”对象属性”加载进来，但此时只是有内部类完成，还没有实例化，需要使用外部类的对象来实例化内部类。</p>
+<p>关于<code>static</code>和其它内部类实例化的区别：跟类中的<code>static</code>属性一样，在外部类加载完成后，<code>static</code>内部类也加载完成了，所以如果要实例化<code>static</code>内部类，只要用<code>new Outer.Inner()</code>的表达方式就可以了。而普通的非<code>static</code>内部类，因为是定义在类中，属于”对象属性”级别，在外部类加载完成时，这些”对象属性”还不存在，等到外部类实例化时，内部类才作为这个外部类实例对象的”对象属性”加载进来，但此时只是有内部类完成，还没有实例化，需要使用外部类的对象来实例化内部类。</p>
 <h2 id="2-接口中的嵌套接口和嵌套类"><a href="#2-接口中的嵌套接口和嵌套类" class="headerlink" title="2.接口中的嵌套接口和嵌套类"></a><strong>2.接口中的嵌套接口和嵌套类</strong></h2><p>接口中的类型成员，包括类和接口，都默认是<code>public staic</code>，也强制只能是<code>public static</code>。</p>
 <p>首先，接口不能被实例化，所以，任何非<code>static</code>的内容都毫无意义。至于<code>public</code>，<a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/tutorial/java/IandI/interfaceDef.html">JavaSE规范</a>中规定，接口中的类型成员不是<code>public</code>就会在编译时报错。</p>
 <p>关于这两个嵌套类型，举个例子，<code>spring boot</code>源码中有一个接口叫<code>DeferredImportSelector</code>，代码如下：</p>
@@ -509,7 +509,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">91k</span>
+    <span title="站点总字数">92k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
