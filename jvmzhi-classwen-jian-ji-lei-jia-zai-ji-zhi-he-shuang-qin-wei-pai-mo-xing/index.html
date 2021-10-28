@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+      <!-- Enable responsiveness on mobile devices-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+      <title> - JVM之class文件及类加载机制和双亲委派模型</title>
+
+      
+
+      
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/slideout/1.0.1/slideout.min.js"></script>
+          
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+
+          <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
+          <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/contrib/mathtex-script-type.min.js" integrity="sha384-zWYbd0NBwgTsgIdFKVprSfTh1mbMPe5Hz1X3yY4Sd1h/K1cQoUe36OGwAGz/PcDy" crossorigin="anonymous"></script>
+              
+          <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/contrib/auto-render.min.js" integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous"
+                  onload="renderMathInElement(document.body);"></script>
+              
+          
+      
+
+      
+          <link rel="stylesheet" href="https:&#x2F;&#x2F;www.fewth.com&#x2F;site.css">
+          
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+          
+      
+
+      
+      
+    </head>
+
+    <body>
+        <div class="container">
+
+            <div id="mobile-navbar" class="mobile-navbar">
+              <div class="mobile-header-logo">
+                <a href="/" class="logo">Even</a>
+              </div>
+              <div class="mobile-navbar-icon icon-out">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+
+            <nav id="mobile-menu" class="mobile-menu slideout-menu slideout-menu-left">
+              <ul class="mobile-menu-list">
+                
+                    <li class="mobile-menu-item">
+                        <a href="https:&#x2F;&#x2F;www.fewth.com">
+                            Home
+                        </a>
+                    </li>
+                
+                    <li class="mobile-menu-item">
+                        <a href="https:&#x2F;&#x2F;www.fewth.com&#x2F;categories">
+                            Categories
+                        </a>
+                    </li>
+                
+                    <li class="mobile-menu-item">
+                        <a href="https:&#x2F;&#x2F;www.fewth.com&#x2F;tags">
+                            Tags
+                        </a>
+                    </li>
+                
+                    <li class="mobile-menu-item">
+                        <a href="https:&#x2F;&#x2F;www.fewth.com&#x2F;about">
+                            About
+                        </a>
+                    </li>
+                
+              </ul>
+            </nav>
+
+            <header id="header">
+                <div class="logo"><a href="https:&#x2F;&#x2F;www.fewth.com">Even</a></div>
+                <nav class="menu">
+                    <ul>
+                        
+                            <li>
+                                <a href="https:&#x2F;&#x2F;www.fewth.com">
+                                    Home
+                                </a>
+                            </li>
+                        
+                            <li>
+                                <a href="https:&#x2F;&#x2F;www.fewth.com&#x2F;categories">
+                                    Categories
+                                </a>
+                            </li>
+                        
+                            <li>
+                                <a href="https:&#x2F;&#x2F;www.fewth.com&#x2F;tags">
+                                    Tags
+                                </a>
+                            </li>
+                        
+                            <li>
+                                <a href="https:&#x2F;&#x2F;www.fewth.com&#x2F;about">
+                                    About
+                                </a>
+                            </li>
+                        
+                    </ul>
+                </nav>
+            </header>
+
+            <main>
+                <div class="content" id="mobile-panel">
+                    
+
+
+<div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content always-active">
+        <nav id="TableOfContents">
+            <ul>
+                
+                <li>
+                    <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#1-classwen-jian-ge-shi" class="toc-link">1 class文件格式</a>
+                    
+                    <ul>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#magic" class="toc-link">magic</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#minor-version" class="toc-link">minor_version</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#major-version" class="toc-link">major_version</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#constant-pool-count" class="toc-link">constant_pool_count</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#constant-pool-constant-pool-count-1" class="toc-link">constant_pool[constant_pool_count-1]</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#access-flags" class="toc-link">access_flags</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#this-class" class="toc-link">this_class</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#super-class" class="toc-link">super_class</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#interfaces-count" class="toc-link">interfaces_count</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#interfaces-interfaces-count" class="toc-link">interfaces[interfaces_count]</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#fields-count" class="toc-link">fields_count</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#fields-fields-count" class="toc-link">fields[fields_count]</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#methods-count" class="toc-link">methods_count</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#methods-methods-count" class="toc-link">methods[methods_count]</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#attributes-count" class="toc-link">attributes_count</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#attributes-attributes-count" class="toc-link">attributes[attributes_count]</a>
+                        </li>
+                        
+                    </ul>
+                    
+                </li>
+                
+                <li>
+                    <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#2-huan-yuan-yi-ge-classwen-jian-de-nei-rong" class="toc-link">2 还原一个class文件的内容</a>
+                    
+                    <ul>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#magic-1" class="toc-link">magic</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#minor-version-1" class="toc-link">minor_version</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#major-version-1" class="toc-link">major_version</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#constant-pool-count-1" class="toc-link">constant_pool_count</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#constant-pool-constant-pool-count-1-1" class="toc-link">constant_pool[constant_pool_count-1]</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#access-flags-1" class="toc-link">access_flags</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#this-class-1" class="toc-link">this_class</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#super-class-1" class="toc-link">super_class</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#interfaces-count-1" class="toc-link">interfaces_count</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#interfaces" class="toc-link">interfaces[]</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#fields-count-1" class="toc-link">fields_count</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#fields-fields-count-1" class="toc-link">fields[fields_count]</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#methods-count-1" class="toc-link">methods_count</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#methods-methods-count-1" class="toc-link">methods[methods_count]</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#attributes-count-1" class="toc-link">attributes_count</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#attributes-attributes-count-1" class="toc-link">attributes[attributes_count]</a>
+                        </li>
+                        
+                    </ul>
+                    
+                </li>
+                
+                <li>
+                    <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#3-jvmcong-jia-zai-classwen-jian-dao-classchu-shi-hua-de-guo-cheng" class="toc-link">3 JVM从加载class文件到Class初始化的过程</a>
+                    
+                    <ul>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#3-1-chuang-jian-he-zai-ru-creation-and-loading" class="toc-link">3.1 创建和载入(Creation and Loading)</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#3-2-lian-jie-linking" class="toc-link">3.2 链接（Linking)</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#3-3-chu-shi-hua-initialization" class="toc-link">3.3 初始化（Initialization)</a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#lei-de-xie-zai" class="toc-link">类的卸载</a>
+                        </li>
+                        
+                    </ul>
+                    
+                </li>
+                
+                <li>
+                    <a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#4-shuang-qin-wei-pai-mo-xing-parent-delegation-model" class="toc-link">4 双亲委派模型(parent-delegation model)</a>
+                    
+                </li>
+                
+            </ul>
+        </nav>
+    </div>
+</div>
+
+
+<article class="post">
+    
+    <header class="post__header">
+        <h1 class="post__title">
+            <a href="https:&#x2F;&#x2F;www.fewth.com&#x2F;jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing&#x2F;">JVM之class文件及类加载机制和双亲委派模型</a>
+        </h1>
+        <div class="post__meta">
+            <span class="post__time">2021-06-02</span>
+            
+        </div>
+    </header>
+
+    <div class="post-content">
+      <p>本文先简单介绍虚拟机规范约定的<code>class</code>文件格式，并从一个示例<code>class</code>文件复原代码基本内容，最后描述虚拟机类加载机制以及介绍一下双亲委派模型。Java版本为11。</p>
+<!--more-->
+<h2 id="1-classwen-jian-ge-shi">1 class文件格式</h2>
+<p><code>class</code>文件是字节码文件，文件内容基本单位就是一个字节，文件中不同的项根据约定的格式用一个或多个字节表示。<br />
+下面是<code>class</code>文件的基本结构：</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">ClassFile {
+    u4             magic;
+    u2             minor_version;
+    u2             major_version;
+    u2             constant_pool_count;
+    cp_info        constant_pool[constant_pool_count-1];
+    u2             access_flags;
+    u2             this_class;
+    u2             super_class;
+    u2             interfaces_count;
+    u2             interfaces[interfaces_count];
+    u2             fields_count;
+    field_info     fields[fields_count];
+    u2             methods_count;
+    method_info    methods[methods_count];
+    u2             attributes_count;
+    attribute_info attributes[attributes_count];
+}
+</span></code></pre>
+<p>在分别介绍上面的每一个条目之前，先说明几点：</p>
+<ul>
+<li>&quot;u4&quot;,&quot;u2&quot;分别表示4个字节和2个字节</li>
+<li>每一项都是<strong>严格按照顺序</strong>排列的。</li>
+<li>cp_info,field_info,method_info,attribute_info,这几个没有标明长度，因为他们对应的条目是复杂结构，其长度根据不同的条目会变化（但是可以从条目信息中获取相应的长度），整个<code>class</code>文件类似一个目录结构</li>
+</ul>
+<p>下面按顺序解释每一个条目：</p>
+<h3 id="magic">magic</h3>
+<p>4个字节。其值固定是<code>0xCAFEBABE</code>，这是一个16进制的值，名字起源可参考<a href="https://en.wikipedia.org/wiki/Java_class_file">wiki</a></p>
+<h3 id="minor-version">minor_version</h3>
+<p>2个字节。<code>class</code>文件次版本号，现在版本大都为0，以前</p>
+<h3 id="major-version">major_version</h3>
+<p>2个字节。<code>class</code>文件主版本号，比如java11对应的55，虚拟机都是<em>backward compatibility</em>,所以可以支持旧版的<code>class</code>文件，对应的版本支持如下：
+Java SE | class file format version range
+---------|----------
+1.0.2	 | 45.0 ≤ v ≤ 45.3 
+1.1     | 45.0 ≤ v ≤ 45.65535 
+1.2     | 45.0 ≤ v ≤ 46.0
+1.3	 |45.0 ≤ v ≤ 47.0
+1.4	     |45.0 ≤ v ≤ 48.0
+5.0      |45.0 ≤ v ≤ 49.0
+6	     |45.0 ≤ v ≤ 50.0
+7	     |45.0 ≤ v ≤ 51.0
+8	     |45.0 ≤ v ≤ 52.0
+9	     |45.0 ≤ v ≤ 53.0
+10	     |45.0 ≤ v ≤ 54.0
+11	     |45.0 ≤ v ≤ 55.0 </p>
+<h3 id="constant-pool-count">constant_pool_count</h3>
+<p>2个字节。常量池条目的数量，值是“实际条目数量+1”，一个说明是因为计算的时候把<code>constant_pool_count</code>本身也算在内了，其下标是0。</p>
+<h3 id="constant-pool-constant-pool-count-1">constant_pool[constant_pool_count-1]</h3>
+<p>常量池，对应的条目下标编号是从1开始，直到<code>constant_pool_count-1</code>,每一个条目的基本结构如下：</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">cp_info {
+    u1 tag;
+    u1 info[];
+}
+</span></code></pre>
+<p><code>tag</code>表是这个条目是什么类型的，<code>info[]</code>表示后面的具体信息。<br />
+比如，<code>tag</code>是1表示<code>CONSTANT_Utf8</code>,对应的结构如下：</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p><strong>注意，这里的tag和上面tag是同一个，也就是说，length和bytes[length]替换了<code>info[]</code>的位置。</strong><br />
+全部的常量池类型参考<a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-4.html#jvms-4.4">虚拟机规范</a></p>
+<h3 id="access-flags">access_flags</h3>
+<p>2个字节。类型的一些信息，可以是几个值的组合，每个FLAG信息如下：</p>
+<table><thead><tr><th>Flag Name</th><th>Value</th><th>Interpretation</th></tr></thead><tbody>
+<tr><td>ACC_PUBLIC</td><td>0x0001</td><td>Declared public; may be accessed from outside its package.</td></tr>
+<tr><td>ACC_FINAL</td><td>0x0010</td><td>Declared final; no subclasses allowed.</td></tr>
+<tr><td>ACC_SUPER</td><td>0x0020</td><td>Treat superclass methods specially when invoked by the invokespecial instruction.</td></tr>
+<tr><td>ACC_INTERFACE</td><td>0x0200</td><td>Is an interface, not a class.</td></tr>
+<tr><td>ACC_ABSTRACT</td><td>0x0400</td><td>Declared abstract; must not be instantiated.</td></tr>
+<tr><td>ACC_SYNTHETIC</td><td>0x1000</td><td>Declared synthetic; not present in the source code.</td></tr>
+<tr><td>ACC_ANNOTATION</td><td>0x2000</td><td>Declared as an annotation type.</td></tr>
+<tr><td>ACC_ENUM</td><td>0x4000</td><td>Declared as an enum type.</td></tr>
+<tr><td>ACC_MODULE</td><td>0x8000</td><td>Is a module, not a class or interface.</td></tr>
+</tbody></table>
+<blockquote>
+<p>上面的value用的是16进制表示，转化成2进制可以发现这些值都是1个16位的二进制数在不同的位取1，其它15位都是0，这种方法可以非常方便的用二进制操作来判断对应的FLAG是否存在，比如我们的FLAGS值是：<code>0010 0010 0000 0000</code>，用<code>ACC_INTERFACE</code>的值<code>0000 0010 0000 0000</code>去跟FLAGS的值做与运算，返回不是0的值，就表示<code>ACC_INTERFACE</code>这个FLAG存在。不同的FLAG对应的值就是<a href="https://en.wikipedia.org/wiki/Mask_(computing)">位掩码(mask)</a>。</p>
+</blockquote>
+<h3 id="this-class">this_class</h3>
+<p>2个字节。指向常量池中一个条目，被指向的条目必须是一个<code>CONSTANT_Class_info</code>类型。</p>
+<h3 id="super-class">super_class</h3>
+<p>2个字节。通常是一个非0值指向常量池中一个条目，被指向的条目必须是一个<code>CONSTANT_Class_info</code>类型。只有<code>Object</code>这个类本身的<code>class</code>文件，这个值是0。</p>
+<h3 id="interfaces-count">interfaces_count</h3>
+<p>2个字节。表示当前<code>class</code>直接实现或者继承（对于接口class)的接口数量。</p>
+<h3 id="interfaces-interfaces-count">interfaces[interfaces_count]</h3>
+<p>2个字节为单位。每个值指向常量池内的一个条目，被指向的条目必须是一个<code>CONSTANT_Class_info</code>类型。</p>
+<h3 id="fields-count">fields_count</h3>
+<p>2个字节。表示<code>field</code>的个数，<code>field</code>包括类的字段和实例的字段。</p>
+<h3 id="fields-fields-count">fields[fields_count]</h3>
+<p><code>field</code>集合。单个<code>field</code>的基本结构如下：</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">field_info {
+    u2             access_flags;
+    u2             name_index;
+    u2             descriptor_index;
+    u2             attributes_count;
+    attribute_info attributes[attributes_count];
+}
+</span></code></pre>
+<ul>
+<li>access_flags:跟前面描述的<a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#access_flags">access_flags</a>区别就是<code>class</code>和<code>field</code>可以匹配的FLAG会有差别，比如<code>ACC_PROTECTED</code>(0x0004)在<code>class</code>中就没有。具体参考<a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-4.html#jvms-4.5">虚拟机规范</a>。</li>
+<li>name_index：指向常量池的条目，被指向的条目类型必须是<code>CONSTANT_Utf8_info</code>，其值必须是一个有效的非全限定名（关于名字中不能使用一些特殊字符，<a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-4.html#jvms-4.2.2">参考这里</a>）</li>
+<li>descriptor_index：指向常量池的条目，被指向的条目类型必须是<code>CONSTANT_Utf8_info</code>，其值是一个有效的<code>field descriptor</code>,内容表示<code>field</code>的type,分下列3种：
+<ul>
+<li>BaseType:对应8大原始类型，<code>B,C,D,F,I,J,S,Z</code>分别表示<code>byte,char,double,float,int,long,short,boolean</code>，除了<code>long，boolean</code>，其它的都是单词的首字母</li>
+<li>ObjectType:对象类型，字母<code>L</code>开头,<code>;</code>结尾，格式：<code>LClassName;</code>如<code>Ljava/lang/String;</code></li>
+<li>ArrayType:数组类型，<code>[</code>开头，格式<code>[ComponentType</code>，如<code>[Ljava/lang/String;</code></li>
+</ul>
+</li>
+<li>attributes_count:属性的数量</li>
+<li>attributes[attributes_count]：属性的具体内容。属性这个条目可能在类、方法、字段这些条目中出现，我们放到最后类的属性时再讲。</li>
+</ul>
+<h3 id="methods-count">methods_count</h3>
+<p>2个字节。表示<code>method</code>的数量。</p>
+<h3 id="methods-methods-count">methods[methods_count]</h3>
+<p><code>method</code>集合。单个<code>method</code>的基本结构如下：</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">method_info {
+    u2             access_flags;
+    u2             name_index;
+    u2             descriptor_index;
+    u2             attributes_count;
+    attribute_info attributes[attributes_count];
+}
+</span></code></pre>
+<ul>
+<li><code>method</code>和<a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#fields%5Bfields_count%5D">field</a>基本结构是一样的，只说不同点：<code>descriptor_index</code><strong>所指向的这个条目</strong>的结构不同，这里指向的是<code>method descriptor</code>，基本格式是<code>( {ParameterDescriptor} ) ReturnDescriptor</code>：
+<ul>
+<li>{ParameterDescriptor}：表示0个-多个参数，类型是上面说的<code>field type</code>的3种类型之一，参数之间不用任何符号分隔</li>
+<li>ReturnDescriptor：表示返回值，取值可以是<code>field type</code>的3种类型之一或者<code>V</code>(表示void)<br />
+举个例子：<code>Object m(int i, double d, Thread t) {...}</code>的<code>method descriptor</code>是：<code>(IDLjava/lang/Thread;)Ljava/lang/Object;</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="attributes-count">attributes_count</h3>
+<p>2个字节。表示该<code>class</code>的<code>attribute</code>数量。</p>
+<h3 id="attributes-attributes-count">attributes[attributes_count]</h3>
+<p><code>attribute</code>集合。单个<code>attributes</code>的基本结构如下：</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">attribute_info {
+    u2 attribute_name_index;
+    u4 attribute_length;
+    u1 info[attribute_length];
+}
+</span></code></pre>
+<p>跟<a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#constant_pool%5Bconstant_pool_count-1%5D">常量池</a>内的条目一样，前面两项<code>attribute_name_index</code>和<code>attribute_length</code>是所有<code>attribute</code>共有的，<code>info[attribute_length]</code>根据属性的不同使用不同的格式。<br />
+这里的<code>attribute_length</code>长度是指其后内容的字节数，跟内容的表示方式无关，有的属性长度值是固定的，有的是不固定的。<br />
+比如，<code>ConstantValue</code>，长度就是2：</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">ConstantValue_attribute {
+    u2 attribute_name_index;
+    u4 attribute_length;
+    u2 constantvalue_index;
+}
+</span></code></pre>
+<p>属性的内容非常多，也很复杂，展开的话超出了本文的范围，可以参考<a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-4.html#jvms-4.7">虚拟机规范</a>。</p>
+<h2 id="2-huan-yuan-yi-ge-classwen-jian-de-nei-rong">2 还原一个class文件的内容</h2>
+<p>根据上面的知识，我们按class文件的字节流顺序还原其内容。</p>
+<p>首先，我们构造一个类，让它实现1个空的接口，继承1个空的父类，定义2个属性，1个方法，使用1个空的注解。<br />
+类<code>Test</code></p>
+<pre style="background-color:#2b303b;">
+<code class="language-java" data-lang="java"><span style="color:#c0c5ce;">@</span><span style="color:#bf616a;">MyAnnotation
+</span><span style="color:#b48ead;">public class </span><span style="color:#ebcb8b;">Test </span><span style="color:#b48ead;">extends </span><span style="color:#a3be8c;">SuperTest </span><span style="color:#b48ead;">implements </span><span style="color:#a3be8c;">IA</span><span style="color:#eff1f5;">{
+    </span><span style="color:#b48ead;">private int </span><span style="color:#eff1f5;">a</span><span style="color:#c0c5ce;">=</span><span style="color:#d08770;">1</span><span style="color:#eff1f5;">;
+    </span><span style="color:#ebcb8b;">String </span><span style="color:#eff1f5;">s</span><span style="color:#c0c5ce;">=&quot;</span><span style="color:#a3be8c;">hello world</span><span style="color:#c0c5ce;">&quot;</span><span style="color:#eff1f5;">;
+    </span><span style="color:#b48ead;">public static void </span><span style="color:#8fa1b3;">sayHello</span><span style="color:#eff1f5;">(</span><span style="color:#ebcb8b;">String </span><span style="color:#bf616a;">aString</span><span style="color:#eff1f5;">,</span><span style="color:#ebcb8b;">Integer </span><span style="color:#bf616a;">anInt</span><span style="color:#eff1f5;">,</span><span style="color:#b48ead;">double </span><span style="color:#bf616a;">aDouble</span><span style="color:#eff1f5;">){
+        </span><span style="color:#ebcb8b;">System</span><span style="color:#eff1f5;">.out.</span><span style="color:#bf616a;">println</span><span style="color:#eff1f5;">(aString);
+    }
+}
+</span></code></pre>
+<p>空的接口<code>IA</code></p>
+<pre style="background-color:#2b303b;">
+<code class="language-java" data-lang="java"><span style="color:#b48ead;">public interface </span><span style="color:#ebcb8b;">IA </span><span style="color:#eff1f5;">{
+}
+</span></code></pre>
+<p>空的父类<code>SuperTest</code></p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">public class SuperTest {
+}
+</span></code></pre>
+<p>空的注解<code>MyAnnotation</code>,保留至<code>CLASS</code>级别</p>
+<pre style="background-color:#2b303b;">
+<code class="language-java" data-lang="java"><span style="color:#b48ead;">import </span><span style="color:#c0c5ce;">java.lang.annotation.</span><span style="color:#ebcb8b;">Retention</span><span style="color:#c0c5ce;">;
+</span><span style="color:#b48ead;">import </span><span style="color:#c0c5ce;">java.lang.annotation.</span><span style="color:#ebcb8b;">RetentionPolicy</span><span style="color:#c0c5ce;">;
+
+@</span><span style="color:#bf616a;">Retention</span><span style="color:#c0c5ce;">(</span><span style="color:#ebcb8b;">RetentionPolicy</span><span style="color:#c0c5ce;">.</span><span style="color:#d08770;">CLASS</span><span style="color:#c0c5ce;">)
+</span><span style="color:#b48ead;">public @interface </span><span style="color:#ebcb8b;">MyAnnotation </span><span style="color:#eff1f5;">{
+}
+</span></code></pre>
+<p>编译后，用16进制查看<code>Test.class</code>文件，内容如下：</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CA FE BA BE 00 00 00 37 00 2B 0A 00 08 00 1B 09 
+00 07 00 1C 08 00 1D 09 00 07 00 1E 09 00 1F 00 
+20 0A 00 21 00 22 07 00 23 07 00 24 07 00 25 01 
+00 01 61 01 00 01 49 01 00 01 73 01 00 12 4C 6A 
+61 76 61 2F 6C 61 6E 67 2F 53 74 72 69 6E 67 3B 
+01 00 06 3C 69 6E 69 74 3E 01 00 03 28 29 56 01 
+00 04 43 6F 64 65 01 00 0F 4C 69 6E 65 4E 75 6D 
+62 65 72 54 61 62 6C 65 01 00 12 4C 6F 63 61 6C 
+56 61 72 69 61 62 6C 65 54 61 62 6C 65 01 00 04 
+74 68 69 73 01 00 06 4C 54 65 73 74 3B 01 00 08 
+73 61 79 48 65 6C 6C 6F 01 00 15 28 4C 6A 61 76 
+61 2F 6C 61 6E 67 2F 53 74 72 69 6E 67 3B 29 56 
+01 00 0A 53 6F 75 72 63 65 46 69 6C 65 01 00 09 
+54 65 73 74 2E 6A 61 76 61 01 00 1B 52 75 6E 74 
+69 6D 65 49 6E 76 69 73 69 62 6C 65 41 6E 6E 6F 
+74 61 74 69 6F 6E 73 01 00 0E 4C 4D 79 41 6E 6E 
+6F 74 61 74 69 6F 6E 3B 0C 00 0E 00 0F 0C 00 0A 
+00 0B 01 00 0B 68 65 6C 6C 6F 20 77 6F 72 6C 64 
+0C 00 0C 00 0D 07 00 26 0C 00 27 00 28 07 00 29 
+0C 00 2A 00 16 01 00 04 54 65 73 74 01 00 09 53 
+75 70 65 72 54 65 73 74 01 00 02 49 41 01 00 10 
+6A 61 76 61 2F 6C 61 6E 67 2F 53 79 73 74 65 6D 
+01 00 03 6F 75 74 01 00 15 4C 6A 61 76 61 2F 69 
+6F 2F 50 72 69 6E 74 53 74 72 65 61 6D 3B 01 00 
+13 6A 61 76 61 2F 69 6F 2F 50 72 69 6E 74 53 74 
+72 65 61 6D 01 00 07 70 72 69 6E 74 6C 6E 00 21 
+00 07 00 08 00 01 00 09 00 02 00 00 00 0A 00 0B 
+00 00 00 00 00 0C 00 0D 00 00 00 02 00 01 00 0E 
+00 0F 00 01 00 10 00 00 00 42 00 02 00 01 00 00 
+00 10 2A B7 00 01 2A 04 B5 00 02 2A 12 03 B5 00 
+04 B1 00 00 00 02 00 11 00 00 00 0E 00 03 00 00 
+00 02 00 04 00 03 00 09 00 04 00 12 00 00 00 0C 
+00 01 00 00 00 10 00 13 00 14 00 00 00 01 00 15 
+00 16 00 01 00 10 00 00 00 40 00 02 00 02 00 00 
+00 08 B2 00 05 2B B6 00 06 B1 00 00 00 02 00 11 
+00 00 00 0A 00 02 00 00 00 06 00 07 00 07 00 12 
+00 00 00 16 00 02 00 00 00 08 00 13 00 14 00 00 
+00 00 00 08 00 0C 00 0D 00 01 00 02 00 17 00 00 
+00 02 00 18 00 19 00 00 00 06 00 01 00 1A 00 00
+</span></code></pre>
+<p>下面我们按相同的顺序分析这些字节码（建议把字节码复制出来，一边分析一边删除）：</p>
+<h3 id="magic-1">magic</h3>
+<p><code>CA FE BA BE</code>4个字节</p>
+<h3 id="minor-version-1">minor_version</h3>
+<p><code>00 00</code>，次版本号，0</p>
+<h3 id="major-version-1">major_version</h3>
+<p><code>00 37</code>,主版本号，3x16+7=55</p>
+<h3 id="constant-pool-count-1">constant_pool_count</h3>
+<p><code>00 2B</code>，常量池数量，2x16+11=43，表示常量池有42个具体的条目</p>
+<h3 id="constant-pool-constant-pool-count-1-1">constant_pool[constant_pool_count-1]</h3>
+<p>分别列出42个条目（手动分析前面的条目时还不知道后面条目的内容，这种情况都是回头补充的）：</p>
+<h4 id="1-constant-methodref">1 CONSTANT_Methodref</h4>
+<p><code>0A</code>开头，说明是<code>CONSTANT_Methodref</code>类型，根据结构：</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Methodref_info {
+    u1 tag;
+    u2 class_index;
+    u2 name_and_type_index;
+}
+</span></code></pre>
+<p>class_index:<code>00 08</code>，第8个条目，<code>SuperTest</code><br />
+name_and_type_index:<code>00 1B</code>,第27个条目,<code>&lt;init&gt;:()V</code></p>
+<h4 id="2-constant-fieldref">2 CONSTANT_Fieldref</h4>
+<p><code>09</code>开头，说明是<code>CONSTANT_Fieldref</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Fieldref_info {
+    u1 tag;
+    u2 class_index;
+    u2 name_and_type_index;
+}
+</span></code></pre>
+<p>class_index：<code>00 07</code>，第7个条目，<code>Test</code><br />
+name_and_type_index:<code>00 1C</code>,第28个条目，<code>a:I</code></p>
+<h4 id="3-constant-string">3 CONSTANT_String</h4>
+<p><code>08</code>开头，说明是<code>CONSTANT_String</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_String_info {
+    u1 tag;
+    u2 string_index;
+}
+</span></code></pre>
+<p>string_index：<code>00 1D</code>，第29个条目，<code>hello world</code></p>
+<h4 id="4-constant-fieldref">4 CONSTANT_Fieldref</h4>
+<p><code>09</code>开头，说明是<code>CONSTANT_Fieldref</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Fieldref_info {
+    u1 tag;
+    u2 class_index;
+    u2 name_and_type_index;
+}
+</span></code></pre>
+<p>class_index：<code>00 07</code>，第7个条目，<code>Test</code><br />
+name_and_type_index：<code>00 1E</code>，第30个条目，<code>s:Ljava/lang/String;</code></p>
+<h4 id="5-constant-fieldref">5 CONSTANT_Fieldref</h4>
+<p><code>09</code>开头，说明是<code>CONSTANT_Fieldref</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Fieldref_info {
+    u1 tag;
+    u2 class_index;
+    u2 name_and_type_index;
+}
+</span></code></pre>
+<p>class_index：<code>00 1F</code>，第31个条目,<code>java/lang/System</code><br />
+name_and_type_index：<code>00 20</code>第32个条目,<code>out:Ljava/io/PrintStream;</code></p>
+<h5 id="6-constant-methodref">6 CONSTANT_Methodref</h5>
+<p><code>0A</code>开头，说明是<code>CONSTANT_Methodref</code>类型，根据结构：</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Methodref_info {
+    u1 tag;
+    u2 class_index;
+    u2 name_and_type_index;
+}
+</span></code></pre>
+<p>class_index：<code>00 21</code>,第33个条目，<code>java/io/PrintStream</code><br />
+name_and_type_index：<code>00 22</code>，第34个条目，<code>println:(Ljava/lang/String;)V</code></p>
+<h4 id="7-constant-class">7 CONSTANT_Class</h4>
+<p><code>07</code>开头，说明是<code>CONSTANT_Class</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Class_info {
+    u1 tag;
+    u2 name_index;
+}
+</span></code></pre>
+<p>name_index:<code>00 23</code>,第35个条目，<code>Test</code></p>
+<h4 id="8-constant-class">8 CONSTANT_Class</h4>
+<p><code>07</code>开头，说明是<code>CONSTANT_Class</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Class_info {
+    u1 tag;
+    u2 name_index;
+}
+</span></code></pre>
+<p>name_index:<code>00 24</code>,第36个条目，<code>SuperTest</code></p>
+<h4 id="9-constant-class">9 CONSTANT_Class</h4>
+<p><code>07</code>开头，说明是<code>CONSTANT_Class</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Class_info {
+    u1 tag;
+    u2 name_index;
+}
+</span></code></pre>
+<p>name_index:<code>00 25</code>,第37个条目，<code>IA</code></p>
+<h4 id="10-constant-utf8">10 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 01</code>,长度1个字节<br />
+bytes[1]:0x61=6x16+1=97,查ascii表得知是：<code>a</code></p>
+<h4 id="11-constant-utf8">11 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 01</code>,长度1个字节<br />
+bytes[1]:0x49=4x16+9=73,查ascii表得知是：<code>I</code></p>
+<h4 id="12-constant-utf8">12 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 01</code>,长度1个字节<br />
+bytes[1]:0x73=7x16+3=115,查ascii表得知是：<code>s</code></p>
+<h4 id="13-constant-utf8">13 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 12</code>,长度0x12=1x16+2=18个字节<br />
+bytes[18]:<code>4C 6A 61 76 61 2F 6C 61 6E 67 2F 53 74 72 69 6E 67 3B</code>,对应的ascii值是<code>L j a v a / l a n g / S t r i n g ;</code></p>
+<h4 id="14-constant-utf8">14 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 06</code>,长度6个字节<br />
+bytes[6]:<code>3C 69 6E 69 74 3E</code>,对应的ascii值是<code>&lt; i n i t &gt;</code></p>
+<h4 id="15-constant-utf8">15 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 03</code>,长度3个字节<br />
+bytes[3]:<code>28 29 56</code>,对应的ascii值是<code>( ) V</code></p>
+<h4 id="16-constant-utf8">16 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 04</code>,长度4个字节<br />
+bytes[4]:<code>43 6F 64 65</code>,对应的ascii值是<code>C o d e</code></p>
+<h4 id="17-constant-utf8">17 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 0F</code>,长度15个字节<br />
+bytes[15]:<code>4C 69 6E 65 4E 75 6D 62 65 72 54 61 62 6C 65</code>,对应的ascii值是<code>L i n e N u m b e r T a b l e</code></p>
+<h4 id="18-constant-utf8">18 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 12</code>,长度0x12=1x16+2=18个字节<br />
+bytes[18]:<code>4C 6F 63 61 6C 56 61 72 69 61 62 6C 65 54 61 62 6C 65</code>,对应的ascii值是<code>L o c a l V a r i a b l e T a b l e</code></p>
+<h4 id="19-constant-utf8">19 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 04</code>,长度4个字节<br />
+bytes[4]:<code>74 68 69 73</code>,对应的ascii值是<code>t h i s</code></p>
+<h4 id="20-constant-utf8">20 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 06</code>,长度6个字节<br />
+bytes[6]:<code>4C 54 65 73 74 3B</code>,对应的ascii值是<code>L T e s t ;</code></p>
+<h4 id="21-constant-utf8">21 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 08</code>,长度8个字节<br />
+bytes[8]:<code>73 61 79 48 65 6C 6C 6F</code>,对应的ascii值是<code>s a y H e l l o</code></p>
+<h4 id="22-constant-utf8">22 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 15</code>,长度0x15=1*16+5=21个字节<br />
+bytes[21]:<code>28 4C 6A 61 76 61 2F 6C 61 6E 67 2F 53 74 72 69 6E 67 3B 29 56</code>,对应的ascii值是<code>( L j a v a / l a n g / S t r i n g ; ) V</code></p>
+<h4 id="23-constant-utf8">23 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 0A</code>,长度10个字节<br />
+bytes[10]:<code>53 6F 75 72 63 65 46 69 6C 65</code>,对应的ascii值是<code>S o u r c e F i l e</code></p>
+<h4 id="24-constant-utf8">24 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 09</code>,长度9个字节<br />
+bytes[9]:<code>54 65 73 74 2E 6A 61 76 61</code>,对应的ascii值是<code>T e s t . j a v a</code></p>
+<h4 id="25-constant-utf8">25 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 1B</code>,长度0x1B=1x16+11=27个字节<br />
+bytes[27]:<code>52 75 6E 74 69 6D 65 49 6E 76 69 73 69 62 6C 65 41 6E 6E 6F 74 61 74 69 6F 6E 73</code>,对应的ascii值是<code>R u n t i m e I n v i s i b l e A n n o t a t i o n s</code></p>
+<h4 id="26-constant-utf8">26 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 0E</code>,长度14个字节<br />
+bytes[14]:<code>4C 4D 79 41 6E 6E 6F 74 61 74 69 6F 6E 3B</code>,对应的ascii值是<code>L M y A n n o t a t i o n ;</code></p>
+<h4 id="27-constant-nameandtype">27 CONSTANT_NameAndType</h4>
+<p><code>0C</code>开头，说明是<code>CONSTANT_NameAndType</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_NameAndType_info {
+    u1 tag;
+    u2 name_index;
+    u2 descriptor_index;
+}
+</span></code></pre>
+<p>name_index:<code>00 0E</code>，第14个条目，<code>&lt;init&gt;</code><br />
+descriptor_index:<code>00 0F</code>,第15个条目，<code>()V</code></p>
+<h4 id="28-constant-nameandtype">28 CONSTANT_NameAndType</h4>
+<p><code>0C</code>开头，说明是<code>CONSTANT_NameAndType</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_NameAndType_info {
+    u1 tag;
+    u2 name_index;
+    u2 descriptor_index;
+}
+</span></code></pre>
+<p>name_index:<code>00 0A</code>，第10个条目，<code>a</code><br />
+descriptor_index:<code>00 0B</code>,第11个条目，<code>I</code></p>
+<h4 id="29-constant-utf8">29 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 0B</code>,长度11个字节<br />
+bytes[11]:<code>68 65 6C 6C 6F 20 77 6F 72 6C 64</code>,对应的ascii值是<code>h e l l o 空格 w o r l d</code></p>
+<h4 id="30-constant-nameandtype">30 CONSTANT_NameAndType</h4>
+<p><code>0C</code>开头，说明是<code>CONSTANT_NameAndType</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_NameAndType_info {
+    u1 tag;
+    u2 name_index;
+    u2 descriptor_index;
+}
+</span></code></pre>
+<p>name_index:<code>00 0C</code>，第12个条目，<code>s</code><br />
+descriptor_index:<code>00 0D</code>,第13个条目，<code>Ljava/lang/String;</code></p>
+<h4 id="31-constant-class">31 CONSTANT_Class</h4>
+<p><code>07</code>开头，说明是<code>CONSTANT_Class</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Class_info {
+    u1 tag;
+    u2 name_index;
+}
+</span></code></pre>
+<p>name_index:<code>00 26</code>,第0x26=2x16+6=38个条目，<code>java/lang/System</code></p>
+<h4 id="32-constant-nameandtype">32 CONSTANT_NameAndType</h4>
+<p><code>0C</code>开头，说明是<code>CONSTANT_NameAndType</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_NameAndType_info {
+    u1 tag;
+    u2 name_index;
+    u2 descriptor_index;
+}
+</span></code></pre>
+<p>name_index:<code>00 27</code>，第0x27=2x16+7=39个条目，<code>out</code><br />
+descriptor_index:<code>00 28</code>,第0x28=2x16+8=40个条目，<code>Ljava/io/PrintStream;</code></p>
+<h4 id="33-constant-class">33 CONSTANT_Class</h4>
+<p><code>07</code>开头，说明是<code>CONSTANT_Class</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Class_info {
+    u1 tag;
+    u2 name_index;
+}
+</span></code></pre>
+<p>name_index:<code>00 29</code>,第0x29=2x16+9=41个条目，<code>java/io/PrintStream</code></p>
+<h4 id="34-constant-nameandtype">34 CONSTANT_NameAndType</h4>
+<p><code>0C</code>开头，说明是<code>CONSTANT_NameAndType</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_NameAndType_info {
+    u1 tag;
+    u2 name_index;
+    u2 descriptor_index;
+}
+</span></code></pre>
+<p>name_index:<code>00 2A</code>，第0x2A=2x16+10=42个条目，<code>println</code><br />
+descriptor_index:<code>00 16</code>,第0x16=1x16+6=22个条目，<code>(Ljava/lang/String;)V</code></p>
+<h4 id="35-constant-utf8">35 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 04</code>,长度4个字节<br />
+bytes[4]:<code>54 65 73 74</code>,对应的ascii值是<code>T e s t</code></p>
+<h4 id="36-constant-utf8">36 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 09</code>,长度9个字节<br />
+bytes[9]:<code>53 75 70 65 72 54 65 73 74</code>,对应的ascii值是<code>S u p e r T e s t</code></p>
+<h4 id="37-constant-utf8">37 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 02</code>,长度2个字节<br />
+bytes[2]:<code>49 41</code>,对应的ascii值是<code>IA</code></p>
+<h4 id="38-constant-utf8">38 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 10</code>,长度0x10=1x16+0=16个字节<br />
+bytes[16]:<code>6A 61 76 61 2F 6C 61 6E 67 2F 53 79 73 74 65 6D</code>,对应的ascii值是<code>j a v a / l a n g / S y s t e m</code></p>
+<h4 id="39-constant-utf8">39 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 03</code>,长度3个字节<br />
+bytes[3]:<code>6F 75 74</code>,对应的ascii值是<code>o u t</code></p>
+<h4 id="40-constant-utf8">40 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 15</code>,长度0x15=1x16+5=21个字节<br />
+bytes[21]:<code>4C 6A 61 76 61 2F 69 6F 2F 50 72 69 6E 74 53 74 72 65 61 6D 3B</code>,对应的ascii值是<code>L j a v a / i o / P r i n t S t r e a m ;</code></p>
+<h4 id="41-constant-utf8">41 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 13</code>,长度0x13=1x16+3=19个字节<br />
+bytes[19]:<code>6A 61 76 61 2F 69 6F 2F 50 72 69 6E 74 53 74 72 65 61 6D </code>,对应的ascii值是<code>j a v a / i o / P r i n t S t r e a m</code></p>
+<h4 id="42-constant-utf8">42 CONSTANT_Utf8</h4>
+<p><code>01</code>开头，说明是<code>CONSTANT_Utf8</code>类型，根据结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+</span></code></pre>
+<p>length:<code>00 07</code>,长度7个字节<br />
+bytes[7]:<code>70 72 69 6E 74 6C 6E</code>,对应的ascii值是<code>p r i n t l n</code></p>
+<h3 id="access-flags-1">access_flags</h3>
+<p><code>00 21</code>,表示<code>0020+0001</code>，所以是<code>ACC_SUPER</code>,<code>ACC_PUBLIC</code>,这里的<code>ACC_SUPER</code>是为了兼容性存在的，java 8以后每个<code>class</code>文件都有，现在已经没有实际意义。</p>
+<h3 id="this-class-1">this_class</h3>
+<p><code>00 07</code>，指向常量池第7个条目，即<code>Test</code></p>
+<h3 id="super-class-1">super_class</h3>
+<p><code>00 08</code>，指向常量池第8个条目，即<code>SuperTest</code></p>
+<h3 id="interfaces-count-1">interfaces_count</h3>
+<p><code>00 01</code>，接口数量，1个</p>
+<h3 id="interfaces">interfaces[]</h3>
+<p>指向常量池的条目，因为这里只有1个接口，所以取2个字节，<code>00 09</code>，第9个条目，即<code>IA</code></p>
+<h3 id="fields-count-1">fields_count</h3>
+<p><code>00 02</code>，<code>field</code>数量，2条。</p>
+<h3 id="fields-fields-count-1">fields[fields_count]</h3>
+<p>因为有2个<code>field</code>,根据下面的基本结构分析：</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">field_info {
+    u2             access_flags;
+    u2             name_index;
+    u2             descriptor_index;
+    u2             attributes_count;
+    attribute_info ;
+}
+</span></code></pre><h4 id="di-1ge-field">第1个field</h4>
+<ul>
+<li>access_flags:<code>00 02</code>,<code>ACC_PRIVATE</code></li>
+<li>name_index:<code>00 0A</code>,指向第10个条目，即<code>a</code></li>
+<li>descriptor_index:<code>00 0B</code>,指向第11个条目，即<code>I</code></li>
+<li>attributes_count：<code>00 00</code>，0个</li>
+<li>attributes[attributes_count]，因为是0个，所以这里没有。</li>
+</ul>
+<h4 id="di-2ge-field">第2个field</h4>
+<ul>
+<li>access_flags:<code>00 00</code>,没有FLAG</li>
+<li>name_index:<code>00 0C</code>,指向第12个条目，即<code>s</code></li>
+<li>descriptor_index:<code>00 0D</code>,指向第13个条目，即<code>Ljava/lang/String;</code></li>
+<li>attributes_count：<code>00 00</code>，0个</li>
+<li>attributes[attributes_count]，因为是0个，所以这里没有。</li>
+</ul>
+<h3 id="methods-count-1">methods_count</h3>
+<p><code>00 02</code>，方法数量，2个。</p>
+<h3 id="methods-methods-count-1">methods[methods_count]</h3>
+<p>因为有2个<code>method</code>,根据下面的基本结构分析：</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">method_info {
+    u2             access_flags;
+    u2             name_index;
+    u2             descriptor_index;
+    u2             attributes_count;
+    attribute_info attributes[attributes_count];
+}
+</span></code></pre><h4 id="di-yi-ge-fang-fa">第一个方法</h4>
+<ul>
+<li>
+<p>access_flags:<code>00 01</code>,即<code>ACC_PUBLIC</code></p>
+</li>
+<li>
+<p>name_index：<code>00 0E</code>，指向第13个条目，即<code>Ljava/lang/String;</code></p>
+</li>
+<li>
+<p>descriptor_index:<code>00 0F</code>,第向第14个条目，即<code>&lt;init&gt;</code></p>
+</li>
+<li>
+<p>attributes_count：<code>00 01</code>，属性数量，1条</p>
+</li>
+<li>
+<p>attributes[1]：属性内容，根据下面的结构展开：</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">attribute_info {
+</span><span style="color:#c0c5ce;">    u2 attribute_name_index;
+</span><span style="color:#c0c5ce;">    u4 attribute_length;
+</span><span style="color:#c0c5ce;">    u1 info[attribute_length];
+</span><span style="color:#c0c5ce;">}
+</span></code></pre>
+<p>attribute_name_index：<code>00 10</code>，第16个条目，即<code>Code</code>，说明我们的属性是<code>Code</code><br />
+attribute_length：<code>00 00 00 42</code>，长度0x42=4x16+2=66个字节
+info[66]：根据<code>Code</code>属性的结构再展开：</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">Code_attribute {
+</span><span style="color:#c0c5ce;">    u2 attribute_name_index;
+</span><span style="color:#c0c5ce;">    u4 attribute_length;
+</span><span style="color:#c0c5ce;">    u2 max_stack;
+</span><span style="color:#c0c5ce;">    u2 max_locals;
+</span><span style="color:#c0c5ce;">    u4 code_length;
+</span><span style="color:#c0c5ce;">    u1 code[code_length];
+</span><span style="color:#c0c5ce;">    u2 exception_table_length;
+</span><span style="color:#c0c5ce;">    {   u2 start_pc;
+</span><span style="color:#c0c5ce;">        u2 end_pc;
+</span><span style="color:#c0c5ce;">        u2 handler_pc;
+</span><span style="color:#c0c5ce;">        u2 catch_type;
+</span><span style="color:#c0c5ce;">    } exception_table[exception_table_length];
+</span><span style="color:#c0c5ce;">    u2 attributes_count;
+</span><span style="color:#c0c5ce;">    attribute_info attributes[attributes_count];
+</span><span style="color:#c0c5ce;">}
+</span></code></pre>
+<p>max_stack：<code>00 02</code>，栈的最大值，2<br />
+max_locals：<code>00 01</code>，本地变量的最大值，1<br />
+code_length：<code>00 00 00 10</code>，code长度，16字节<br />
+code[16]：<code>2A B7 00 01 2A 04 B5 00 02 2A 12 03 B5 00 04 B1</code>，这些对应的是虚拟机指令，查规范可得分别是<code>aload_0 invokespecial indexbyte1=0 indexbyte2=1 aload_0 iconst_1 putfield indexbyte1=0 indexbyte2=2 aload_0 ldc index=3 putfield indexbyte1=0 indexbyte2=4 return</code>,其中<code>indexbyte</code>是用来给它前面的指令加载常量池用的地址，地址的值是<code>indexbyte1&lt;&lt;8 | indexbyte2</code>，就是两个字节表示的数，上面的指令整理后如下：</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">aload_0
+</span><span style="color:#c0c5ce;">invokespecial #1 SuperTest.&lt;init&gt;()V
+</span><span style="color:#c0c5ce;">aload_0
+</span><span style="color:#c0c5ce;">iconst_1 
+</span><span style="color:#c0c5ce;">putfield #2 Test.a:I
+</span><span style="color:#c0c5ce;">aload_0
+</span><span style="color:#c0c5ce;">ldc #3 hello world
+</span><span style="color:#c0c5ce;">putfield #4 Test.s:Ljava/lang/String;
+</span><span style="color:#c0c5ce;">return
+</span></code></pre>
+<p>exception_table_length:<code>00 00</code>，长度0。<br />
+exception_table[exception_table_length]:因为上面的长度是0，所以这里是空。<br />
+attributes_count:<code>00 02</code>,属性数量，2个。
+attributes[2]：2个属性,分别展开：</p>
+<ul>
+<li>第一个属性：
+<ul>
+<li>
+<p>attribute_name_index：<code>00 11</code>，第0x11=1x16+1=17个条目，即<code>LineNumberTable</code>，其结构如下：</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">LineNumberTable_attribute {
+</span><span style="color:#c0c5ce;">u2 attribute_name_index;
+</span><span style="color:#c0c5ce;">u4 attribute_length;
+</span><span style="color:#c0c5ce;">u2 line_number_table_length;
+</span><span style="color:#c0c5ce;">{   u2 start_pc;
+</span><span style="color:#c0c5ce;">    u2 line_number;	
+</span><span style="color:#c0c5ce;">} line_number_table[line_number_table_length];
+</span><span style="color:#c0c5ce;">}
+
+</span></code></pre></li>
+<li>
+<p>attribute_length:<code>00 00 00 0E</code>,长度，14个字节</p>
+</li>
+<li>
+<p>line_number_table_length：<code>00 03</code>表格长度，3</p>
+</li>
+<li>
+<p>line_number_table[3]:属性长度14个字节，减去上面表示表格长度的2个字节，正好12字节，<code>00 00 00 02 00 04 00 03 00 09 00 04</code>分别对应当前的[0,2],[4,3],[9,4]</p>
+</li>
+</ul>
+</li>
+<li>第二个属性：
+<ul>
+<li>attribute_name_index：<code>00 12</code>，第0x12=1x16+2=18个条目，即<code>LocalVariableTable</code>,其结构如下:<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">LocalVariableTable_attribute {
+</span><span style="color:#c0c5ce;">    u2 attribute_name_index;
+</span><span style="color:#c0c5ce;">    u4 attribute_length;
+</span><span style="color:#c0c5ce;">    u2 local_variable_table_length;
+</span><span style="color:#c0c5ce;">    {   u2 start_pc;
+</span><span style="color:#c0c5ce;">        u2 length;
+</span><span style="color:#c0c5ce;">        u2 name_index;
+</span><span style="color:#c0c5ce;">        u2 descriptor_index;
+</span><span style="color:#c0c5ce;">        u2 index;
+</span><span style="color:#c0c5ce;">    } local_variable_table[local_variable_table_length];
+</span><span style="color:#c0c5ce;">}
+</span></code></pre></li>
+<li>attribute_length:<code>00 00 00 0C</code>,属性长度，12个字节</li>
+<li>local_variable_table_length:<code>00 01</code>，表格长度，1</li>
+<li>local_variable_table[1]:属性长度12个字节，减去上面表示表格长度的2个字节，正好10字节，<code>00 00 00 10 00 13 00 14 00 00</code>，对应里面的5个属性:</li>
+<li>start_pc:<code>00 00</code>,0</li>
+<li>length:<code>00 10</code>,16</li>
+<li>name_index:<code>00 13</code>,第19个条目，<code>this</code></li>
+<li>descriptor_index:<code>00 14</code>,第20个条目，<code>LTest</code></li>
+<li>index:<code>00 00</code>,0</li>
+</ul>
+</li>
+</ul>
+<p>回头看方法的<code>attribute</code>里的<code>info</code>是66个字节，把上面分析的内容加起来正好也是66字节。</p>
+</li>
+</ul>
+<h4 id="di-er-ge-fang-fa">第二个方法</h4>
+<p>再看一遍方法的结构:</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">method_info {
+    u2             access_flags;
+    u2             name_index;
+    u2             descriptor_index;
+    u2             attributes_count;
+    attribute_info attributes[attributes_count];
+}
+</span></code></pre>
+<ul>
+<li>access_flags:<code>00 01</code>,即<code>ACC_PUBLIC</code></li>
+<li>name_index：<code>00 15</code>，指向第21个条目，即<code>sayHello</code></li>
+<li>descriptor_index:<code>00 16</code>,第向第22个条目，即<code>(Ljava/lang/String;)V</code></li>
+<li>attributes_count：<code>00 01</code>，属性数量，1条</li>
+<li>attributes[1]：属性内容，先看名称<code>00 10</code>，指向第16个条目，<code>Code</code>，有如下结构：<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">Code_attribute {
+</span><span style="color:#c0c5ce;">    u2 attribute_name_index;
+</span><span style="color:#c0c5ce;">    u4 attribute_length;
+</span><span style="color:#c0c5ce;">    u2 max_stack;
+</span><span style="color:#c0c5ce;">    u2 max_locals;
+</span><span style="color:#c0c5ce;">    u4 code_length;
+</span><span style="color:#c0c5ce;">    u1 code[code_length];
+</span><span style="color:#c0c5ce;">    u2 exception_table_length;
+</span><span style="color:#c0c5ce;">    {   u2 start_pc;
+</span><span style="color:#c0c5ce;">        u2 end_pc;
+</span><span style="color:#c0c5ce;">        u2 handler_pc;
+</span><span style="color:#c0c5ce;">        u2 catch_type;
+</span><span style="color:#c0c5ce;">    } exception_table[exception_table_length];
+</span><span style="color:#c0c5ce;">    u2 attributes_count;
+</span><span style="color:#c0c5ce;">    attribute_info attributes[attributes_count];
+</span><span style="color:#c0c5ce;">}
+</span></code></pre>
+<ul>
+<li>
+<p>attribute_length:<code>00 00 00 40</code>,属性长度64字节</p>
+</li>
+<li>
+<p>max_stack：<code>00 02</code>，2</p>
+</li>
+<li>
+<p>max_locals：<code>00 02</code>，2</p>
+</li>
+<li>
+<p>code_length：<code>00 00 00 08</code>，长度8</p>
+</li>
+<li>
+<p>code[8]:<code>B2 00 05 2B B6 00 06 B1</code>,分别对应<code>getstatic indexbyte1 indexbyte2 aload_1 invokevirtual indexbyte1 indexbyte2 return</code>,整理得：</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">getstatic #5 java/lang/System.out:Ljava/io/PrintStream;
+</span><span style="color:#c0c5ce;">aload_1
+</span><span style="color:#c0c5ce;">invokevirtual #6 java/io/PrintStream.println:(Ljava/lang/String;)V
+</span><span style="color:#c0c5ce;">return
+</span></code></pre></li>
+<li>
+<p>exception_table_length:<code>00 00</code></p>
+</li>
+<li>
+<p>exception_table[0]:空</p>
+</li>
+<li>
+<p>attributes_count：<code>00 02</code>,属性数量2个<br />
+第一个属性：</p>
+<ul>
+<li>attribute_name_index：<code>00 11</code>，第17个条目，即<code>LineNumberTable</code>,有如下结构：</li>
+</ul>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">LineNumberTable_attribute {
+</span><span style="color:#c0c5ce;">    u2 attribute_name_index;
+</span><span style="color:#c0c5ce;">    u4 attribute_length;
+</span><span style="color:#c0c5ce;">    u2 line_number_table_length;
+</span><span style="color:#c0c5ce;">    {   u2 start_pc;
+</span><span style="color:#c0c5ce;">        u2 line_number;	
+</span><span style="color:#c0c5ce;">    } line_number_table[line_number_table_length];
+</span><span style="color:#c0c5ce;">}
+</span></code></pre>
+<ul>
+<li>attribute_length:<code>00 00 00 0A</code>,属性长度10</li>
+<li>line_number_table_length：<code>00 02</code>，表格长度，2</li>
+<li>line_number_table[2]:<code>00 00 00 06 00 07 00 07 </code>,对应[0,6],[7,7]
+第二个属性：</li>
+<li>attribute_name_index：<code>00 12</code>，第18个条目，即<code>LocalVariabletable</code>,有如下结构：</li>
+</ul>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">LocalVariableTable_attribute {
+</span><span style="color:#c0c5ce;">    u2 attribute_name_index;
+</span><span style="color:#c0c5ce;">    u4 attribute_length;
+</span><span style="color:#c0c5ce;">    u2 local_variable_table_length;
+</span><span style="color:#c0c5ce;">    {   u2 start_pc;
+</span><span style="color:#c0c5ce;">        u2 length;
+</span><span style="color:#c0c5ce;">        u2 name_index;
+</span><span style="color:#c0c5ce;">        u2 descriptor_index;
+</span><span style="color:#c0c5ce;">        u2 index;
+</span><span style="color:#c0c5ce;">    } local_variable_table[local_variable_table_length];
+</span><span style="color:#c0c5ce;">} 
+</span></code></pre>
+<ul>
+<li>attribute_length:<code>00 00 00 16</code>,属性长度0x16=1x16+6=22字节</li>
+<li>local_variable_table_length：<code>00 02</code>表格长度，2</li>
+<li>local_variable_table[2]:表格长度2，内容如下：<br />
+{
+start_pc:<code>00 00</code>,0
+length：<code>00 08</code>，8
+name_index：<code>00 13</code>,第19个条目，<code>this</code>
+descriptor_index：<code>00 14</code>，第20个条目，<code>LTest</code>
+index:<code>00 00</code>,0
+},
+{
+start_pc:<code>00 00</code>,0
+length：<code>00 08</code>，8
+name_index：<code>00 0C</code>,第12个条目，<code>s</code>
+descriptor_index：<code>00 0D</code>，第13个条目，<code>Ljava/lang/String;</code>
+index:<code>00 01</code>,1
+}<br />
+这里的<code>start_pc</code>和<code>length</code>指的是前面<code>Code_attribute</code>内的<code>code[code_length]</code>的索引，表明当前这个<code>local varialble</code>在第<code>start_pc</code>（包含）个索引对应的操作到第<code>start_pc+length</code>（不包含）个索引对应的操作期间一直有效。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="attributes-count-1">attributes_count</h3>
+<p><code>00 02</code>,<code>class</code>的属性数量，2个</p>
+<h3 id="attributes-attributes-count-1">attributes[attributes_count]</h3>
+<p>2个属性的内容：</p>
+<ul>
+<li>
+<p>第一个属性</p>
+<ul>
+<li>
+<p>attribute_name_index:<code>00 17</code>,第23个条目，<code>SourceFile</code>,有如下结构：</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">SourceFile_attribute {
+</span><span style="color:#c0c5ce;">    u2 attribute_name_index;
+</span><span style="color:#c0c5ce;">    u4 attribute_length;
+</span><span style="color:#c0c5ce;">    u2 sourcefile_index;
+</span><span style="color:#c0c5ce;">}
+</span></code></pre></li>
+<li>
+<p>attribute_length：<code>00 00 00 02</code>，属性长度，2，这是固定的，因为后面的内容固定为2字节</p>
+</li>
+<li>
+<p>sourcefile_index:<code>00 18</code>,源文件，第24个条目，<code>Test.java</code></p>
+</li>
+</ul>
+</li>
+<li>
+<p>第二个属性</p>
+<ul>
+<li>attribute_name_index:<code>00 19</code>,第25个条目，<code>RuntimeInvisibleAnnotations</code>,有如下结构:</li>
+</ul>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">RuntimeInvisibleAnnotations_attribute {
+</span><span style="color:#c0c5ce;">    u2         attribute_name_index;
+</span><span style="color:#c0c5ce;">    u4         attribute_length;
+</span><span style="color:#c0c5ce;">    u2         num_annotations;
+</span><span style="color:#c0c5ce;">    annotation annotations[num_annotations];
+</span><span style="color:#c0c5ce;">}
+</span></code></pre>
+<ul>
+<li>attribute_length:属性长度，<code>00 00 00 06</code>，6个字节</li>
+<li>num_annotations：<code>00 01</code>，注解编号，1</li>
+<li>annotations[1]:注解内容，annotation有如下结构：<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">annotation {
+</span><span style="color:#c0c5ce;">    u2 type_index;
+</span><span style="color:#c0c5ce;">    u2 num_element_value_pairs;
+</span><span style="color:#c0c5ce;">    {   u2            element_name_index;
+</span><span style="color:#c0c5ce;">        element_value value;
+</span><span style="color:#c0c5ce;">    } element_value_pairs[num_element_value_pairs];
+</span><span style="color:#c0c5ce;">}
+</span></code></pre>
+<ul>
+<li>type_index：<code>00 1A</code>,注解类型，第26个条目，<code>LMyAnnotation</code></li>
+<li>num_element_value_pairs：<code>00 00</code>，注解内的value及其赋值的数量,0</li>
+<li>element_value_pairs[0]：空</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>到这里文件内容就还原结束了，跟<code>javap -v Test.class</code>的内容可以进行对比，基本一致。</p>
+<h2 id="3-jvmcong-jia-zai-classwen-jian-dao-classchu-shi-hua-de-guo-cheng">3 JVM从加载class文件到Class初始化的过程</h2>
+<p>按照虚拟机规范的分类，这个过程可以分成3个步骤，但是这3个步骤也不是简单的顺序执行，而是根据需要交织在一起。<br />
+先介绍一下这3个步骤，再用一个例子说明。<br />
+<em>注：class文件可以表示类或接口，jdk9以后还可以表示模块，因为模块用的不多，下文没有特殊说明的地方都默认表示类或接口。</em></p>
+<h3 id="3-1-chuang-jian-he-zai-ru-creation-and-loading">3.1 创建和载入(Creation and Loading)</h3>
+<p>准确的说应该是&quot;载入和创建&quot;(为了跟类&quot;加载&quot;区分出来，这里loading译成载入而不是加载）。这个过程用<code>classlader</code>把<code>class</code>文件（或者其它表示形式如二进制数据流等）载入到虚拟机中转化成<code>方法区</code>内部的表现形式（具体跟虚拟机实现有关），从而完成对应Class的创建。在载入时，虚拟机会执行格式检查(<a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-4.html#jvms-4.8">format checking</a>)，主要是检查class文件整体格式是否符合要求，常量池中的数据格式等，这只算是“表面”上的检查，因为还没有执行链接中的解析等操作，就算常量池中的引用类型对应的Class并不存在，在这个阶段也查不出来。在后面的链接阶段会执行更详细的检查。</p>
+<p>在虚拟机的角度，只有两种<code>classloader</code>:</p>
+<ul>
+<li><code>Bootstrap Class Loader</code>,虚拟机内部实现的类加载器</li>
+<li><code>User-defined Class Loader</code>,除了Bootstrap之外的其它类加载器，都是<code>ClassLoader</code>这个抽象类的子类</li>
+</ul>
+<p>在用类加载器<code>L</code>加载名字为<code>N</code>的Class（记为<code>C</code>）时，两种类加载器的表现有点区别：<br />
+第一步：两种类加载器都会首先判断当前类加载器<code>L</code>是否已经被记录为名字为<code>N</code>的类的初始化加载器（initiating loader)，如果是，说明想要的Class已经被加载过，直接返回结果<code>C</code><br />
+第二步：如果第一步没有找到对应的记录，那么：</p>
+<ul>
+<li><code>Bootstrap Class Loader</code>：JVM把名字<code>N</code>这个参数传递给当前加载器的一个方法，根据<code>N</code>去搜索<code>C</code>的一个&quot;宣称合理但未经验证的表现形式&quot;（purported representation)，通常是一个文件，比如文件名是<code>N</code>，找到后JVM会尝试用当前加载器从这个文件生成跟<code>N</code>对应的<code>C</code>。成功后，记<code>L</code>为<code>C</code>的<code>initiating loader</code><sup>注</sup>和<code>defining loader</code><sup>注</sup>。这里会有两种<strong>意外</strong>情况：
+<ul>
+<li>&quot;宣称合理但未经验证的表现形式&quot;找不到：抛出<code>ClassNotFoundException</code>异常的一个实例。</li>
+<li>&quot;宣称合理但未经验证的表现形式&quot;验证失败：有几种可能：文件结构不符合虚拟机规范、版本号不被当前虚拟机支持、文件所表示的类并不是<code>N</code>所表示的类（比如<code>class</code>文件内的<code>this_class</code>名字不是<code>N</code>），这些情况都会抛出对应的异常。</li>
+</ul>
+</li>
+<li><code>User-defined Class Loader</code>：它跟<code>bootstrap</code>的区别在于，这个加载器可以把创建操作委托给自己的父加载器（只是委托层次上的父加载器，不是实际的父子类继承关系），当然也可以自己直接创建，如果直接创建，跟上面<code>bootstrap</code>的方式类拟。
+&gt;<span id="defandinit">注</span>：<br />
+initiating loader:初始化类加载器，可以有多个，如果有委托层次L-&gt;LP，且L发起初始化，但委托给LP，LP是defining lader,完成创建，那么L和LP都是initiating loader<br />
+defining loader:从文件生成class的这个加载器，也就是实际完成创建的加载器，defining loader必定是initiating loader</li>
+</ul>
+<p>关于数组：<br />
+数组类型本身是由虚拟机直接创建的，但它包含的元素类型的加载仍然是用的上面的方式。如果元素类型是引用类型，那么数组<code>C</code>的<code>defining loader</code>记录就是其元素类型的<code>defining loader</code>，如果元素是原始类型，那么数组<code>C</code>的<code>defining loader</code>记录就是<code>bootstrap class loader</code>，当然也同时包含<code>initiating loader</code>的记录。</p>
+<p><strong>载入约束（loading constraints)</strong><br />
+如果<code>C</code>(&lt;N1,L1&gt;确定，表示L1是<code>C</code>的<code>defining loader</code>）里面的字段（字段类型）或者方法（参数类型，返回值类型）引用了其它Class比如<code>D</code>(&lt;N2,L2&gt;),那么相应的字段或者方法的<code>descriptor</code>所涉及到的任意类型，由<code>L1,L2</code>作为初始类加载器加载的时候，其表示的结果应该是同一个类，即N<sup>L1</sup>=N<sup>L2</sup>。比如，<code>C</code>里面的1个方法的<code>descriptor</code>是<code>（LE,LF)LG</code>，那么<code>E,F,G</code>这3个名字分别用<code>L1,L2</code>加载的时候，表示的类应该是相同的。<br />
+载入约束会在记录类的初始加载器的时候进行检查，后面提到的链接阶段也会触发检查。</p>
+<h3 id="3-2-lian-jie-linking">3.2 链接（Linking)</h3>
+<p>链接过程可以细分为3个步骤：验证、准备、解析。虚拟机规范没有明确要求链接的操作什么时候执行，只要满足下面几个要求：</p>
+<ul>
+<li>class在被链接前必须完全被载入</li>
+<li>class在初始化之前必须完成验证、准备这两个步骤</li>
+<li>如果链接过程会报错，有class跟这个错误有关，那么异常抛出的时机必须是：应用程序执行一些操作，直接或间接的需要链接这个class的时候。这可以让异常的抛出对调用方来说更加的明显。</li>
+<li>对一个动态计算的常量的解析操作，会延迟执行，直到满足下面两种情况之一：
+<ul>
+<li><code>ldc,ldc_w,ldc2_w</code>这3个指令引用这个常量，并且执行</li>
+<li><code>bootstrap</code>加载器的方法把这个常量作为一个静态参数调用</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-2-1-yan-zheng-verification">3.2.1 验证(Verification)</h4>
+<p>这个阶段主要是检查<code>Code_Attribute</code>的格式，因为这个属性内包含了类中的所有方法执行的代码，都是用虚拟机指令表示，属性本身非常复杂，检查的内容也很多，具体看虚拟机规范<a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-4.html#jvms-4.9">4.9,4.10</a></p>
+<h4 id="3-2-2-zhun-bei-preparation">3.2.2 准备(Preparation)</h4>
+<p>这个阶段创建class的静态字段并初始化为系统的默认值，这个值是虚拟机指定的，比如<code>int</code>类型是0，并不是代码中的初始化赋值。在这个阶段会执行上面提到的<strong>载入约束</strong>检查。</p>
+<p>准备阶段可以在创建(creation)和初始化(initialization)之间的任意时间节点出现。</p>
+<h4 id="3-2-3-jie-xi-resolution">3.2.3 解析(Resolution)</h4>
+<p>这个阶段就是把常量池里面那些引用符号解析成具体的Class，在解析这些引用符号比如方法时，其中引用的类型会先完成解析。</p>
+<p>这里的解析也包括父类和实现的接口等，这些被解析的Class重复上面的流程，先被<code>载入、创建</code>，然后<code>验证、准备、解析</code>。</p>
+<h3 id="3-3-chu-shi-hua-initialization">3.3 初始化（Initialization)</h3>
+<p>class的初始化就是执行其<code>&lt;clinit&gt;</code>方法，这个方法是被虚拟机直接执行的，这一步结束就代表类已经初始化，类中的静态字段和静态方法等已经可用。<br />
+<span id="jvminit">只有以下情况之一才会触发初始化</span>：</p>
+<ol>
+<li>执行虚拟机的以下四个指令之一：<code>new, getstatic, putstatic,invokestatic</code>，new是初始化类的实例，显然需要先初始化类本身，后面3个就是对类的静态字段和方法的调用，也需要类本身。</li>
+<li>以下四种<code>method handle</code>：<code>kind 2 (REF_getStatic), 4 (REF_putStatic), 6 (REF_invokeStatic), or 8 (REF_newInvokeSpecial)</code>，对其中任何一个的解析结果是一个<code>java.lang.invoke.MethodHandle</code>类型的实例，那么在第一次调用这个实例时会触发初始化。这条跟上面那条本质上是一样的，只不过把指令包装在<code>Methodhandle</code>内。</li>
+<li>对一些反射方法的调用，比如<code>java.lang.reflect</code>包内的一些方法。</li>
+<li>对<code>C</code>的子类进行初始化之前，要先初始化<code>C</code></li>
+<li>如果<code>C</code>是一个接口，里面实现了一个<code>non-static,non-abstract</code>的方法(也就是提供了一个<code>default</code>方法时)，假设<code>D</code><strong>直接或间接</strong>实现了<code>C</code>,那么对<code>D</code>的初始化会触发<code>C</code>的初始化，这跟子类初始化触发父类差不多。</li>
+<li>作为虚拟机的启动类，比如<code>java MyApp</code>，这里的<code>MyApp</code>这个类会要求初始化。</li>
+</ol>
+<p>上面的4，5两条，规定了一个类在初始化时，它的父类和提供了<code>default</code>方法的接口也会被初始化，那么为什么普通的接口就算引用了它的静态字段也不会被初始化呢？<br />
+先看一下<a href="https://docs.oracle.com/javase/specs/jls/se11/html/jls-12.html#jls-12.4.1">JLS12.4.1</a>从java语言使用层面的说明，一个class，记为T，只有下面4种情况之一会触发T的初始化：</p>
+<ol>
+<li>T是类，当T被实例化时</li>
+<li>T中的一个静态方法被调用时</li>
+<li>T中的一个静态字段被赋值时</li>
+<li>T中的一个静态字段被使用且这个字段不是一个<code>constant variable</code>(<font color="red">俗称常量，被final修饰的原始类型或者String类型变量，且初始化值是一个常量表达式，如原始类型的值或者简单的四则运算或者String常量)</font></li>
+<li>子类的初始化会触发父类的初始化以及提供了<code>default</code>方法的接口的初始化，接口本身的初始化不会触发它的父接口的初始化。</li>
+<li>一些反射调用</li>
+</ol>
+<p>这里除了第4条以外，其它几条跟上面的虚拟机规范的内容都能呼应上,第4条意思就是对T的<strong>非常量字段</strong>的引用才会触发T的初始化，什么是常量，上面已经解释了，仔细阅读几遍，很多人都没有真的明白java中定义的常量是什么，举几个反例：</p>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">static int a=0;//没有final修饰
+static final Integer a=0;//不是原始类型
+static final int=Integer.valueOf(0);//不符合常量表达式要求，返回的是Integer，还要拆箱才是int
+</span></code></pre>
+<p>常量的定义比较严格，满足这些定义以后，对于编译器来说这个值就可以确定了。<br />
+还有一个问题，那些&quot;普通的接口&quot;是什么时候初始化的呢？比如只有几个方法签名的接口？<br />
+它们不需要初始化，跟常量一样，方法签名这些信息在编译时就确定了，没有必要初始化。</p>
+<p><a href="https://docs.oracle.com/javase/specs/jls/se11/html/jls-12.html#jls-12.4.1">JLS12.4.1</a>中也提供了一些示例代码，大家也可以自己构造一些类来验证上面的内容。</p>
+<p>PS：上面提到的对于常量字段的使用，在<code>class</code>文件中可以看到对应的访问指令是<code>iconst_n</code>这个系列，而如果使用非常量字段，对应的指令就是<code>getstatic</code>，符合<a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#jvminit">前面虚拟机规范定义的情况</a>。</p>
+<h3 id="lei-de-xie-zai">类的卸载</h3>
+<p>简单提一下关于类的卸载，因为类加载的时候，类和类加载器之间存在相互引用，准确的说是强引用，如果要卸载一个类，首先类的所有实例都已经被回收，且必须同时卸载相应的类加载器，而这需要经过精心设计的自定义类加载器，所以类的卸载情况也很少发生（直接继承<code>Classloader</code>重载<code>load</code>方法的“自定义加载器”是不行的）。可以在启动时加入虚拟机参数<code>-Xlog:class+unload</code>来观察卸载情况（大部分场景下看不到相关输出，因为没有发生卸载）。</p>
+<h2 id="4-shuang-qin-wei-pai-mo-xing-parent-delegation-model">4 双亲委派模型(parent-delegation model)</h2>
+<p>这个翻译容易让人误解，叫“父类委派模型”或许更直观。<br />
+简单的说，就是一个<code>classloader</code>加载一个类时，会先把这个加载任务委派给自己的父加载器（只是委派模型中的父子关系，不是类的继承）,父加载器也会委派给自己的父加载器。。。直到<code>bootstrap</code>这个最基本的类加载器，它没有父加器，如果<code>bootstrap</code>无法加载，那么再回退给委派给它的那个类加载器，如果这个类加载器也无法加载，再回退。。。直到回到最初的那个类加载器，调用<code>findClass</code>方法，这个方法内容是由具体实现类重载的，如果这个加载器也无法加载，则会报错。<br />
+在<code>ClassLoader</code>这个抽象类中，<code>loadClass</code>方法包含了这个模型的逻辑：</p>
+<details>
+<summary>显示代码</summary>
+<pre style="background-color:#2b303b;">
+<code class="language-java" data-lang="java"><span style="color:#b48ead;">protected </span><span style="color:#ebcb8b;">Class</span><span style="color:#c0c5ce;">&lt;?&gt; </span><span style="color:#bf616a;">loadClass</span><span style="color:#c0c5ce;">(</span><span style="color:#ebcb8b;">String</span><span style="color:#c0c5ce;"> name, </span><span style="color:#b48ead;">boolean</span><span style="color:#c0c5ce;"> resolve)
+    throws </span><span style="color:#ebcb8b;">ClassNotFoundException
+</span><span style="color:#c0c5ce;">{
+    </span><span style="color:#b48ead;">synchronized </span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">getClassLoadingLock</span><span style="color:#c0c5ce;">(name)) {
+        </span><span style="color:#65737e;">// First, check if the class has already been loaded
+        </span><span style="color:#ebcb8b;">Class</span><span style="color:#c0c5ce;">&lt;?&gt; c = </span><span style="color:#bf616a;">findLoadedClass</span><span style="color:#c0c5ce;">(name);
+        </span><span style="color:#b48ead;">if </span><span style="color:#c0c5ce;">(c == </span><span style="color:#d08770;">null</span><span style="color:#c0c5ce;">) {
+            </span><span style="color:#b48ead;">long</span><span style="color:#c0c5ce;"> t0 = </span><span style="color:#ebcb8b;">System</span><span style="color:#c0c5ce;">.</span><span style="color:#bf616a;">nanoTime</span><span style="color:#c0c5ce;">();
+            </span><span style="color:#b48ead;">try </span><span style="color:#c0c5ce;">{
+                </span><span style="color:#b48ead;">if </span><span style="color:#c0c5ce;">(parent != </span><span style="color:#d08770;">null</span><span style="color:#c0c5ce;">) {
+                    c = parent.</span><span style="color:#bf616a;">loadClass</span><span style="color:#c0c5ce;">(name, </span><span style="color:#d08770;">false</span><span style="color:#c0c5ce;">);
+                } </span><span style="color:#b48ead;">else </span><span style="color:#c0c5ce;">{
+                    c = </span><span style="color:#bf616a;">findBootstrapClassOrNull</span><span style="color:#c0c5ce;">(name);
+                }
+            } </span><span style="color:#b48ead;">catch </span><span style="color:#c0c5ce;">(</span><span style="color:#ebcb8b;">ClassNotFoundException </span><span style="color:#bf616a;">e</span><span style="color:#c0c5ce;">) {
+                </span><span style="color:#65737e;">// ClassNotFoundException thrown if class not found
+                // from the non-null parent class loader
+            </span><span style="color:#c0c5ce;">}
+
+            </span><span style="color:#b48ead;">if </span><span style="color:#c0c5ce;">(c == </span><span style="color:#d08770;">null</span><span style="color:#c0c5ce;">) {
+                </span><span style="color:#65737e;">// If still not found, then invoke findClass in order
+                // to find the class.
+                </span><span style="color:#b48ead;">long</span><span style="color:#c0c5ce;"> t1 = </span><span style="color:#ebcb8b;">System</span><span style="color:#c0c5ce;">.</span><span style="color:#bf616a;">nanoTime</span><span style="color:#c0c5ce;">();
+                c = </span><span style="color:#bf616a;">findClass</span><span style="color:#c0c5ce;">(name);
+
+                </span><span style="color:#65737e;">// this is the defining class loader; record the stats
+                </span><span style="color:#ebcb8b;">PerfCounter</span><span style="color:#c0c5ce;">.</span><span style="color:#bf616a;">getParentDelegationTime</span><span style="color:#c0c5ce;">().</span><span style="color:#bf616a;">addTime</span><span style="color:#c0c5ce;">(t1 - t0);
+                </span><span style="color:#ebcb8b;">PerfCounter</span><span style="color:#c0c5ce;">.</span><span style="color:#bf616a;">getFindClassTime</span><span style="color:#c0c5ce;">().</span><span style="color:#bf616a;">addElapsedTimeFrom</span><span style="color:#c0c5ce;">(t1);
+                </span><span style="color:#ebcb8b;">PerfCounter</span><span style="color:#c0c5ce;">.</span><span style="color:#bf616a;">getFindClasses</span><span style="color:#c0c5ce;">().</span><span style="color:#bf616a;">increment</span><span style="color:#c0c5ce;">();
+            }
+        }
+        </span><span style="color:#b48ead;">if </span><span style="color:#c0c5ce;">(resolve) {
+            </span><span style="color:#bf616a;">resolveClass</span><span style="color:#c0c5ce;">(c);
+        }
+        </span><span style="color:#b48ead;">return</span><span style="color:#c0c5ce;"> c;
+    }
+}
+</span></code></pre></details>
+<p>上面的<code>parent!=null</code>用来判断是否是<code>bootstrap</code>类加载器，<code>null</code>代表<code>bootstrap</code>加载器。</p>
+<p><strong>Java9引入模块化以后，类加载器的部分也发生了变化，其中的<code>PlatformClassLoader</code>（取代了以前的<code>ExtClassLoader</code>），<code>AppClassLoader</code>都是继承自<code>BuiltinClassLoader</code>，而<code>BuiltinClassLoader</code>内的<code>loadClassOrNull</code>方法加入了先判断类是否属于某个模块的逻辑，然后再执行父类委派，某种程度上已经破坏了双亲委派，所以后面不针对JAVA11，只是对传统意义上的双亲委派进行优缺点分析</strong><br />
+下面这段代码可以查看jdk中所有模块对应的加载器，有兴趣的可以看一下模块化以后的类加载情况：</p>
+<pre style="background-color:#2b303b;">
+<code class="language-java" data-lang="java"><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Test</span><span style="color:#eff1f5;">{
+    </span><span style="color:#b48ead;">public static void </span><span style="color:#8fa1b3;">main</span><span style="color:#eff1f5;">(</span><span style="color:#ebcb8b;">String</span><span style="color:#b48ead;">[] </span><span style="color:#bf616a;">args</span><span style="color:#eff1f5;">) </span><span style="color:#b48ead;">throws </span><span style="color:#ebcb8b;">ClassNotFoundException </span><span style="color:#eff1f5;">{
+        </span><span style="color:#b48ead;">for</span><span style="color:#eff1f5;">(</span><span style="color:#ebcb8b;">Module</span><span style="color:#eff1f5;"> m</span><span style="color:#c0c5ce;">:</span><span style="color:#ebcb8b;">ModuleLayer</span><span style="color:#eff1f5;">.</span><span style="color:#bf616a;">boot</span><span style="color:#eff1f5;">().</span><span style="color:#bf616a;">modules</span><span style="color:#eff1f5;">()){
+            </span><span style="color:#ebcb8b;">System</span><span style="color:#eff1f5;">.out.</span><span style="color:#bf616a;">println</span><span style="color:#eff1f5;">(m.</span><span style="color:#bf616a;">getName</span><span style="color:#eff1f5;">()</span><span style="color:#c0c5ce;">+&quot;</span><span style="color:#a3be8c;">====&gt;</span><span style="color:#c0c5ce;">&quot;+</span><span style="color:#eff1f5;">m.</span><span style="color:#bf616a;">getClassLoader</span><span style="color:#eff1f5;">());
+        }
+    }
+}
+</span></code></pre>
+<p>双亲委派的优点：</p>
+<ul>
+<li>保证核心类的加载安全：我们用换一种方式来描述双亲委派机制的作用：越重要的类由越底层的类加载器加载，像<code>java.util</code>,<code>java.lang</code>这些常用的核心库文件都是由<code>bootstrap class loader</code>加载的，只有几个内置的加载器都不加载的类，才轮到自定义加载器加载。所以比如我们自定义了一个<code>Integer</code>类型，编译后放在当前项目的class目录内，然后<code>AppClassLoader</code>负责加载当前项目的类，假如没有双亲委派，那么自定义的这个<code>Integer</code>类就会在这个阶段被加载，这对于核心类来说太容易被破坏了，除非虚拟机在加载<code>class</code>时要不断的去判断这些class文件是否跟核心类库里的类冲突，就算是检测到冲突，也只能报运行时异常了。如果基于双亲委派模型，那么<code>AppClassLoader</code>就会委派给<code>ExtClassLoader</code>(jdk8以及前)或者<code>PlatformClassLoader</code>（jdk9及以后）,然后再委派给<code>bootstrap class loader</code>，最后由<code>bootstrap class loader</code>加载这个类，这就保证了所有用到<code>Integer</code>等核心类库里的类的地方，就算有冲突，最终都会加载的核心类库里的类。
+&gt;PS：所有类都是全限定名，比如<code>Integer</code>是<code>java.lang.Integer</code>，所以上面的测试也要把<code>Integer</code>放在<code>java.lang</code>这个包内，但是直接代码结构定义这个包的话会在编译时报错，提示包名跟核心类库冲突，所以我们只能先在别的路径先编译好一个<code>Integer.class</code>，然后在项目的class路径内创建<code>java.lang</code>这个包把<code>Integer.class</code>放进去</li>
+<li>避免类的重复加载：如果没有用双亲委派模型，就算没有上面说的安全问题，且一个自定义类加载器在当前目录找不到class文件的时候，会自动去查找核心类库里的class文件，然后成功加载，那么100个自定义的类加载器就会有100次一模一样的加载，并且都把自己记录为这个class的初始类加载器(理论上来说也是define class loader)。如果用了双亲委派模型，比如<code>Integer</code>这个类，虽然是最终由<code>bootstrap class loader</code>加载的，但是根据<a href="https://www.fewth.com/jvmzhi-classwen-jian-ji-lei-jia-zai-ji-zhi-he-shuang-qin-wei-pai-mo-xing/#defandinit">前面</a>虚拟机规范定义的规则，发起这个加载的classloader，比如叫<code>L1</code>,和<code>bootstrap class loader</code>都会被记录为这个类的初始化加载器（initiating loader）,后面如果<code>L2</code>也要加载这个类，最终委派给<code>bootstrap class loader</code>的时候，会直接返回结果，并把<code>L2</code>也记录为<code>initiating loader</code>,这样，同一个类，只需要由&quot;最接近底层且符合要求&quot;的类加载器加载一次，虽然这个加载器可能会被多次委派去加载这个类。</li>
+</ul>
+<p>双亲委派的缺点：<br />
+因为双亲委派只能由“子加载器”向“父加载器”委派，而不能反向，很多时候这都没什么影响，比如我们编写一个普通的程序，要么用“核心类库”里的功能（向上委派由<code>bootstarp class loader</code>或者<code>PlatfromClassLoader</code>加载），要么调用由我们自己代码实现的功能（委派后回退到<code>AppClassLoader</code>加载），但是在<a href="https://en.wikipedia.org/wiki/Service_provider_interface">SPI</a>或者一些框架的实现中，就不是这么简单。</p>
+<p>比如，jdbc，只提供了一套接口，具体的实现是由不同的数据库厂商负责的，我们在编写代码的时候，都是面向java平台提供的接口编程，用一个例子说明问题：</p>
+<pre style="background-color:#2b303b;">
+<code class="language-java" data-lang="java"><span style="color:#b48ead;">public class </span><span style="color:#ebcb8b;">test </span><span style="color:#eff1f5;">{
+    </span><span style="color:#b48ead;">public static void </span><span style="color:#8fa1b3;">main</span><span style="color:#eff1f5;">(</span><span style="color:#ebcb8b;">String</span><span style="color:#b48ead;">[] </span><span style="color:#bf616a;">args</span><span style="color:#eff1f5;">) </span><span style="color:#b48ead;">throws </span><span style="color:#ebcb8b;">SQLException</span><span style="color:#eff1f5;">, </span><span style="color:#ebcb8b;">ClassNotFoundException </span><span style="color:#eff1f5;">{
+        </span><span style="color:#ebcb8b;">Connection</span><span style="color:#eff1f5;"> conn</span><span style="color:#c0c5ce;">= </span><span style="color:#ebcb8b;">DriverManager</span><span style="color:#eff1f5;">.</span><span style="color:#bf616a;">getConnection</span><span style="color:#eff1f5;">(</span><span style="color:#c0c5ce;">&quot;</span><span style="color:#a3be8c;">jdbc:mysql://localhost:3306/testdb</span><span style="color:#c0c5ce;">&quot;</span><span style="color:#eff1f5;">,</span><span style="color:#c0c5ce;">&quot;</span><span style="color:#a3be8c;">root</span><span style="color:#c0c5ce;">&quot;</span><span style="color:#eff1f5;">,</span><span style="color:#c0c5ce;">&quot;</span><span style="color:#a3be8c;">123456</span><span style="color:#c0c5ce;">&quot;</span><span style="color:#eff1f5;">);
+        </span><span style="color:#65737e;">//看一下这两个类的classloader
+        </span><span style="color:#ebcb8b;">System</span><span style="color:#eff1f5;">.out.</span><span style="color:#bf616a;">println</span><span style="color:#eff1f5;">(</span><span style="color:#ebcb8b;">Connection</span><span style="color:#eff1f5;">.</span><span style="color:#bf616a;">class</span><span style="color:#eff1f5;">.</span><span style="color:#bf616a;">getClassLoader</span><span style="color:#eff1f5;">());
+        </span><span style="color:#ebcb8b;">System</span><span style="color:#eff1f5;">.out.</span><span style="color:#bf616a;">println</span><span style="color:#eff1f5;">(</span><span style="color:#ebcb8b;">DriverManager</span><span style="color:#eff1f5;">.</span><span style="color:#bf616a;">class</span><span style="color:#eff1f5;">.</span><span style="color:#bf616a;">getClassLoader</span><span style="color:#eff1f5;">());
+    }
+}
+</span></code></pre>
+<p>上面的<code>Connection</code>,<code>DriverManager</code>都在<code>java.sql</code>这个包下面，打印结果显示它们都是由<code>PlatformClassLoader</code>加载，而第三方实现肯定是用<code>AppClassLoader</code>或者自定义类加载器才能加载，如果用双亲委派的模型，上面的<code>getConnection</code>方法在尝试加载具体实现类的时候，会尝试用自己的加载器(<code>PlatformClassLoader</code>)去加载第三方类，但是无法加载，然后报错。<br />
+解决方法就是生成一个<code>AppClassLoader</code>去加载第三方类，比如用<code>Thread.currentThread().getContextClassLoader()</code>获取当前线程的加载器。</p>
+<p>最后用文字简单记一下通过<code>DriverManager</code>这个类为入口分析第三方实现类加载的过程：</p>
+<ul>
+<li>首先<code>getConnection</code>调用内部的<code>getConnection（）</code>方法，这个方法内部有一个<code>ensureDriversInitialized</code>方法</li>
+<li><code>ensureDriversInitialized</code>方法内部有一个<code>AccessController.doPrivileged</code>方法，其中使用了<code>ServiceLoader</code>类<pre style="background-color:#2b303b;">
+<code class="language-java" data-lang="java"><span style="color:#ebcb8b;">ServiceLoader</span><span style="color:#c0c5ce;">&lt;</span><span style="color:#ebcb8b;">Driver</span><span style="color:#c0c5ce;">&gt; loadedDrivers = </span><span style="color:#ebcb8b;">ServiceLoader</span><span style="color:#c0c5ce;">.</span><span style="color:#bf616a;">load</span><span style="color:#c0c5ce;">(</span><span style="color:#ebcb8b;">Driver</span><span style="color:#c0c5ce;">.</span><span style="color:#bf616a;">class</span><span style="color:#c0c5ce;">);
+</span><span style="color:#ebcb8b;">Iterator</span><span style="color:#c0c5ce;">&lt;</span><span style="color:#ebcb8b;">Driver</span><span style="color:#c0c5ce;">&gt; driversIterator = loadedDrivers.</span><span style="color:#bf616a;">iterator</span><span style="color:#c0c5ce;">();
+</span></code></pre>ServiceLoader.load方法会设置一个类加载器变量<code>ClassLoader cl = Thread.currentThread().getContextClassLoader()</code>，并在<code>ServiceLoader</code>类的构造方法中赋值给变量<code>loader</code><br />
+关键在于这个<code>driversIterator</code>变量，它的操作会通过<code>newLookupIterator</code>类型的变量来完成，当后面的代码调用<code>driversIterator.hasNext()</code>的时候，触发懒加载机制，最终来到<code>ServiceLoader</code>的内部类<code>LazyClassPathLookupIterator</code>的<code>hasNextService()</code>方法</li>
+<li><code>hasNextService()</code>方法里调用了<code>nextProviderClass()</code>方法，这个方法去<code>META-INF</code>下查找第三方实现类的信息，方法最终返回<code>return Class.forName(cn, false, loader)</code>,这一步才加载真正的实现类，用的上面的变量<code>loader</code>所定义的加载器</li>
+</ul>
+
+    </div>
+
+    
+    
+
+    <div class="post-footer">
+        
+            
+            
+                <div class="post-nav">
+                    
+                        <a class="previous" href="https:&#x2F;&#x2F;www.fewth.com&#x2F;javazhu-jie&#x2F;">‹ Java注解</a>
+                    
+                    
+                        <a class="next" href="https:&#x2F;&#x2F;www.fewth.com&#x2F;yong-github-actionszi-dong-hua-bu-shu-hexobo-ke-cong-si-you-cang-ku-dao-gong-gong-cang-ku&#x2F;">用Github-Actions自动化布署Hexo博客(从私有仓库到公共仓库) ›</a>
+                    
+                    
+                    
+                </div>
+            
+
+        
+
+    </div>
+
+    
+    
+</article>
+
+
+                </div>
+            </main>
+
+            
+            
+        </div>
+
+      
+          <script type="text/javascript" src="https:&#x2F;&#x2F;www.fewth.com&#x2F;even.js" ></script>
+      
+    </body>
+
+</html>

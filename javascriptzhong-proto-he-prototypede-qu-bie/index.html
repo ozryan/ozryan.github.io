@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+      <!-- Enable responsiveness on mobile devices-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+      <title> - Javascript中__proto__和prototype的区别</title>
+
+      
+
+      
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/slideout/1.0.1/slideout.min.js"></script>
+          
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+
+          <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
+          <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/contrib/mathtex-script-type.min.js" integrity="sha384-zWYbd0NBwgTsgIdFKVprSfTh1mbMPe5Hz1X3yY4Sd1h/K1cQoUe36OGwAGz/PcDy" crossorigin="anonymous"></script>
+              
+          <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/contrib/auto-render.min.js" integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous"
+                  onload="renderMathInElement(document.body);"></script>
+              
+          
+      
+
+      
+          <link rel="stylesheet" href="https:&#x2F;&#x2F;www.fewth.com&#x2F;site.css">
+          
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+          
+      
+
+      
+      
+    </head>
+
+    <body>
+        <div class="container">
+
+            <div id="mobile-navbar" class="mobile-navbar">
+              <div class="mobile-header-logo">
+                <a href="/" class="logo">Even</a>
+              </div>
+              <div class="mobile-navbar-icon icon-out">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+
+            <nav id="mobile-menu" class="mobile-menu slideout-menu slideout-menu-left">
+              <ul class="mobile-menu-list">
+                
+                    <li class="mobile-menu-item">
+                        <a href="https:&#x2F;&#x2F;www.fewth.com">
+                            Home
+                        </a>
+                    </li>
+                
+                    <li class="mobile-menu-item">
+                        <a href="https:&#x2F;&#x2F;www.fewth.com&#x2F;categories">
+                            Categories
+                        </a>
+                    </li>
+                
+                    <li class="mobile-menu-item">
+                        <a href="https:&#x2F;&#x2F;www.fewth.com&#x2F;tags">
+                            Tags
+                        </a>
+                    </li>
+                
+                    <li class="mobile-menu-item">
+                        <a href="https:&#x2F;&#x2F;www.fewth.com&#x2F;about">
+                            About
+                        </a>
+                    </li>
+                
+              </ul>
+            </nav>
+
+            <header id="header">
+                <div class="logo"><a href="https:&#x2F;&#x2F;www.fewth.com">Even</a></div>
+                <nav class="menu">
+                    <ul>
+                        
+                            <li>
+                                <a href="https:&#x2F;&#x2F;www.fewth.com">
+                                    Home
+                                </a>
+                            </li>
+                        
+                            <li>
+                                <a href="https:&#x2F;&#x2F;www.fewth.com&#x2F;categories">
+                                    Categories
+                                </a>
+                            </li>
+                        
+                            <li>
+                                <a href="https:&#x2F;&#x2F;www.fewth.com&#x2F;tags">
+                                    Tags
+                                </a>
+                            </li>
+                        
+                            <li>
+                                <a href="https:&#x2F;&#x2F;www.fewth.com&#x2F;about">
+                                    About
+                                </a>
+                            </li>
+                        
+                    </ul>
+                </nav>
+            </header>
+
+            <main>
+                <div class="content" id="mobile-panel">
+                    
+
+
+<div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content always-active">
+        <nav id="TableOfContents">
+            <ul>
+                
+                <li>
+                    <a href="https://www.fewth.com/javascriptzhong-proto-he-prototypede-qu-bie/#objecthe-function" class="toc-link">Object和Function</a>
+                    
+                </li>
+                
+            </ul>
+        </nav>
+    </div>
+</div>
+
+
+<article class="post">
+    
+    <header class="post__header">
+        <h1 class="post__title">
+            <a href="https:&#x2F;&#x2F;www.fewth.com&#x2F;javascriptzhong-proto-he-prototypede-qu-bie&#x2F;">Javascript中__proto__和prototype的区别</a>
+        </h1>
+        <div class="post__meta">
+            <span class="post__time">2020-07-28</span>
+            
+        </div>
+    </header>
+
+    <div class="post-content">
+      <p>prototype是函数特有的属性，一个对象的构造函数也是函数，js中没有类，只有构造函数。关于原型链的继承在这里不展开。
+&gt;<code>__proto__</code>属性已经被标记为deprecated，可以用<code>Object.getPrototypeOf(obj)</code>的方式代替访问该属性，应该避免修改该属性，因为它会影响到所有跟这个属性有关的对象，性能非常低下，可以用<code>Object.create(targetproto)</code>的方式直接用你希望的原型创建一个新的对象。</p>
+<!--more-->
+<p><span style="color:red">本文以下内容仍以<code>__proto__</code>的方式表示该属性，主要为解释原理，在生产中应该避免使用</span></p>
+<p><code>__proto__</code>是对象上的属性，而js中一切皆对象，访问<code>__proto__</code>属性等同于访问该对象的构造函数的<code>prototype</code>属性，对于一个普通的构造函数及通过其构造的对象，这一点不难理解，在console中测试：</p>
+<pre style="background-color:#2b303b;">
+<code class="language-js" data-lang="js"><span style="color:#65737e;">//Person构造函数
+</span><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">Person</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">name</span><span style="color:#c0c5ce;">){
+    </span><span style="color:#bf616a;">this</span><span style="color:#c0c5ce;">.name=</span><span style="color:#bf616a;">name</span><span style="color:#c0c5ce;">;
+}
+
+</span><span style="color:#b48ead;">var </span><span style="color:#bf616a;">person1</span><span style="color:#c0c5ce;">=new Person();   </span><span style="color:#65737e;">//构造一个person1对象
+</span><span style="color:#bf616a;">person1</span><span style="color:#c0c5ce;">.__proto__===</span><span style="color:#ebcb8b;">Person</span><span style="color:#c0c5ce;">.prototype    </span><span style="color:#65737e;">//true,访问__proto__属性等同于访问该对象的构造函数的prototype属性
+</span><span style="color:#bf616a;">person1</span><span style="color:#c0c5ce;">.__proto__===</span><span style="color:#bf616a;">person1</span><span style="color:#c0c5ce;">.constructor.prototype   </span><span style="color:#65737e;">//true,同上
+
+</span><span style="color:#ebcb8b;">Person</span><span style="color:#c0c5ce;">.prototype.</span><span style="color:#bf616a;">age</span><span style="color:#c0c5ce;">=</span><span style="color:#d08770;">18 </span><span style="color:#65737e;">//给Person.prototype添加一个age属性
+</span><span style="color:#bf616a;">person1</span><span style="color:#c0c5ce;">.</span><span style="color:#bf616a;">age </span><span style="color:#65737e;">//18
+
+</span><span style="color:#bf616a;">person1</span><span style="color:#c0c5ce;">.__proto__.</span><span style="color:#bf616a;">country</span><span style="color:#c0c5ce;">=&quot;</span><span style="color:#a3be8c;">china</span><span style="color:#c0c5ce;">&quot;   </span><span style="color:#65737e;">//添加一个country属性，两种方式相同，操作的是同一个原型
+
+</span><span style="color:#b48ead;">var </span><span style="color:#bf616a;">person2</span><span style="color:#c0c5ce;">=new Person;
+</span><span style="color:#bf616a;">person2</span><span style="color:#c0c5ce;">.</span><span style="color:#bf616a;">country </span><span style="color:#65737e;">//china
+</span><span style="color:#bf616a;">person2</span><span style="color:#c0c5ce;">.</span><span style="color:#bf616a;">age </span><span style="color:#65737e;">//18
+
+</span></code></pre><h2 id="objecthe-function">Object和Function</h2>
+<p>相比于上面的普通对象和构造函数，<code>Object</code> 和 <code>Function</code>比较难理解，在浏览器点开console,输入<code>Object.prototype</code>，在输出中随便找点点击一个函数，如<code>toString()</code>，里面有个<code>__proto__</code>，再点进去，里面还有个<code>__proto__</code>，再点进去，里面的内容跟刚才Object.prototype的输入里一样的，如此循环下去。。。</p>
+<p>想搞清楚这些，先明确几个概念：</p>
+<ul>
+<li>js中一切皆对象，person1是对象，其构造函数Person也是对象，Object，Function都是对象。<span style="color:red;font-weight:bold">所有对象的原型链尽头都是<code>Object.prototype</code></span>。对象的原型链：<code>person1 -&gt; Person.prototype -&gt; Object.protoytpe -&gt; null</code>，这其中的每一环，如<code>Person.prototype</code>也都是对象，所有对象不断的访问<code>__proto__</code>属性，都会返回自己的原型链上游，只有一个例外，<code>Object.prototype.__proto__===null</code></li>
+<li>所有函数对象的构造函数都是<code>Function</code>,所有函数对象的原型都是<code>Function.prototype</code>。</li>
+<li>一切构造函数是对象的同时，也是函数。<code>Object</code>和<code>Function</code>，既是对象又是构造函数。</li>
+<li>原型<code>Function.prototype</code>也是对象，其原型链上游为<code>Object.prototype</code>。</li>
+</ul>
+<p>如构造函数<code>Person</code>，<code>Person.__proto__===Function.prototype</code>返回true,这里的Person可以理解为一个对象：一个从<code>Function.prototype</code>这个原型继承而来的对象。</p>
+<p>在console中运行下面的代码来验证上述的原型之间的关系：</p>
+<pre style="background-color:#2b303b;">
+<code class="language-js" data-lang="js"><span style="color:#65737e;">//构造Dog
+</span><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">Dog</span><span style="color:#c0c5ce;">(){}
+</span><span style="color:#b48ead;">var </span><span style="color:#bf616a;">dog1</span><span style="color:#c0c5ce;">=new Dog(){}
+
+</span><span style="color:#65737e;">//dog1是普通的对象，它的__proto__指向它的构造函数的原型，
+</span><span style="color:#bf616a;">dog1</span><span style="color:#c0c5ce;">.__proto__===</span><span style="color:#ebcb8b;">Dog</span><span style="color:#c0c5ce;">.prototype </span><span style="color:#65737e;">//true
+</span><span style="color:#bf616a;">Dog</span><span style="color:#c0c5ce;">.__proto__===</span><span style="color:#ebcb8b;">Function</span><span style="color:#c0c5ce;">.prototype  </span><span style="color:#65737e;">//true 所有的函数对象的原型都是Function.prototype。
+</span><span style="color:#ebcb8b;">Dog</span><span style="color:#c0c5ce;">.prototype.</span><span style="color:#bf616a;">__proto</span><span style="color:#c0c5ce;">===</span><span style="color:#ebcb8b;">Object</span><span style="color:#c0c5ce;">.prototype </span><span style="color:#65737e;">//true Dog.prototype这个对象的原型就是Object.prototype
+</span><span style="color:#bf616a;">dog1</span><span style="color:#c0c5ce;">.__proto__.__proto__===</span><span style="color:#ebcb8b;">Object</span><span style="color:#c0c5ce;">.prototype </span><span style="color:#65737e;">//true 跟上面的表示等价
+</span><span style="color:#bf616a;">dog1</span><span style="color:#c0c5ce;">.__proto__.__proto__.__proto__  </span><span style="color:#65737e;">//null Object.prototype的原型是null
+
+//下面的Object、Number、Dog、Function都是构造函数，所有的函数对象的原型都是Function.prototype。
+</span><span style="color:#ebcb8b;">Object</span><span style="color:#c0c5ce;">.__proto__===</span><span style="color:#ebcb8b;">Function</span><span style="color:#c0c5ce;">.prototype   </span><span style="color:#65737e;">//true
+</span><span style="color:#ebcb8b;">Number</span><span style="color:#c0c5ce;">.__proto__===</span><span style="color:#ebcb8b;">Function</span><span style="color:#c0c5ce;">.prototype   </span><span style="color:#65737e;">//true
+</span><span style="color:#bf616a;">Dog</span><span style="color:#c0c5ce;">.__proto__===</span><span style="color:#ebcb8b;">Function</span><span style="color:#c0c5ce;">.prototype  </span><span style="color:#65737e;">//true
+</span><span style="color:#ebcb8b;">Function</span><span style="color:#c0c5ce;">.__proto__===</span><span style="color:#ebcb8b;">Function</span><span style="color:#c0c5ce;">.prototype </span><span style="color:#65737e;">//true
+
+//原型`Function.prototype`也是对象，其原型链上游为Object.prototype。
+</span><span style="color:#ebcb8b;">Function</span><span style="color:#c0c5ce;">.prototype.__proto__===</span><span style="color:#ebcb8b;">Object</span><span style="color:#c0c5ce;">.prototype </span><span style="color:#65737e;">//true
+</span><span style="color:#ebcb8b;">Object</span><span style="color:#c0c5ce;">.prototype.__proto__  </span><span style="color:#65737e;">//null
+</span></code></pre>
+<p>回到上面无限循环的例子，对应每一步解释：</p>
+<ol>
+<li>在console输入<code>Object.prototype</code>时，返回的是所有对象的原型链顶端的Object.prototype`对象，里面有一些方法</li>
+<li>点击<code>toString()</code>方法，该方法本质是函数，所有的函数对象的原型都是<code>Function.prototype</code>，即<code>toString().__proto__===Function.prototype</code>，所以点开<code>__proto__</code>就是<code>Function.prototype</code>对象</li>
+<li><code>Function.prototype</code>对象也是对象，它的原型就是<code>Object.prototype</code>，即<code>Function.prototype.__proto__===Object.prototype</code>，所以点开<code>__proto__</code>又回到了1,无限循环。</li>
+</ol>
+
+    </div>
+
+    
+    
+
+    <div class="post-footer">
+        
+            
+            
+                <div class="post-nav">
+                    
+                        <a class="previous" href="https:&#x2F;&#x2F;www.fewth.com&#x2F;windowsyong-powershelllian-jie-vps-yi-googlecloudwei-li&#x2F;">‹ Windows用PowerShell连接VPS(以GoogleCloud为例）</a>
+                    
+                    
+                        <a class="next" href="https:&#x2F;&#x2F;www.fewth.com&#x2F;zai-windowszhong-an-zhuang-shi-yong-redisde-ji-chong-fang-fa&#x2F;">在Windows中安装使用Redis的几种方法 ›</a>
+                    
+                    
+                    
+                </div>
+            
+
+        
+
+    </div>
+
+    
+    
+</article>
+
+
+                </div>
+            </main>
+
+            
+            
+        </div>
+
+      
+          <script type="text/javascript" src="https:&#x2F;&#x2F;www.fewth.com&#x2F;even.js" ></script>
+      
+    </body>
+
+</html>
