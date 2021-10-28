@@ -13,7 +13,7 @@ We&amp;rsquo;ll start with creating a new site with a very basic template.</desc
 &lt;/div>
 &lt;div class="highlight">&lt;div class="chroma">
 &lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
 &lt;/span>&lt;span class="lnt"> 2
 &lt;/span>&lt;span class="lnt"> 3
 &lt;/span>&lt;span class="lnt"> 4
@@ -27,7 +27,7 @@ We&amp;rsquo;ll start with creating a new site with a very basic template.</desc
 &lt;/span>&lt;span class="lnt">12
 &lt;/span>&lt;/code>&lt;/pre>&lt;/td>
 &lt;td class="lntd">
-&lt;pre class="chroma">&lt;code class="language-markdown" data-lang="markdown">{{% admonition note &amp;#34;I&amp;#39;m title!&amp;#34; false %}}
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-markdown" data-lang="markdown">{{% admonition note &amp;#34;I&amp;#39;m title!&amp;#34; false %}}
 biu biu biu.
 {{% admonition type=&amp;#34;note&amp;#34; title=&amp;#34;note&amp;#34; details=&amp;#34;true&amp;#34; %}}
 biu biu biu.
@@ -41,7 +41,7 @@ Without title.
 &lt;/div></description></item><item><title>JS Flowchart Diagrams</title><link>http://localhost:1313/post/js-flowchart-diagrams/</link><pubDate>Wed, 04 Mar 2015 21:57:50 +0800</pubDate><guid>http://localhost:1313/post/js-flowchart-diagrams/</guid><description>&lt;h2 id="usage">Usage&lt;/h2>
 &lt;div class="highlight">&lt;div class="chroma">
 &lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
 &lt;/span>&lt;span class="lnt"> 2
 &lt;/span>&lt;span class="lnt"> 3
 &lt;/span>&lt;span class="lnt"> 4
@@ -58,7 +58,7 @@ Without title.
 &lt;/span>&lt;span class="lnt">15
 &lt;/span>&lt;/code>&lt;/pre>&lt;/td>
 &lt;td class="lntd">
-&lt;pre class="chroma">&lt;code class="language-fallback" data-lang="fallback">st=&amp;gt;start: Start|past:&amp;gt;http://www.google.com[blank]
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">st=&amp;gt;start: Start|past:&amp;gt;http://www.google.com[blank]
 e=&amp;gt;end: End:&amp;gt;http://www.google.com
 op1=&amp;gt;operation: My Operation|past
 op2=&amp;gt;operation: Stuff|current
@@ -77,13 +77,13 @@ c2(no)-&amp;gt;op2-&amp;gt;e
 &lt;/div></description></item><item><title>JS Sequence Diagrams</title><link>http://localhost:1313/post/js-sequence-diagrams/</link><pubDate>Wed, 04 Mar 2015 21:57:45 +0800</pubDate><guid>http://localhost:1313/post/js-sequence-diagrams/</guid><description>&lt;h2 id="usage">Usage&lt;/h2>
 &lt;div class="highlight">&lt;div class="chroma">
 &lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
 &lt;/span>&lt;span class="lnt">2
 &lt;/span>&lt;span class="lnt">3
 &lt;/span>&lt;span class="lnt">4
 &lt;/span>&lt;/code>&lt;/pre>&lt;/td>
 &lt;td class="lntd">
-&lt;pre class="chroma">&lt;code class="language-fallback" data-lang="fallback">Andrew-&amp;gt;China: Says Hello
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">Andrew-&amp;gt;China: Says Hello
 Note right of China: China thinks\nabout it
 China--&amp;gt;Andrew: How are you?
 Andrew-&amp;gt;&amp;gt;China: I am good thanks!
@@ -91,12 +91,12 @@ Andrew-&amp;gt;&amp;gt;China: I am good thanks!
 &lt;/div>
 &lt;/div></description></item><item><title>Syntax Highlighting</title><link>http://localhost:1313/post/syntax-highlighting/</link><pubDate>Tue, 30 Aug 2011 16:01:23 +0800</pubDate><guid>http://localhost:1313/post/syntax-highlighting/</guid><description>&lt;div class="highlight">&lt;div class="chroma">
 &lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
 &lt;/span>&lt;span class="lnt">2
 &lt;/span>&lt;span class="lnt">3
 &lt;/span>&lt;/code>&lt;/pre>&lt;/td>
 &lt;td class="lntd">
-&lt;pre class="chroma">&lt;code class="language-js" data-lang="js">&lt;span class="kd">function&lt;/span> &lt;span class="nx">helloWorld&lt;/span> &lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-js" data-lang="js">&lt;span class="kd">function&lt;/span> &lt;span class="nx">helloWorld&lt;/span> &lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
 &lt;span class="nx">alert&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;Hello, World!&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
 &lt;span class="p">}&lt;/span>
 &lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
