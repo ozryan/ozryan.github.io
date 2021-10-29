@@ -745,6 +745,16 @@ local nil return function
 <li><code>e:add(100)</code>，跟上面类似，先查找<code>Employee</code>，发现没有<code>add</code>方法，然后查找<code>Person</code>，找到后调用，此时传入的<code>self</code>是<code>e</code>本身，调用方法时发现自身还没有<code>money</code>这个属性，继续往上查找，找到<code>Person</code>的<code>money</code>，值是<code>100</code>,然后相加，得<code>200</code></li>
 </ol>
 </div>
+<div class=post-copyright>
+<p class=copyright-item>
+<span class=item-title>文章作者</span>
+<span class=item-content><a href=https://www.fewth.com/lua%E8%AF%AD%E8%A8%80%E5%85%A5%E9%97%A8/>https://www.fewth.com/Lua语言入门</a></span>
+</p>
+<p class=copyright-item>
+<span class=item-title>许可协议</span>
+<span class=item-content><a rel="license noopener" href=https://creativecommons.org/licenses/by/4.0/ target=_blank>CC-BY 4.0</a>，转载请注明出处。</span>
+</p>
+</div>
 <footer class=post-footer>
 <nav class=post-nav>
 <a class=prev href=/spring-boot%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/>
