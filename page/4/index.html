@@ -82,91 +82,9 @@
 <section id=posts class=posts>
 <article class=post>
 <header class=post-header>
-<h1 class=post-title><a class=post-link href=/post/%E7%AC%ACk%E4%B8%AA%E9%A1%BA%E5%BA%8F%E7%BB%9F%E8%AE%A1%E9%87%8F-%E6%95%B0%E7%BB%84%E4%B8%AD%E7%AC%ACk%E5%B0%8F%E7%9A%84%E5%85%83%E7%B4%A0/>第k个顺序统计量(数组中第k小的元素)</a></h1>
+<h1 class=post-title><a class=post-link href=/post/%E5%90%8E%E7%AB%AF%E5%A4%84%E7%90%86%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E9%AA%8C%E8%AF%81%E5%8F%8A%E7%BB%9F%E4%B8%80%E5%A4%84%E7%90%86%E5%BC%82%E5%B8%B8/>后端处理数据格式验证及统一处理异常</a></h1>
 <div class=post-meta>
-<span class=post-time> 2021-10-24 </span>
-<div class=post-category>
-<a href=/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/> 数据结构与算法 </a>
-</div>
-</div>
-</header>
-<div class=post-content>
-<div class=post-summary>
-<p>要从一个数组中找出第k小的元素，最容易想到的是快速排序，但是快速排序解决这个问题有很多不必要的操作，在快速排序中，根据“哨兵”元素把数组分成两部分，然后对两部分进行递归处理，第k个顺序统计量的算法也借鉴这种思路，我们称为“快速选择(quick select)算法”,但是快速选择算法每次只需要处理第K个元素所在的那一部分就行，我们的目的只是找到目标元素，随着递归次数的深入，快速选择算法要处理的元素会越来越少（而快速排序随着递归的深入，每次递归处理的元素总数依然是n），这种差别是很大的，后面分析时间复杂度时可以得知快速选择算法的期望运行时间是$\theta(n)$。</p>
-<h3 id=算法实现>算法实现</h3>
-<p>快速选择算法跟快速排序类似，主要步骤就是分组算法：根据哨兵元素把数组分成两组，一组小于哨兵，一组大于哨兵，然后进行递归调用。</p>
-</div>
-<div class=read-more>
-<a href=/post/%E7%AC%ACk%E4%B8%AA%E9%A1%BA%E5%BA%8F%E7%BB%9F%E8%AE%A1%E9%87%8F-%E6%95%B0%E7%BB%84%E4%B8%AD%E7%AC%ACk%E5%B0%8F%E7%9A%84%E5%85%83%E7%B4%A0/ class=read-more-link>Read more...</a>
-</div>
-</div>
-</article>
-<article class=post>
-<header class=post-header>
-<h1 class=post-title><a class=post-link href=/post/shell%E7%BC%96%E7%A8%8B/>shell编程</a></h1>
-<div class=post-meta>
-<span class=post-time> 2021-10-18 </span>
-<div class=post-category>
-<a href=/categories/linux/> linux </a>
-</div>
-</div>
-</header>
-<div class=post-content>
-<div class=post-summary>
-<h2 id=1-基本概念>1 基本概念</h2>
-<ul>
-<li>shell是用户和内核之间的桥梁，shell自带的叫内置命令，其它应用程序的命令叫外部命令</li>
-<li>shell是一种脚本语言，支持基本的编程元素，如数组，变量，字符串，注释，四则运算，逻辑运算，if-else,for,case-in,until等</li>
-</ul>
-</div>
-<div class=read-more>
-<a href=/post/shell%E7%BC%96%E7%A8%8B/ class=read-more-link>Read more...</a>
-</div>
-</div>
-</article>
-<article class=post>
-<header class=post-header>
-<h1 class=post-title><a class=post-link href=/post/jvm%E4%B9%8B%E8%87%AA%E5%8A%A8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/>JVM之自动内存管理(垃圾回收机制)</a></h1>
-<div class=post-meta>
-<span class=post-time> 2021-10-11 </span>
-<div class=post-category>
-<a href=/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%89%B9%E6%80%A7/> 编程语言特性 </a>
-</div>
-</div>
-</header>
-<div class=post-content>
-<div class=post-summary>
-<p>自动内存管理主要作用在<code>堆(heap)</code>上，而虚拟机规范并没有限定自动内存管理的实现方式，本文以时下流行的<code>HotSpot</code>虚拟机为例，介绍其中的自动内存管理（主要是垃圾回收）机制，以及它提供的几款垃圾回收器（Garbage Collector,简称GC）。</p>
-</div>
-<div class=read-more>
-<a href=/post/jvm%E4%B9%8B%E8%87%AA%E5%8A%A8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/ class=read-more-link>Read more...</a>
-</div>
-</div>
-</article>
-<article class=post>
-<header class=post-header>
-<h1 class=post-title><a class=post-link href=/post/jvm%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F/>JVM之运行时数据区域</a></h1>
-<div class=post-meta>
-<span class=post-time> 2021-08-15 </span>
-<div class=post-category>
-<a href=/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%89%B9%E6%80%A7/> 编程语言特性 </a>
-</div>
-</div>
-</header>
-<div class=post-content>
-<div class=post-summary>
-<p><a href=https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-2.html#jvms-2.5>Java11虚拟机规范</a>中描述的，当执行一个程序时需要用到的几个运行时数据区域，具体的虚拟机实现可能并没有严格按照这个划分。</p>
-</div>
-<div class=read-more>
-<a href=/post/jvm%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F/ class=read-more-link>Read more...</a>
-</div>
-</div>
-</article>
-<article class=post>
-<header class=post-header>
-<h1 class=post-title><a class=post-link href=/post/spring-boot%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/>Spring Boot启动流程</a></h1>
-<div class=post-meta>
-<span class=post-time> 2021-08-14 </span>
+<span class=post-time> 2020-11-02 </span>
 <div class=post-category>
 <a href=/categories//> [web 后端] </a>
 </div>
@@ -174,16 +92,130 @@
 </header>
 <div class=post-content>
 <div class=post-summary>
-<p>本文用一个空的<code>Spring Boot</code>项目演示，从<code>main</code>方法开始顺着源码大概过一遍启动流程。</p>
+<p>对于前后端分离的项目，后端对于前端发送的数据进行验证是必要的，但这不表示前端的验证就没必要，比如一些数据的格式问题可以在前端完成验证，快速返回结果给用户，提升用户体验。</p>
+<p>这里以一个简单的用户注册服务举例，代码部分主要展示逻辑和框架。</p>
+<p>主要思路：前端发送用户注册提交的表单信息，后端接收后在service层进行格式验证，如果格式不符合要求，则抛出相应异常，最后统一在controller层进行异常的拦截处理，返回特定的json信息。</p>
 </div>
 <div class=read-more>
-<a href=/post/spring-boot%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/ class=read-more-link>Read more...</a>
+<a href=/post/%E5%90%8E%E7%AB%AF%E5%A4%84%E7%90%86%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E9%AA%8C%E8%AF%81%E5%8F%8A%E7%BB%9F%E4%B8%80%E5%A4%84%E7%90%86%E5%BC%82%E5%B8%B8/ class=read-more-link>Read more...</a>
+</div>
+</div>
+</article>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title><a class=post-link href=/post/aes%E5%89%8D%E7%AB%AF%E5%AF%86%E7%A0%81%E5%8A%A0%E5%AF%86%E5%90%8E%E7%AB%AF-java-%E8%A7%A3%E5%AF%86%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%B0%E5%BD%95/>AES前端密码加密后端(java)解密的一些记录</a></h1>
+<div class=post-meta>
+<span class=post-time> 2020-09-08 </span>
+<div class=post-category>
+<a href=/categories//> [web 前端] </a>
+<a href=/categories//> [web 后端] </a>
+</div>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+<p>本文主要讲前端传输时的密码加密及后端收到密文后解密的过程，避免明文传输密码，文中内容都比较浅显，加密原理部分需要查阅其它资料。至于前端加密是否有意义，见仁见智。</p>
+<h2 id=环境>环境</h2>
+<p>前端用的<code>vue</code>，纯JS也可以，引入<code>crypto-js</code>库，后端用<code>java</code>。</p>
+<h2 id=加密方法modepadding的选择>加密方法、MODE、PADDING的选择</h2>
+<p>这几个参数之间相互有关联，且前后端加密、解密时的参数必须一致。</p>
+<p>有的参数前端有A选项，但是后端没有对应的选项，反之也存在后端有B选项，但前端没有的，选择的时候只能选前后端都有的。</p>
+<p>具体可以从下面两篇文档中看到：</p>
+<ul>
+<li>
+<p><a href=https://cryptojs.gitbook.io/docs/#pbkdf2>前端cypto-js参考文档</a></p>
+</li>
+<li>
+<p><a href=https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html>后端java参考文档</a></p>
+</li>
+</ul>
+<p>三个参数前后端共有的选项分别是：</p>
+<ul>
+<li>加密方法：<code>AES</code>、<code>DES</code>、 <code>Triple DES</code>(java对应<code>DESede</code>)、<code>RC4</code></li>
+<li>mode：<code>CBC</code>、<code>CFB</code>、<code>CTR</code>、<code>OFB</code>、<code>ECB</code></li>
+<li>padding:<code>NoPadding</code>、<code>Iso10126</code>、<code>Pkcs7 </code>(java对应<code>PKCS5Padding</code>)</li>
+</ul>
+</div>
+<div class=read-more>
+<a href=/post/aes%E5%89%8D%E7%AB%AF%E5%AF%86%E7%A0%81%E5%8A%A0%E5%AF%86%E5%90%8E%E7%AB%AF-java-%E8%A7%A3%E5%AF%86%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%B0%E5%BD%95/ class=read-more-link>Read more...</a>
+</div>
+</div>
+</article>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title><a class=post-link href=/post/vue-element-ui-%E5%AE%9E%E7%8E%B0%E5%BC%B9%E7%AA%97%E7%99%BB%E5%BD%95/>vue+element-ui 不借助vuex实现弹窗登录</a></h1>
+<div class=post-meta>
+<span class=post-time> 2020-09-01 </span>
+<div class=post-category>
+<a href=/categories//> [web 前端] </a>
+</div>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+<blockquote>
+<p>本文主要介绍不使用vuex的情况下，通过父子组件传值通信等方法达到弹窗登录的目的。在生产环境中，使用vuex会非常的方便，通过store去维护一个"isLoginVisible"变量即可。</p>
+</blockquote>
+<h2 id=主要思路>主要思路</h2>
+<p>首先，在同一个页面文件中实现弹窗功能一般没什么问题，定义一个状态变量控制组件的显示就行了。这里主要介绍弹窗作为一个单独的单文件组件时的情况，涉及父子组件通信及属性绑定的问题。</p>
+<p>实现：</p>
+</div>
+<div class=read-more>
+<a href=/post/vue-element-ui-%E5%AE%9E%E7%8E%B0%E5%BC%B9%E7%AA%97%E7%99%BB%E5%BD%95/ class=read-more-link>Read more...</a>
+</div>
+</div>
+</article>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title><a class=post-link href=/post/vue%E4%B8%AD%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%86%99/>Vue中的大小写</a></h1>
+<div class=post-meta>
+<span class=post-time> 2020-08-16 </span>
+<div class=post-category>
+<a href=/categories//> [web 前端] </a>
+</div>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+<p>命名方法主要分三种,效果如其名称:</p>
+<p>camelCase</p>
+<p>kebab-case</p>
+<p>PascalCase</p>
+<p>首先，DOM模板内部元素的属性名称是不区分大小写的，比如以下三种表示是等价的：</p>
+</div>
+<div class=read-more>
+<a href=/post/vue%E4%B8%AD%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%86%99/ class=read-more-link>Read more...</a>
+</div>
+</div>
+</article>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title><a class=post-link href=/post/vue%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%8B%BE%E5%AD%90/>Vue生命周期勾子</a></h1>
+<div class=post-meta>
+<span class=post-time> 2020-08-16 </span>
+<div class=post-category>
+<a href=/categories//> [web 前端] </a>
+</div>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+<p>官方原图：
+<img src=https://cn.vuejs.org/images/lifecycle.png alt=img>
+上图中红色部分为常用的<strong>实例生命周期钩子</strong>，可以用在vue实例运行的各个阶段，按大概时间线：</p>
+</div>
+<div class=read-more>
+<a href=/post/vue%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%8B%BE%E5%AD%90/ class=read-more-link>Read more...</a>
 </div>
 </div>
 </article>
 </section>
 <nav class=pagination>
-<a class=next href=/page/2/>
+<a class=prev href=/page/3/>
+<i class="iconfont icon-left"></i>
+<span class=prev-text>Prev</span>
+</a>
+<a class=next href=/page/5/>
 <span class=next-text>Next</span>
 <i class="iconfont icon-right"></i>
 </a>
