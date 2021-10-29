@@ -1,0 +1,445 @@
+<!doctype html><html lang=zh-cn>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<title>AES前端密码加密后端(java)解密的一些记录 - A few thoughts</title>
+<meta name=renderer content="webkit">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<meta name=theme-color content="#f8f5ec">
+<meta name=msapplication-navbutton-color content="#f8f5ec">
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
+<meta name=author content="ozryan"><meta name=description content="本文主要讲前端传输时的密码加密及后端收到密文后解密的过程，避免明文传输密码，文中内容都比较浅显，加密原理部分需要查阅其它资料。至于前端加密是否有意义，见仁见智。
+环境 前端用的vue，纯JS也可以，引入crypto-js库，后端用java。
+加密方法、MODE、PADDING的选择 这几个参数之间相互有关联，且前后端加密、解密时的参数必须一致。
+有的参数前端有A选项，但是后端没有对应的选项，反之也存在后端有B选项，但前端没有的，选择的时候只能选前后端都有的。
+具体可以从下面两篇文档中看到：
+  前端cypto-js参考文档
+  后端java参考文档
+  三个参数前后端共有的选项分别是：
+ 加密方法：AES、DES、 Triple DES(java对应DESede)、RC4 mode：CBC、CFB、CTR、OFB、ECB padding:NoPadding、Iso10126、Pkcs7 (java对应PKCS5Padding) ">
+<meta name=generator content="Hugo 0.88.1 with theme even">
+<link rel=canonical href=https://www.fewth.com/aes%E5%89%8D%E7%AB%AF%E5%AF%86%E7%A0%81%E5%8A%A0%E5%AF%86%E5%90%8E%E7%AB%AFjava%E8%A7%A3%E5%AF%86%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%B0%E5%BD%95/>
+<link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png>
+<link rel=manifest href=/manifest.json>
+<link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5>
+<link href=/sass/main.min.b5a744db6de49a86cadafb3b70f555ab443f83c307a483402259e94726b045ff.css rel=stylesheet>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous>
+<meta property="og:title" content="AES前端密码加密后端(java)解密的一些记录">
+<meta property="og:description" content="本文主要讲前端传输时的密码加密及后端收到密文后解密的过程，避免明文传输密码，文中内容都比较浅显，加密原理部分需要查阅其它资料。至于前端加密是否有意义，见仁见智。
+环境
+前端用的vue，纯JS也可以，引入crypto-js库，后端用java。
+加密方法、MODE、PADDING的选择
+这几个参数之间相互有关联，且前后端加密、解密时的参数必须一致。
+有的参数前端有A选项，但是后端没有对应的选项，反之也存在后端有B选项，但前端没有的，选择的时候只能选前后端都有的。
+具体可以从下面两篇文档中看到：
+
+
+前端cypto-js参考文档
+
+
+后端java参考文档
+
+
+三个参数前后端共有的选项分别是：
+
+加密方法：AES、DES、 Triple DES(java对应DESede)、RC4
+mode：CBC、CFB、CTR、OFB、ECB
+padding:NoPadding、Iso10126、Pkcs7 (java对应PKCS5Padding)
+">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.fewth.com/aes%E5%89%8D%E7%AB%AF%E5%AF%86%E7%A0%81%E5%8A%A0%E5%AF%86%E5%90%8E%E7%AB%AFjava%E8%A7%A3%E5%AF%86%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%B0%E5%BD%95/"><meta property="article:section" content="post">
+<meta property="article:published_time" content="2020-09-08T19:41:34+00:00">
+<meta property="article:modified_time" content="2020-09-08T19:41:34+00:00">
+<meta itemprop=name content="AES前端密码加密后端(java)解密的一些记录">
+<meta itemprop=description content="本文主要讲前端传输时的密码加密及后端收到密文后解密的过程，避免明文传输密码，文中内容都比较浅显，加密原理部分需要查阅其它资料。至于前端加密是否有意义，见仁见智。
+环境
+前端用的vue，纯JS也可以，引入crypto-js库，后端用java。
+加密方法、MODE、PADDING的选择
+这几个参数之间相互有关联，且前后端加密、解密时的参数必须一致。
+有的参数前端有A选项，但是后端没有对应的选项，反之也存在后端有B选项，但前端没有的，选择的时候只能选前后端都有的。
+具体可以从下面两篇文档中看到：
+
+
+前端cypto-js参考文档
+
+
+后端java参考文档
+
+
+三个参数前后端共有的选项分别是：
+
+加密方法：AES、DES、 Triple DES(java对应DESede)、RC4
+mode：CBC、CFB、CTR、OFB、ECB
+padding:NoPadding、Iso10126、Pkcs7 (java对应PKCS5Padding)
+"><meta itemprop=datePublished content="2020-09-08T19:41:34+00:00">
+<meta itemprop=dateModified content="2020-09-08T19:41:34+00:00">
+<meta itemprop=wordCount content="1388">
+<meta itemprop=keywords content><meta name=twitter:card content="summary">
+<meta name=twitter:title content="AES前端密码加密后端(java)解密的一些记录">
+<meta name=twitter:description content="本文主要讲前端传输时的密码加密及后端收到密文后解密的过程，避免明文传输密码，文中内容都比较浅显，加密原理部分需要查阅其它资料。至于前端加密是否有意义，见仁见智。
+环境
+前端用的vue，纯JS也可以，引入crypto-js库，后端用java。
+加密方法、MODE、PADDING的选择
+这几个参数之间相互有关联，且前后端加密、解密时的参数必须一致。
+有的参数前端有A选项，但是后端没有对应的选项，反之也存在后端有B选项，但前端没有的，选择的时候只能选前后端都有的。
+具体可以从下面两篇文档中看到：
+
+
+前端cypto-js参考文档
+
+
+后端java参考文档
+
+
+三个参数前后端共有的选项分别是：
+
+加密方法：AES、DES、 Triple DES(java对应DESede)、RC4
+mode：CBC、CFB、CTR、OFB、ECB
+padding:NoPadding、Iso10126、Pkcs7 (java对应PKCS5Padding)
+"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
+</head>
+<body>
+<div id=mobile-navbar class=mobile-navbar>
+<div class=mobile-header-logo>
+<a href=/ class=logo>A few thoughts</a>
+</div>
+<div class=mobile-navbar-icon>
+<span></span>
+<span></span>
+<span></span>
+</div>
+</div>
+<nav id=mobile-menu class="mobile-menu slideout-menu">
+<ul class=mobile-menu-list>
+<a href=/>
+<li class=mobile-menu-item>主页</li>
+</a><a href=/post>
+<li class=mobile-menu-item>归档</li>
+</a><a href=/categories/>
+<li class=mobile-menu-item>分类</li>
+</a>
+</ul>
+</nav>
+<div class=container id=mobile-panel>
+<header id=header class=header>
+<div class=logo-wrapper>
+<a href=/ class=logo>A few thoughts</a>
+</div>
+<nav class=site-navbar>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a class=menu-item-link href=/>主页</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/post>归档</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/categories/>分类</a>
+</li>
+</ul>
+</nav>
+</header>
+<main id=main class=main>
+<div class=content-wrapper>
+<div id=content class=content>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title>AES前端密码加密后端(java)解密的一些记录</h1>
+<div class=post-meta>
+<span class=post-time> 2020-09-08 </span>
+<div class=post-category>
+<a href=/categories//> [web 前端] </a>
+<a href=/categories//> [web 后端] </a>
+</div>
+<span class=more-meta> 约 1388 字 </span>
+<span class=more-meta> 预计阅读 3 分钟 </span>
+</div>
+</header>
+<div class=post-toc id=post-toc>
+<h2 class=post-toc-title>文章目录</h2>
+<div class="post-toc-content always-active">
+<nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li><a href=#环境>环境</a></li>
+<li><a href=#加密方法modepadding的选择>加密方法、MODE、PADDING的选择</a></li>
+<li><a href=#实现工具类>实现工具类</a>
+<ul>
+<li><a href=#前端>前端</a></li>
+<li><a href=#后端>后端</a></li>
+</ul>
+</li>
+<li><a href=#应用>应用</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+<div class=post-content>
+<p>本文主要讲前端传输时的密码加密及后端收到密文后解密的过程，避免明文传输密码，文中内容都比较浅显，加密原理部分需要查阅其它资料。至于前端加密是否有意义，见仁见智。</p>
+<h2 id=环境>环境</h2>
+<p>前端用的<code>vue</code>，纯JS也可以，引入<code>crypto-js</code>库，后端用<code>java</code>。</p>
+<h2 id=加密方法modepadding的选择>加密方法、MODE、PADDING的选择</h2>
+<p>这几个参数之间相互有关联，且前后端加密、解密时的参数必须一致。</p>
+<p>有的参数前端有A选项，但是后端没有对应的选项，反之也存在后端有B选项，但前端没有的，选择的时候只能选前后端都有的。</p>
+<p>具体可以从下面两篇文档中看到：</p>
+<ul>
+<li>
+<p><a href=https://cryptojs.gitbook.io/docs/#pbkdf2>前端cypto-js参考文档</a></p>
+</li>
+<li>
+<p><a href=https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html>后端java参考文档</a></p>
+</li>
+</ul>
+<p>三个参数前后端共有的选项分别是：</p>
+<ul>
+<li>加密方法：<code>AES</code>、<code>DES</code>、 <code>Triple DES</code>(java对应<code>DESede</code>)、<code>RC4</code></li>
+<li>mode：<code>CBC</code>、<code>CFB</code>、<code>CTR</code>、<code>OFB</code>、<code>ECB</code></li>
+<li>padding:<code>NoPadding</code>、<code>Iso10126</code>、<code>Pkcs7 </code>(java对应<code>PKCS5Padding</code>)</li>
+</ul>
+<p>选择的话,每一个方法、MODE、padding的实现都有点复杂，上面的java参考文档里有写具体的技术性文档链接，这里只说使用，不说原理。</p>
+<ul>
+<li>加密方法通常选<code>AES</code>，参考：<a href=https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf>FIPS 197</a>。</li>
+<li>mode: <code>crypto-js</code>默认是<code>CBC</code>，参考：<a href=https://csrc.nist.gov/publications/fips/fips81/fips81.htm>FIPS 81</a></li>
+<li>padding：如果上面选的是<code>AES/CBC</code>,那么<code>padding</code>可以选<code>Iso10126</code>或者<code>Pkcs7</code>。
+<ul>
+<li><font color=red>NoPadding不能用</font>，因为AES只支持128bit、192bit、256bit几种大小的分块(block)，取决于key的位数，除非要加密的密文正好是上面这个块的大小，否则就不能解密，这显然是不合理的。</li>
+<li>前端的<code>Pkcs7</code>和java的<code>PKCS5Padding</code>是对应的，参考<a href=https://en.wikipedia.org/wiki/Padding_(cryptography)>wiki</a>上的解释,两者基本等价：</li>
+</ul>
+<blockquote>
+<p>PKCS#5 padding is identical to PKCS#7 padding, except that it has only been defined for block ciphers that use a 64-bit (8-byte) block size. In practice the two can be used interchangeably.</p>
+</blockquote>
+</li>
+</ul>
+<h2 id=实现工具类>实现工具类</h2>
+<p>下面的例子采用<code>AES/CBC/Pkcs7</code>这几项，java端是<code>AES/CBC/PKCS5Padding</code>。</p>
+<p>密钥<code>key</code>和初始向量<code>iv</code>都设置成固定值，前后端一致即可。</p>
+<p><code>key</code>用于<code>AES</code>方法加密，<code>iv</code>用于<code>CBC</code>MODE，<code>iv</code>的大小要跟<code>block</code>一样，在这里就是128bit，跟<code>key</code>一样</p>
+<p>前端引入<code>crypto-js</code>：<code>npm install crypto-js</code></p>
+<h3 id=前端>前端</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=c1>//aesutils.js
+</span><span class=c1></span><span class=kr>import</span> <span class=nx>CryptoJs</span> <span class=nx>from</span> <span class=s1>&#39;crypto-js&#39;</span>
+
+<span class=c1>//把key、iv设置成固定值，前后端的值要一致
+</span><span class=c1></span><span class=kd>let</span> <span class=nx>key</span> <span class=o>=</span> <span class=nx>CryptoJs</span><span class=p>.</span><span class=nx>enc</span><span class=p>.</span><span class=nx>Utf8</span><span class=p>.</span><span class=nx>parse</span><span class=p>(</span><span class=s2>&#34;onlinemenukey123&#34;</span><span class=p>);</span>
+<span class=kd>let</span> <span class=nx>iv</span> <span class=o>=</span> <span class=nx>CryptoJs</span><span class=p>.</span><span class=nx>enc</span><span class=p>.</span><span class=nx>Utf8</span><span class=p>.</span><span class=nx>parse</span><span class=p>(</span><span class=s2>&#34;onlinemenuiv1234&#34;</span><span class=p>);</span>
+
+<span class=cm>/**
+</span><span class=cm> *
+</span><span class=cm> * @param word 原始文本
+</span><span class=cm> * @returns {*} Base64的文本
+</span><span class=cm> * @constructor
+</span><span class=cm> */</span>
+<span class=kr>export</span> <span class=kd>function</span> <span class=nx>Encrypt</span><span class=p>(</span><span class=nx>word</span><span class=p>)</span> <span class=p>{</span>
+    <span class=kd>let</span> <span class=nx>srcs</span> <span class=o>=</span> <span class=nx>CryptoJs</span><span class=p>.</span><span class=nx>enc</span><span class=p>.</span><span class=nx>Utf8</span><span class=p>.</span><span class=nx>parse</span><span class=p>(</span><span class=nx>word</span><span class=p>);</span>
+    <span class=kd>var</span> <span class=nx>encrypted</span> <span class=o>=</span> <span class=nx>CryptoJs</span><span class=p>.</span><span class=nx>AES</span><span class=p>.</span><span class=nx>encrypt</span><span class=p>(</span><span class=nx>srcs</span><span class=p>,</span> <span class=nx>key</span><span class=p>,</span> <span class=p>{</span>
+        <span class=nx>iv</span><span class=o>:</span> <span class=nx>iv</span><span class=p>,</span>
+        <span class=nx>mode</span><span class=o>:</span> <span class=nx>CryptoJs</span><span class=p>.</span><span class=nx>mode</span><span class=p>.</span><span class=nx>CBC</span><span class=p>,</span>
+        <span class=nx>padding</span><span class=o>:</span> <span class=nx>CryptoJs</span><span class=p>.</span><span class=nx>pad</span><span class=p>.</span><span class=nx>Pkcs7</span>
+    <span class=p>});</span>
+    <span class=k>return</span> <span class=nx>CryptoJs</span><span class=p>.</span><span class=nx>enc</span><span class=p>.</span><span class=nx>Base64</span><span class=p>.</span><span class=nx>stringify</span><span class=p>(</span><span class=nx>encrypted</span><span class=p>.</span><span class=nx>ciphertext</span><span class=p>);</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=后端>后端</h3>
+<p>涉及到<code>String</code>和<code>byte[]</code>转换时，最好指定编码类型，可以避免</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=kn>package</span> <span class=nn>com.lyuww.bgmanager.Utils</span><span class=o>;</span>
+
+<span class=kn>import</span> <span class=nn>org.apache.tomcat.util.codec.binary.Base64</span><span class=o>;</span>
+
+<span class=kn>import</span> <span class=nn>javax.crypto.Cipher</span><span class=o>;</span>
+<span class=kn>import</span> <span class=nn>javax.crypto.spec.IvParameterSpec</span><span class=o>;</span>
+<span class=kn>import</span> <span class=nn>javax.crypto.spec.SecretKeySpec</span><span class=o>;</span>
+<span class=kn>import</span> <span class=nn>java.nio.charset.StandardCharsets</span><span class=o>;</span>
+
+<span class=kd>public</span> <span class=kd>class</span> <span class=nc>AESUtils</span> <span class=o>{</span>
+    <span class=cm>/**
+</span><span class=cm>     * 解密前端发送的AES加密处理后的密码文本
+</span><span class=cm>     * @param text 前端发送的加密后的密文
+</span><span class=cm>     * @param key 跟前端设置的key一致,只能是128bit、192bit、256bit
+</span><span class=cm>     * @param iv 初始向量，跟前端设置的iv一致
+</span><span class=cm>     * @return
+</span><span class=cm>     */</span>
+
+    <span class=kd>private</span> <span class=kd>static</span> <span class=kd>final</span> <span class=n>String</span> <span class=n>key</span><span class=o>=</span><span class=s>&#34;onlinemenukey123&#34;</span><span class=o>;</span>
+    <span class=kd>private</span> <span class=kd>static</span> <span class=kd>final</span> <span class=n>String</span> <span class=n>iv</span><span class=o>=</span><span class=s>&#34;onlinemenuiv1234&#34;</span><span class=o>;</span>
+
+
+    <span class=kd>public</span> <span class=kd>static</span> <span class=n>String</span> <span class=nf>DecoderAES</span><span class=o>(</span><span class=n>String</span> <span class=n>text</span><span class=o>){</span>
+        <span class=k>try</span><span class=o>{</span>
+            <span class=kt>byte</span><span class=o>[]</span> <span class=n>encrypted</span><span class=o>=</span><span class=k>new</span> <span class=n>Base64</span><span class=o>().</span><span class=na>decode</span><span class=o>(</span><span class=n>text</span><span class=o>);</span><span class=c1>//把base64编码的文本转换成byte数组
+</span><span class=c1></span>
+            <span class=n>Cipher</span> <span class=n>cipher</span><span class=o>=</span><span class=n>Cipher</span><span class=o>.</span><span class=na>getInstance</span><span class=o>(</span><span class=s>&#34;AES/CBC/PKCS5Padding &#34;</span><span class=o>);</span>
+            <span class=n>SecretKeySpec</span> <span class=n>secretKey</span><span class=o>=</span><span class=k>new</span> <span class=n>SecretKeySpec</span><span class=o>(</span><span class=n>key</span><span class=o>.</span><span class=na>getBytes</span><span class=o>(</span><span class=n>StandardCharsets</span><span class=o>.</span><span class=na>UTF_8</span><span class=o>),</span><span class=s>&#34;AES&#34;</span><span class=o>);</span>
+            <span class=n>IvParameterSpec</span> <span class=n>ivParameter</span><span class=o>=</span><span class=k>new</span> <span class=n>IvParameterSpec</span><span class=o>(</span><span class=n>iv</span><span class=o>.</span><span class=na>getBytes</span><span class=o>(</span><span class=n>StandardCharsets</span><span class=o>.</span><span class=na>UTF_8</span><span class=o>));</span>
+
+            <span class=n>cipher</span><span class=o>.</span><span class=na>init</span><span class=o>(</span><span class=n>Cipher</span><span class=o>.</span><span class=na>DECRYPT_MODE</span><span class=o>,</span><span class=n>secretKey</span><span class=o>,</span><span class=n>ivParameter</span><span class=o>);</span>
+
+            <span class=kt>byte</span><span class=o>[]</span> <span class=n>decrypted</span><span class=o>=</span><span class=n>cipher</span><span class=o>.</span><span class=na>doFinal</span><span class=o>(</span><span class=n>encrypted</span><span class=o>);</span>
+            <span class=n>String</span> <span class=n>oriringalString</span><span class=o>=</span><span class=k>new</span> <span class=n>String</span><span class=o>(</span><span class=n>decrypted</span><span class=o>,</span><span class=n>StandardCharsets</span><span class=o>.</span><span class=na>UTF_8</span><span class=o>);</span>
+            <span class=k>return</span> <span class=n>oriringalString</span><span class=o>;</span>
+        <span class=o>}</span><span class=k>catch</span> <span class=o>(</span><span class=n>Exception</span> <span class=n>e</span><span class=o>){</span>
+            <span class=c1>//解密失败时的操作
+</span><span class=c1></span>            <span class=k>return</span> <span class=n>e</span><span class=o>.</span><span class=na>toString</span><span class=o>();</span>
+        <span class=o>}</span>
+    <span class=o>}</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=应用>应用</h2>
+<p>主要步骤：</p>
+<p>前端</p>
+<ul>
+<li>
+<p>引入工具类：</p>
+<p><code>import {Decrypt, Encrypt} from "@/utils/aesutils";</code></p>
+</li>
+<li>
+<p>用<code>axios</code>等方法传输数据，比如密码，在传输前加工具类加密即可</p>
+<p><code>Encrypt(this.$data.formData.password)</code></p>
+</li>
+</ul>
+<p>后端</p>
+<ul>
+<li>
+<p>引入工具类</p>
+<p><code>import xxx.AESUtils;</code></p>
+</li>
+<li>
+<p>用工具类解密还原密码，然后进行后续的数据库端密码操作即可</p>
+<p><code>AESUtils.DecoderAES(user.getPassword()))</code></p>
+</li>
+</ul>
+</div>
+<footer class=post-footer>
+<nav class=post-nav>
+<a class=prev href=/%E5%90%8E%E7%AB%AF%E5%A4%84%E7%90%86%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E9%AA%8C%E8%AF%81%E5%8F%8A%E7%BB%9F%E4%B8%80%E5%A4%84%E7%90%86%E5%BC%82%E5%B8%B8/>
+<i class="iconfont icon-left"></i>
+<span class="prev-text nav-default">后端处理数据格式验证及统一处理异常</span>
+<span class="prev-text nav-mobile">上一篇</span>
+</a>
+<a class=next href=/vue-element-ui-%E4%B8%8D%E5%80%9F%E5%8A%A9vuex%E5%AE%9E%E7%8E%B0%E5%BC%B9%E7%AA%97%E7%99%BB%E5%BD%95/>
+<span class="next-text nav-default">vue+element-ui 不借助vuex实现弹窗登录</span>
+<span class="next-text nav-mobile">下一篇</span>
+<i class="iconfont icon-right"></i>
+</a>
+</nav>
+</footer>
+</article>
+</div>
+<div id=vcomments></div>
+<script src=//cdn1.lncld.net/static/js/3.0.4/av-min.js></script>
+<script src=//unpkg.com/valine/dist/Valine.min.js></script>
+<script type=text/javascript>new Valine({el:'#vcomments',appId:'BmT2lGTnBMBj6625uiiWM1xV-MdYXbMMI',appKey:'tasHQvivyFQEjq66DERC31Ja',notify:!1,verify:!1,avatar:'mm',placeholder:'说点什么吧...',visitor:!1})</script>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=social-links>
+<a href=https://github.com/ozryan class="iconfont icon-github" title=github></a>
+<a href=https://www.fewth.com/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a>
+</div>
+<div class=copyright>
+<span class=power-by>
+由 <a class=hexo-link href=https://gohugo.io>Hugo</a> 强力驱动
+</span>
+<span class=division>|</span>
+<span class=theme-info>
+主题 -
+<a class=theme-link href=https://github.com/olOwOlo/hugo-theme-even>Even</a>
+</span>
+<span class=copyright-year>
+&copy;
+2020 -
+2021<span class=heart><i class="iconfont icon-heart"></i></span><span>ozryan</span>
+</span>
+</div>
+</footer>
+<div class=back-to-top id=back-to-top>
+<i class="iconfont icon-up"></i>
+</div>
+</div>
+<script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script>
+<script type=text/javascript src=/js/main.min.c99b103c33d1539acf3025e1913697534542c4a5aa5af0ccc20475ed2863603b.js></script>
+<script type=text/javascript>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]}}</script>
+<script async src=https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin=anonymous></script>
+</body>
+</html>
