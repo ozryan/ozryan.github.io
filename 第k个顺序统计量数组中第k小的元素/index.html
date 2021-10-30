@@ -29,14 +29,14 @@
 快速选择算法跟快速排序类似，主要步骤就是分组算法：根据哨兵元素把数组分成两组，一组小于哨兵，一组大于哨兵，然后进行递归调用。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://www.fewth.com/%E7%AC%ACk%E4%B8%AA%E9%A1%BA%E5%BA%8F%E7%BB%9F%E8%AE%A1%E9%87%8F%E6%95%B0%E7%BB%84%E4%B8%AD%E7%AC%ACk%E5%B0%8F%E7%9A%84%E5%85%83%E7%B4%A0/"><meta property="article:section" content="post">
-<meta property="article:published_time" content="2021-10-24T17:09:19+00:00">
-<meta property="article:modified_time" content="2021-10-28T00:00:00+00:00">
+<meta property="article:published_time" content="2021-10-24T00:00:00+00:00">
+<meta property="article:modified_time" content="2021-10-30T00:00:00+00:00">
 <meta itemprop=name content="第k个顺序统计量(数组中第k小的元素)">
 <meta itemprop=description content="要从一个数组中找出第k小的元素，最容易想到的是快速排序，但是快速排序解决这个问题有很多不必要的操作，在快速排序中，根据“哨兵”元素把数组分成两部分，然后对两部分进行递归处理，第k个顺序统计量的算法也借鉴这种思路，我们称为“快速选择(quick select)算法”,但是快速选择算法每次只需要处理第K个元素所在的那一部分就行，我们的目的只是找到目标元素，随着递归次数的深入，快速选择算法要处理的元素会越来越少（而快速排序随着递归的深入，每次递归处理的元素总数依然是n），这种差别是很大的，后面分析时间复杂度时可以得知快速选择算法的期望运行时间是$\theta(n)$。
 算法实现
-快速选择算法跟快速排序类似，主要步骤就是分组算法：根据哨兵元素把数组分成两组，一组小于哨兵，一组大于哨兵，然后进行递归调用。"><meta itemprop=datePublished content="2021-10-24T17:09:19+00:00">
-<meta itemprop=dateModified content="2021-10-28T00:00:00+00:00">
-<meta itemprop=wordCount content="2494">
+快速选择算法跟快速排序类似，主要步骤就是分组算法：根据哨兵元素把数组分成两组，一组小于哨兵，一组大于哨兵，然后进行递归调用。"><meta itemprop=datePublished content="2021-10-24T00:00:00+00:00">
+<meta itemprop=dateModified content="2021-10-30T00:00:00+00:00">
+<meta itemprop=wordCount content="2500">
 <meta itemprop=keywords content><meta name=twitter:card content="summary">
 <meta name=twitter:title content="第k个顺序统计量(数组中第k小的元素)">
 <meta name=twitter:description content="要从一个数组中找出第k小的元素，最容易想到的是快速排序，但是快速排序解决这个问题有很多不必要的操作，在快速排序中，根据“哨兵”元素把数组分成两部分，然后对两部分进行递归处理，第k个顺序统计量的算法也借鉴这种思路，我们称为“快速选择(quick select)算法”,但是快速选择算法每次只需要处理第K个元素所在的那一部分就行，我们的目的只是找到目标元素，随着递归次数的深入，快速选择算法要处理的元素会越来越少（而快速排序随着递归的深入，每次递归处理的元素总数依然是n），这种差别是很大的，后面分析时间复杂度时可以得知快速选择算法的期望运行时间是$\theta(n)$。
@@ -94,7 +94,7 @@
 <div class=post-category>
 <a href=/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/> 数据结构与算法 </a>
 </div>
-<span class=more-meta> 约 2494 字 </span>
+<span class=more-meta> 约 2500 字 </span>
 <span class=more-meta> 预计阅读 5 分钟 </span>
 </div>
 </header>
@@ -241,14 +241,16 @@
 </div><h2 id=期望运行时间>期望运行时间</h2>
 <p>运行一次快速选择算法，可能出现的最差情况：比如我们的目标是选择最小元素，但每次递归调用分组算法都只排除了一个最大元素，直到最后一次循环才选中目标元素，那么运行时间是$\theta(n^2)$,所以单说快速选择算法的时间复杂度，我们只能给出$O(n^2)$，但是类似快速排序，在样本数量足够大的时候，快速选择算法的<strong>期望运行时间</strong>是$\theta(n)$，下面来证明这个结论。</p>
 <p>对于一个大小为<code>n</code>的数组，我们用符号$T(n)$表示一次快速选择算法运行的时间,根据前面的代码，可以得出一个基本的递归式(注意left在这里表示数量而不是下标)：</p>
-<p>$
+<p>$$
+\begin{aligned}
 T(n)=
 \begin{cases}
-T(left)+\theta (n),k-1&lt;left \\<br>
-T(n-1-left)+ \theta (n),k-1>left \\<br>
-O(1)+ \theta(n),k-1==left
+T(left)+\theta (n),&k-1&lt;left \\<br>
+T(n-1-left)+ \theta (n),&k-1>left \\<br>
+O(1)+ \theta(n),&k-1==left
 \end{cases}
-$</p>
+\end{aligned}
+$$</p>
 <p>其中$\theta(n)$表示<code>partition</code>方法运行的时间，<code>partition</code>只有一个<code>for</code>循环，$k$表示我们要找的是第k个元素(从1开始)，<code>left</code>表示在哨兵左边的元素数量，取值[0,n-1],<code>n-1-left</code>就表示在哨兵右边的元素数量。</p>
 <p>因为<code>partition</code>操作是随机的，所以<code>left</code>的值（也就是哨兵左边的元素数量）会在[0,n-1]中等概率的出现，而根据上面的公式可知，对于任意的$k$,只要知道<code>left</code>的值，就知道了需要递归处理的元素是哪些，而$E[T(n)]$就是把所有可能出现的<code>left</code>对应的情况进行统计，分析它们对应要递归处理的元素的数量。这里要注意，虽然<code>left</code>的值是在[0,n-1]之间变化的，但是要递归处理的元素数量并不是单调变化的，它们在<code>k</code>的两侧都会发生突变，看下图：</p>
 <p><img src=expectedtime-of-quickselect.png alt=递归处理的元素数量></p>
@@ -259,11 +261,14 @@ E[T(n)]&lt;=2 \sum \limits_{ s=\lceil \frac{n-1}{2}\rceil}^{n-1}\frac{1}{n}T(s)+
 $$</p>
 <p>公式中使用向上取整就可以覆盖到n是奇数和偶数两种情况。</p>
 <p>要证明上面的递归式，我们用替代法，替代法最重要的步骤就是猜，猜出算法的时间复杂度，然后代入到方程中求证，猜测通常需要一点经验，这里我们的猜测是：当n足够大时，存在一个常数<code>a</code>，使得$T(n)&lt; an $成立，因为递归式中还有$\theta (n)$部分，所以用$bn$来代替它的上限，对上面的方程整理后得:</p>
-<p>$$\begin{split}
-E[T(n)]&lt;=\frac {2a}{n}\frac {(n-1+\lceil \frac {n-1}{2} \rceil )}{2}(n- \lceil \frac {n-1}{2}\rceil )+ bn \\<br>
-&lt;=\frac {a}{n}(n-1+\frac {n}{2})(n-\frac {n}{2})+bn=\frac {3}{4}an-\frac {a}{2}+bn \\<br>
-=an+(bn-\frac {a}{2}-\frac {1}{4}an)
-\end{split}$$</p>
+<p>$$
+\begin{aligned}
+E[T(n)]&lt;=&\frac {2a}{n}\frac {(n-1+\lceil \frac {n-1}{2} \rceil )}{2}(n- \lceil \frac {n-1}{2}\rceil )+ bn \\<br>
+&lt;=&\frac {a}{n}(n-1+\frac {n}{2})(n-\frac {n}{2})+bn \\<br>
+=&\frac {3}{4}an-\frac {a}{2}+bn \\<br>
+=&an+(bn-\frac {a}{2}-\frac {1}{4}an)
+\end{aligned}
+$$</p>
 <p>还要满足$(bn-\frac{a}{2}-\frac{1}{4}an)&lt;=0$，整理后得$n>=\frac{2a}{a-4b}$,也就是说，当n大于这个值时，$E[T(n)]&lt;=an$就成立，这个式子的值虽然跟<code>a,b</code>有关，但是<code>a</code>的值是我们假设的，<code>b</code>的值可以认为是固定的，那么我们只要让<code>a</code>远大于<code>4b</code>就行了，此时式子的值接近2，而n=1,2的情况显然是满足条件的，至此证明结束。</p>
 </div>
 <div class=post-copyright>
