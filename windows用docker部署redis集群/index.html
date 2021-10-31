@@ -1,0 +1,501 @@
+<!doctype html><html lang=zh-cn>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<title>windows用docker部署redis集群 - A few thoughts</title>
+<meta name=renderer content="webkit">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<meta name=theme-color content="#f8f5ec">
+<meta name=msapplication-navbutton-color content="#f8f5ec">
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
+<meta name=author content="ozryan"><meta name=description content="1 预备知识 除了知道Docker和Redis cluster的基本概念和常规部署流程外，还需要知道Docker里的几个概念：
+">
+<meta name=generator content="Hugo 0.88.1 with theme even">
+<link rel=canonical href=https://www.fewth.com/windows%E7%94%A8docker%E9%83%A8%E7%BD%B2redis%E9%9B%86%E7%BE%A4/>
+<link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png>
+<link rel=manifest href=/manifest.json>
+<link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5>
+<link href=/sass/main.min.b5a744db6de49a86cadafb3b70f555ab443f83c307a483402259e94726b045ff.css rel=stylesheet>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous>
+<meta property="og:title" content="windows用docker部署redis集群">
+<meta property="og:description" content="1 预备知识
+除了知道Docker和Redis cluster的基本概念和常规部署流程外，还需要知道Docker里的几个概念：">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.fewth.com/windows%E7%94%A8docker%E9%83%A8%E7%BD%B2redis%E9%9B%86%E7%BE%A4/"><meta property="article:section" content="post">
+<meta property="article:published_time" content="2021-04-14T12:23:02+00:00">
+<meta property="article:modified_time" content="2021-04-14T12:23:02+00:00">
+<meta itemprop=name content="windows用docker部署redis集群">
+<meta itemprop=description content="1 预备知识
+除了知道Docker和Redis cluster的基本概念和常规部署流程外，还需要知道Docker里的几个概念："><meta itemprop=datePublished content="2021-04-14T12:23:02+00:00">
+<meta itemprop=dateModified content="2021-04-14T12:23:02+00:00">
+<meta itemprop=wordCount content="1817">
+<meta itemprop=keywords content><meta name=twitter:card content="summary">
+<meta name=twitter:title content="windows用docker部署redis集群">
+<meta name=twitter:description content="1 预备知识
+除了知道Docker和Redis cluster的基本概念和常规部署流程外，还需要知道Docker里的几个概念："><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
+</head>
+<body>
+<div id=mobile-navbar class=mobile-navbar>
+<div class=mobile-header-logo>
+<a href=/ class=logo>A few thoughts</a>
+</div>
+<div class=mobile-navbar-icon>
+<span></span>
+<span></span>
+<span></span>
+</div>
+</div>
+<nav id=mobile-menu class="mobile-menu slideout-menu">
+<ul class=mobile-menu-list>
+<a href=/>
+<li class=mobile-menu-item>主页</li>
+</a><a href=/post>
+<li class=mobile-menu-item>归档</li>
+</a><a href=/categories/>
+<li class=mobile-menu-item>分类</li>
+</a>
+</ul>
+</nav>
+<div class=container id=mobile-panel>
+<header id=header class=header>
+<div class=logo-wrapper>
+<a href=/ class=logo>A few thoughts</a>
+</div>
+<nav class=site-navbar>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a class=menu-item-link href=/>主页</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/post>归档</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/categories/>分类</a>
+</li>
+</ul>
+</nav>
+</header>
+<main id=main class=main>
+<div class=content-wrapper>
+<div id=content class=content>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title>windows用docker部署redis集群</h1>
+<div class=post-meta>
+<span class=post-time> 2021-04-14 </span>
+<div class=post-category>
+<a href=/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/> 工具使用 </a>
+</div>
+<span class=more-meta> 约 1817 字 </span>
+<span class=more-meta> 预计阅读 4 分钟 </span>
+</div>
+</header>
+<div class=post-toc id=post-toc>
+<h2 class=post-toc-title>文章目录</h2>
+<div class="post-toc-content always-active">
+<nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li><a href=#1-预备知识>1 预备知识</a></li>
+<li><a href=#2-基本步骤>2 基本步骤</a>
+<ul>
+<li><a href=#21-获取redis镜像>2.1 获取redis镜像</a></li>
+<li><a href=#22-在本机创建配置文件>2.2 在本机创建配置文件</a></li>
+<li><a href=#23-创建一个docker-network>2.3 创建一个<code>Docker Network</code></a></li>
+<li><a href=#24-用本地配置文件启动多个redis节点>2.4 用本地配置文件启动多个redis节点</a></li>
+</ul>
+</li>
+<li><a href=#3-在项目中使用>3 在项目中使用</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+<div class=post-content>
+<h2 id=1-预备知识>1 预备知识</h2>
+<p>除了知道<code>Docker</code>和<code>Redis cluster</code>的基本概念和常规部署流程外，还需要知道<code>Docker</code>里的几个概念：</p>
+<ul>
+<li><a href=https://docs.docker.com/storage/volumes/>Volume</a>：独立于<code>container</code>的一个数据保存区域，可以被<code>container</code>共享，也可以用来把本地的配置文件映射过去供<code>container</code>使用。</li>
+<li><a href=https://docs.docker.com/network/bridge/>Network</a>：<code>Docker</code>内部的"网络"，让不同的<code>container</code>可以互相访问，这是<code>redis</code>官方建议的在<code>docker</code>里做<code>cluster</code>时的方式。我们这里主要用<code>bridge</code>模式。</li>
+</ul>
+<h2 id=2-基本步骤>2 基本步骤</h2>
+<h3 id=21-获取redis镜像>2.1 获取redis镜像</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>docker pull redis
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=22-在本机创建配置文件>2.2 在本机创建配置文件</h3>
+<p>在本地的一个文件夹内创建一个<code>redis-cluster.conf</code>配置文件，里面仅包含简单的集群配置信息：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>port 6379
+cluster-enabled yes
+cluster-config-file nodes.conf
+cluster-node-timeout 5000
+appendonly yes
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=23-创建一个docker-network>2.3 创建一个<code>Docker Network</code></h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>docker network create my-net
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=24-用本地配置文件启动多个redis节点>2.4 用本地配置文件启动多个redis节点</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>docker run -d --name redis-1 --network my-net -v C:\Users\xxx\Desktop\conf\redis-cluster.conf:/usr/local/etc/redis/redis.conf redis redis-server /usr/local/etc/redis/redis.conf
+</code></pre></td></tr></table>
+</div>
+</div><p>上面这条命令里的几个参数：</p>
+<ul>
+<li>docker run：运行一个<code>container</code></li>
+<li>-d:后台运行</li>
+<li><code>--name</code>：自定义的container的名称</li>
+<li><code>--network</code>:容器加入的网络</li>
+<li>-v:volume映射,“本机地址：docker地址”的格式，&ldquo;C:\Users\xxx\Desktop\conf\redis-cluster.conf"是刚才存放的配置文件地址（加文件名），"/usr/local/etc/redis/redis.conf"是我们的<code>volume</code>挂载的地址,这里我们把配置文件的名称也改掉了，本机是<code>redis-cluster.conf</code>，<code>volume</code>里是<code>redis.conf</code></li>
+<li>redis：我们的<code>image</code>名称，默认用最新版</li>
+<li>redis-server /usr/local/etc/redis/redis.conf:这跟我们常规启动<code>redis</code>服务是一样的，用我们刚才映射过去的配置文件启动。</li>
+</ul>
+<p>把上面的"redis-1"换成"redis-2&rdquo;&mldr;&ldquo;redis-6&rdquo;，启动6个节点，注意这里配置文件不用改，端口也全是6379,因为<code>network</code>会给我们每一个节点分配不同的IP。</p>
+<p>完成后查看一下容器：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>docker ps
+</code></pre></td></tr></table>
+</div>
+</div><details>
+<summary>查看输出</summary>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>CONTAINER ID   IMAGE     COMMAND                  CREATED          STATUS          PORTS      NAMES
+
+cd6d8811ce44   redis     &#34;docker-entrypoint.s…&#34;   2 seconds ago    Up 1 second     6379/tcp   redis-6
+
+f67c48b6ea9d   redis     &#34;docker-entrypoint.s…&#34;   8 seconds ago    Up 7 seconds    6379/tcp   redis-5
+
+4fe4a89469da   redis     &#34;docker-entrypoint.s…&#34;   13 seconds ago   Up 12 seconds   6379/tcp   redis-4
+
+950537cd501e   redis     &#34;docker-entrypoint.s…&#34;   21 seconds ago   Up 20 seconds   6379/tcp   redis-3
+
+4d09c04e87b1   redis     &#34;docker-entrypoint.s…&#34;   34 seconds ago   Up 32 seconds   6379/tcp   redis-2
+
+d15c0933bc05   redis     &#34;docker-entrypoint.s…&#34;   12 minutes ago   Up 12 minutes   6379/tcp   redis-1
+</code></pre></td></tr></table>
+</div>
+</div></details>
+<p>再查看一下network:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>docker network inspect my-net
+</code></pre></td></tr></table>
+</div>
+</div><p>可以看到我们的6个<code>container</code>都在里面，每个分配了不同的ID</p>
+<details>
+<summary>查看输出</summary>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span><span class=lnt>64
+</span><span class=lnt>65
+</span><span class=lnt>66
+</span><span class=lnt>67
+</span><span class=lnt>68
+</span><span class=lnt>69
+</span><span class=lnt>70
+</span><span class=lnt>71
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback> {
+        &#34;Name&#34;: &#34;my-net&#34;,
+        &#34;Id&#34;: &#34;8fa94b07701cad47c4440298b2908fbadd0591b44999df2013a7e1eb4b7b541b&#34;,
+        &#34;Created&#34;: &#34;2021-04-21T05:46:18.4468198Z&#34;,
+        &#34;Scope&#34;: &#34;local&#34;,
+        &#34;Driver&#34;: &#34;bridge&#34;,
+        &#34;EnableIPv6&#34;: false,
+        &#34;IPAM&#34;: {
+            &#34;Driver&#34;: &#34;default&#34;,
+            &#34;Options&#34;: {},
+            &#34;Config&#34;: [
+                {
+                    &#34;Subnet&#34;: &#34;172.18.0.0/16&#34;,
+                    &#34;Gateway&#34;: &#34;172.18.0.1&#34;
+                }
+            ]
+        },
+        &#34;Internal&#34;: false,
+        &#34;Attachable&#34;: false,
+        &#34;Ingress&#34;: false,
+        &#34;ConfigFrom&#34;: {
+            &#34;Network&#34;: &#34;&#34;
+        },
+        &#34;ConfigOnly&#34;: false,
+        &#34;Containers&#34;: {
+            &#34;4d09c04e87b1b99ebe7827181ce89f8bddd054b047ae24a4179d37ff0f98d271&#34;: {
+                &#34;Name&#34;: &#34;redis-2&#34;,
+                &#34;EndpointID&#34;: &#34;46faad0fc995299d176f941dd97e06b5a35f16a5a2b4b5d66f3ccf624363cebb&#34;,
+                &#34;MacAddress&#34;: &#34;02:42:ac:12:00:03&#34;,
+                &#34;IPv4Address&#34;: &#34;172.18.0.3/16&#34;,
+                &#34;IPv6Address&#34;: &#34;&#34;
+            },
+            &#34;4fe4a89469da15e772d8a1437698b5832bc95310ebc59a18fb4860ec93c86595&#34;: {
+                &#34;Name&#34;: &#34;redis-4&#34;,
+                &#34;EndpointID&#34;: &#34;c2a84c3c7e8db91f4f694f10b390c1a78f702f2b65e71eeecbc51dc2288e28be&#34;,
+                &#34;MacAddress&#34;: &#34;02:42:ac:12:00:05&#34;,
+                &#34;IPv4Address&#34;: &#34;172.18.0.5/16&#34;,
+                &#34;IPv6Address&#34;: &#34;&#34;
+            },
+            &#34;950537cd501eb2731dbd69890fd30c933f3246d2d85fca6cc51818b0c3fc5b31&#34;: {
+                &#34;Name&#34;: &#34;redis-3&#34;,
+                &#34;EndpointID&#34;: &#34;1bfe934156ff36b05a4c44c3695b02cef2a50f6a5fd3a75f52c03e3c900cbb7c&#34;,
+                &#34;MacAddress&#34;: &#34;02:42:ac:12:00:04&#34;,
+                &#34;IPv4Address&#34;: &#34;172.18.0.4/16&#34;,
+                &#34;IPv6Address&#34;: &#34;&#34;
+            },
+            &#34;cd6d8811ce443f98a504e8466d2cd321f8129eae06b03b7667e4c145a308a880&#34;: {
+                &#34;Name&#34;: &#34;redis-6&#34;,
+                &#34;EndpointID&#34;: &#34;d0b9d092e6c38433d760f16781bd3cd2100b8f9c1b7f37f5c499e172fe0845d5&#34;,
+                &#34;MacAddress&#34;: &#34;02:42:ac:12:00:07&#34;,
+                &#34;IPv4Address&#34;: &#34;172.18.0.7/16&#34;,
+                &#34;IPv6Address&#34;: &#34;&#34;
+            },
+            &#34;d15c0933bc05450410f4c1923e70493f1fd79b200c16341be0b5cda4c599bbfa&#34;: {
+                &#34;Name&#34;: &#34;redis-1&#34;,
+                &#34;EndpointID&#34;: &#34;7262111112b513c1d4c3e090fc4ae7b01bbc6adf0df337eb38fa311b04d92b45&#34;,
+                &#34;MacAddress&#34;: &#34;02:42:ac:12:00:02&#34;,
+                &#34;IPv4Address&#34;: &#34;172.18.0.2/16&#34;,
+                &#34;IPv6Address&#34;: &#34;&#34;
+            },
+            &#34;f67c48b6ea9d8fb31ba8b1ec96ad6ea8cc1c246747608420814e79f59abfd56c&#34;: {
+                &#34;Name&#34;: &#34;redis-5&#34;,
+                &#34;EndpointID&#34;: &#34;a86deeae79f267f21e55e7ee06da7d12a627617e348398125c6303a12439cbdc&#34;,
+                &#34;MacAddress&#34;: &#34;02:42:ac:12:00:06&#34;,
+                &#34;IPv4Address&#34;: &#34;172.18.0.6/16&#34;,
+                &#34;IPv6Address&#34;: &#34;&#34;
+            }
+        },
+        &#34;Options&#34;: {},
+        &#34;Labels&#34;: {}
+    }
+</code></pre></td></tr></table>
+</div>
+</div></details>
+<p>上面可以看到我们每一个<code>container</code>的IP，也可以用下面这条命令单独获取某个<code>container</code>的IP,比如获取redis-1这个<code>container</code>的IP:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>docker inspect --format=&#39;{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}&#39; $INSTANCE_ID
+</code></pre></td></tr></table>
+</div>
+</div><p>2.5 启动cluster</p>
+<p>根据上面获取的IP，我们先进入redis1这个container</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>docker exec -it redis-1 /bin/bash
+</code></pre></td></tr></table>
+</div>
+</div><p>然后跟常规一样运行cluster</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>redis-cli --cluster create 172.18.0.2:6379 172.18.0.3:6379 172.18.0.4:6379 172.18.0.5:6379 172.18.0.6:6379 172.18.0.7:6379 --cluster-replicas 1
+</code></pre></td></tr></table>
+</div>
+</div><p>redis会自动分配slot，输入yes完成cluster。</p>
+<p>完成以后，我们以cluster模式启动（还是在redis-1这个container里面）:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>redis -c -p 6379
+</code></pre></td></tr></table>
+</div>
+</div><p>测试下面4条语句可以观察到cluster自动在节点间跳转</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>set foo bar
+set hello world
+get foo
+get bar
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=3-在项目中使用>3 在项目中使用</h2>
+<p>因为我们的<code>network</code>对于主机来说并没有开放，所以在本地运行的项目并不能直接访问到这些IP。但是我们可以把项目打包部署到这个<code>network</code>里面，就可以直接使用这个<code>cluster</code>了。</p>
+</div>
+<div class=post-copyright>
+<p class=copyright-item>
+<span class=item-title>本文链接</span>
+<span class=item-content><a href=https://www.fewth.com/windows%E7%94%A8docker%E9%83%A8%E7%BD%B2redis%E9%9B%86%E7%BE%A4/>https://www.fewth.com/windows用docker部署redis集群</a></span>
+</p>
+<p class=copyright-item>
+<span class=item-title>版权声明</span>
+<span class=item-content>本文采用<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-sa/4.0/ target=_blank>CC BY-NC-SA 4.0</a>许可协议，转载请注明出处。</span>
+</p>
+</div>
+<footer class=post-footer>
+<nav class=post-nav>
+<a class=prev href=/elasticsearch%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/>
+<i class="iconfont icon-left"></i>
+<span class="prev-text nav-default">elasticsearch分布式搜索引擎</span>
+<span class="prev-text nav-mobile">上一篇</span>
+</a>
+<a class=next href=/java%E6%B3%9B%E5%9E%8B%E5%92%8Cc-%E6%A8%A1%E6%9D%BF%E7%9A%84%E5%8C%BA%E5%88%AB/>
+<span class="next-text nav-default">java泛型和c++模板的区别</span>
+<span class="next-text nav-mobile">下一篇</span>
+<i class="iconfont icon-right"></i>
+</a>
+</nav>
+</footer>
+</article>
+</div>
+<div id=vcomments></div>
+<script src=//cdn1.lncld.net/static/js/3.0.4/av-min.js></script>
+<script src=//unpkg.com/valine/dist/Valine.min.js></script>
+<script type=text/javascript>new Valine({el:'#vcomments',appId:'BmT2lGTnBMBj6625uiiWM1xV-MdYXbMMI',appKey:'tasHQvivyFQEjq66DERC31Ja',notify:!1,verify:!1,avatar:'mm',placeholder:'说点什么吧...',visitor:!1})</script>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=social-links>
+<a href=https://github.com/ozryan class="iconfont icon-github" title=github></a>
+<a href=https://www.fewth.com/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a>
+</div>
+<div class=copyright>
+<span class=copyright-year>
+&copy;
+2020 -
+2021<span class=heart><i class="iconfont icon-heart"></i></span><span>ozryan</span>
+</span>
+</div>
+</footer>
+<div class=back-to-top id=back-to-top>
+<i class="iconfont icon-up"></i>
+</div>
+</div>
+<script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script>
+<script type=text/javascript src=/js/main.min.c99b103c33d1539acf3025e1913697534542c4a5aa5af0ccc20475ed2863603b.js></script>
+<script type=text/javascript>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]}}</script>
+<script async src=https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin=anonymous></script>
+</body>
+</html>

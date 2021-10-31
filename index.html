@@ -1,0 +1,341 @@
+<!doctype html><html lang=zh-cn>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<title>A few thoughts</title>
+<meta name=renderer content="webkit">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<meta name=theme-color content="#f8f5ec">
+<meta name=msapplication-navbutton-color content="#f8f5ec">
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
+<meta name=author content="ozryan">
+<meta name=generator content="Hugo 0.88.1 with theme even">
+<link rel=canonical href=https://www.fewth.com/>
+<link href=https://www.fewth.com/index.xml rel=alternate type=application/rss+xml title="A few thoughts">
+<link href=https://www.fewth.com/index.xml rel=feed type=application/rss+xml title="A few thoughts">
+<link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png>
+<link rel=manifest href=/manifest.json>
+<link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5>
+<link href=/sass/main.min.b5a744db6de49a86cadafb3b70f555ab443f83c307a483402259e94726b045ff.css rel=stylesheet>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous>
+<meta property="og:title" content="A few thoughts">
+<meta property="og:description" content>
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.fewth.com/">
+<meta itemprop=name content="A few thoughts">
+<meta itemprop=description content><meta name=twitter:card content="summary">
+<meta name=twitter:title content="A few thoughts">
+<meta name=twitter:description content><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
+</head>
+<body>
+<div id=mobile-navbar class=mobile-navbar>
+<div class=mobile-header-logo>
+<a href=/ class=logo>A few thoughts</a>
+</div>
+<div class=mobile-navbar-icon>
+<span></span>
+<span></span>
+<span></span>
+</div>
+</div>
+<nav id=mobile-menu class="mobile-menu slideout-menu">
+<ul class=mobile-menu-list>
+<a href=/>
+<li class=mobile-menu-item>主页</li>
+</a><a href=/post>
+<li class=mobile-menu-item>归档</li>
+</a><a href=/categories/>
+<li class=mobile-menu-item>分类</li>
+</a>
+</ul>
+</nav>
+<div class=container id=mobile-panel>
+<header id=header class=header>
+<div class=logo-wrapper>
+<a href=/ class=logo>A few thoughts</a>
+</div>
+<nav class=site-navbar>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a class=menu-item-link href=/>主页</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/post>归档</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/categories/>分类</a>
+</li>
+</ul>
+</nav>
+</header>
+<main id=main class=main>
+<div class=content-wrapper>
+<div id=content class=content>
+<section id=posts class=posts>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title><a class=post-link href=/%E7%AC%ACk%E4%B8%AA%E9%A1%BA%E5%BA%8F%E7%BB%9F%E8%AE%A1%E9%87%8F-%E6%95%B0%E7%BB%84%E4%B8%AD%E7%AC%ACk%E5%B0%8F%E7%9A%84%E5%85%83%E7%B4%A0/>第k个顺序统计量-数组中第k小的元素</a></h1>
+<div class=post-meta>
+<span class=post-time> 2021-10-24 </span>
+<div class=post-category>
+<a href=/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/> 数据结构与算法 </a>
+</div>
+<span class=more-meta> 约 2500 字 </span>
+<span class=more-meta> 预计阅读 5 分钟 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+<p>要从一个数组中找出第k小的元素，最容易想到的是快速排序，但是快速排序解决这个问题有很多不必要的操作，在快速排序中，根据“哨兵”元素把数组分成两部分，然后对两部分进行递归处理，第k个顺序统计量的算法也借鉴这种思路，我们称为“快速选择(quick select)算法”,但是快速选择算法每次只需要处理第K个元素所在的那一部分就行，我们的目的只是找到目标元素，随着递归次数的深入，快速选择算法要处理的元素会越来越少（而快速排序随着递归的深入，每次递归处理的元素总数依然是n），这种差别是很大的，后面分析时间复杂度时可以得知快速选择算法的期望运行时间是$\theta(n)$。</p>
+<h2 id=算法实现>算法实现</h2>
+<p>快速选择算法跟快速排序类似，主要步骤就是分组算法：根据哨兵元素把数组分成两组，一组小于哨兵，一组大于哨兵，然后进行递归调用。</p>
+</div>
+<div class=read-more>
+<a href=/%E7%AC%ACk%E4%B8%AA%E9%A1%BA%E5%BA%8F%E7%BB%9F%E8%AE%A1%E9%87%8F-%E6%95%B0%E7%BB%84%E4%B8%AD%E7%AC%ACk%E5%B0%8F%E7%9A%84%E5%85%83%E7%B4%A0/ class=read-more-link>阅读更多</a>
+</div>
+</div>
+</article>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title><a class=post-link href=/shell%E7%BC%96%E7%A8%8B/>shell编程</a></h1>
+<div class=post-meta>
+<span class=post-time> 2021-10-18 </span>
+<div class=post-category>
+<a href=/categories/linux/> linux </a>
+</div>
+<span class=more-meta> 约 4901 字 </span>
+<span class=more-meta> 预计阅读 10 分钟 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+<h2 id=1-基本概念>1 基本概念</h2>
+<ul>
+<li>shell是用户和内核之间的桥梁，shell自带的叫内置命令，其它应用程序的命令叫外部命令</li>
+<li>shell是一种脚本语言，支持基本的编程元素，如数组，变量，字符串，注释，四则运算，逻辑运算，if-else,for,case-in,until等</li>
+</ul>
+</div>
+<div class=read-more>
+<a href=/shell%E7%BC%96%E7%A8%8B/ class=read-more-link>阅读更多</a>
+</div>
+</div>
+</article>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title><a class=post-link href=/jvm%E4%B9%8B%E8%87%AA%E5%8A%A8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/>jvm之自动内存管理-垃圾回收机制</a></h1>
+<div class=post-meta>
+<span class=post-time> 2021-10-11 </span>
+<div class=post-category>
+<a href=/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%89%B9%E6%80%A7/> 编程语言特性 </a>
+</div>
+<span class=more-meta> 约 12188 字 </span>
+<span class=more-meta> 预计阅读 25 分钟 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+<p>自动内存管理主要作用在<code>堆(heap)</code>上，而虚拟机规范并没有限定自动内存管理的实现方式，本文以时下流行的<code>HotSpot</code>虚拟机为例，介绍其中的自动内存管理（主要是垃圾回收）机制，以及它提供的几款垃圾回收器（Garbage Collector,简称GC）。</p>
+</div>
+<div class=read-more>
+<a href=/jvm%E4%B9%8B%E8%87%AA%E5%8A%A8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/ class=read-more-link>阅读更多</a>
+</div>
+</div>
+</article>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title><a class=post-link href=/jvm%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F/>jvm之运行时数据区域</a></h1>
+<div class=post-meta>
+<span class=post-time> 2021-08-15 </span>
+<div class=post-category>
+<a href=/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%89%B9%E6%80%A7/> 编程语言特性 </a>
+</div>
+<span class=more-meta> 约 2967 字 </span>
+<span class=more-meta> 预计阅读 6 分钟 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+<p><a href=https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-2.html#jvms-2.5>Java11虚拟机规范</a>中描述的，当执行一个程序时需要用到的几个运行时数据区域，具体的虚拟机实现可能并没有严格按照这个划分。</p>
+</div>
+<div class=read-more>
+<a href=/jvm%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F/ class=read-more-link>阅读更多</a>
+</div>
+</div>
+</article>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title><a class=post-link href=/spring-boot%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/>spring boot启动流程</a></h1>
+<div class=post-meta>
+<span class=post-time> 2021-08-14 </span>
+<div class=post-category>
+<a href=/categories//> [web 后端] </a>
+</div>
+<span class=more-meta> 约 13340 字 </span>
+<span class=more-meta> 预计阅读 27 分钟 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+<p>本文用一个空的<code>Spring Boot</code>项目演示，从<code>main</code>方法开始顺着源码大概过一遍启动流程。</p>
+</div>
+<div class=read-more>
+<a href=/spring-boot%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/ class=read-more-link>阅读更多</a>
+</div>
+</div>
+</article>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title><a class=post-link href=/lua%E8%AF%AD%E8%A8%80%E5%85%A5%E9%97%A8/>lua语言入门</a></h1>
+<div class=post-meta>
+<span class=post-time> 2021-08-01 </span>
+<div class=post-category>
+<a href=/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%89%B9%E6%80%A7/> 编程语言特性 </a>
+</div>
+<span class=more-meta> 约 5762 字 </span>
+<span class=more-meta> 预计阅读 12 分钟 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+<h2 id=1-变量>1 变量</h2>
+<h3 id=变量名称>变量名称</h3>
+<p>变量由字母、数字、下划线组成，但不能由数字开头，且不建议<code>_A**</code>这种下划线后接大写字母的方式，通常作为Lua内部特殊用途。下面的几个词是<code>Lua</code>保留的关键字：</p>
+</div>
+<div class=read-more>
+<a href=/lua%E8%AF%AD%E8%A8%80%E5%85%A5%E9%97%A8/ class=read-more-link>阅读更多</a>
+</div>
+</div>
+</article>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title><a class=post-link href=/%E5%9B%9E%E6%BA%AF-backtracking/>回溯-backtracking</a></h1>
+<div class=post-meta>
+<span class=post-time> 2021-06-23 </span>
+<div class=post-category>
+<a href=/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/> 数据结构与算法 </a>
+</div>
+<span class=more-meta> 约 2264 字 </span>
+<span class=more-meta> 预计阅读 5 分钟 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+<h2 id=1-简介>1 简介</h2>
+<p>回溯是一种算法思想，通常借助递归实现，核心就是记录相应的状态值，以降低"试错成本"。</p>
+</div>
+<div class=read-more>
+<a href=/%E5%9B%9E%E6%BA%AF-backtracking/ class=read-more-link>阅读更多</a>
+</div>
+</div>
+</article>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title><a class=post-link href=/%E7%94%A8github-actions%E8%87%AA%E5%8A%A8%E5%8C%96%E5%B8%83%E7%BD%B2hexo%E5%8D%9A%E5%AE%A2-%E4%BB%8E%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93%E5%88%B0%E5%85%AC%E5%85%B1%E4%BB%93%E5%BA%93/>用github actions自动化布署hexo博客-从私有仓库到公共仓库</a></h1>
+<div class=post-meta>
+<span class=post-time> 2021-06-08 </span>
+<div class=post-category>
+<a href=/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/> 工具使用 </a>
+</div>
+<span class=more-meta> 约 1942 字 </span>
+<span class=more-meta> 预计阅读 4 分钟 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+<p>常规的hexo使用方式如下：<br>
+写markdown文件保存-><code>hexo generate</code>生成文件-><code>hexo deploy</code>部署到github仓库->把源文件备份到博客仓库的source分支或者备份到一个私有仓库</p>
+<p>利用<code>Github-Actions</code>+<code>Powershell脚本</code>可以把写博客的流程简化为：<br>
+写markdown文件保存->打开powershell，输入<code>pushhexo</code>指令完成上面的所有步骤</p>
+</div>
+<div class=read-more>
+<a href=/%E7%94%A8github-actions%E8%87%AA%E5%8A%A8%E5%8C%96%E5%B8%83%E7%BD%B2hexo%E5%8D%9A%E5%AE%A2-%E4%BB%8E%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93%E5%88%B0%E5%85%AC%E5%85%B1%E4%BB%93%E5%BA%93/ class=read-more-link>阅读更多</a>
+</div>
+</div>
+</article>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title><a class=post-link href=/jvm%E4%B9%8Bclass%E6%96%87%E4%BB%B6%E5%8F%8A%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E5%92%8C%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B/>jvm之class文件及类加载机制和双亲委派模型</a></h1>
+<div class=post-meta>
+<span class=post-time> 2021-06-02 </span>
+<div class=post-category>
+<a href=/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%89%B9%E6%80%A7/> 编程语言特性 </a>
+</div>
+<span class=more-meta> 约 18684 字 </span>
+<span class=more-meta> 预计阅读 38 分钟 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+<p>本文先简单介绍虚拟机规范约定的<code>class</code>文件格式，并从一个示例<code>class</code>文件复原代码基本内容，最后描述虚拟机类加载机制以及介绍一下双亲委派模型。Java版本为11。</p>
+</div>
+<div class=read-more>
+<a href=/jvm%E4%B9%8Bclass%E6%96%87%E4%BB%B6%E5%8F%8A%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E5%92%8C%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B/ class=read-more-link>阅读更多</a>
+</div>
+</div>
+</article>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title><a class=post-link href=/java%E6%B3%A8%E8%A7%A3/>java注解</a></h1>
+<div class=post-meta>
+<span class=post-time> 2021-05-07 </span>
+<div class=post-category>
+<a href=/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%89%B9%E6%80%A7/> 编程语言特性 </a>
+</div>
+<span class=more-meta> 约 5157 字 </span>
+<span class=more-meta> 预计阅读 11 分钟 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+<h2 id=1-java注解是什么>1 Java注解是什么?</h2>
+<p>根据<a href=https://docs.oracle.com/javase/tutorial/java/annotations/>官方文档</a>说明，<code>Java注解</code>是元数据的一种形式，它不直接影响我们代码本身的操作，但是有以下几个用途：</p>
+<ul>
+<li>给编译器提供信息-编译器可以用注解来检测错误或者抑制编译时的warning信息</li>
+<li>编译和部署代码时进一步加工&mdash;一些工具可以根据注解生成额外的代码或文件</li>
+<li>运行时处理：一些注解可以在运行时被检测</li>
+</ul>
+</div>
+<div class=read-more>
+<a href=/java%E6%B3%A8%E8%A7%A3/ class=read-more-link>阅读更多</a>
+</div>
+</div>
+</article>
+</section>
+<nav class=pagination>
+<a class=next href=/page/2/>
+<span class=next-text>下一页</span>
+<i class="iconfont icon-right"></i>
+</a>
+</nav>
+</div>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=social-links>
+<a href=https://github.com/ozryan class="iconfont icon-github" title=github></a>
+<a href=https://www.fewth.com/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a>
+</div>
+<div class=copyright>
+<span class=copyright-year>
+&copy;
+2020 -
+2021<span class=heart><i class="iconfont icon-heart"></i></span><span>ozryan</span>
+</span>
+</div>
+</footer>
+<div class=back-to-top id=back-to-top>
+<i class="iconfont icon-up"></i>
+</div>
+</div>
+<script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script>
+<script type=text/javascript src=/js/main.min.c99b103c33d1539acf3025e1913697534542c4a5aa5af0ccc20475ed2863603b.js></script>
+<script type=text/javascript>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]}}</script>
+<script async src=https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin=anonymous></script>
+</body>
+</html>

@@ -1,0 +1,720 @@
+<!doctype html><html lang=zh-cn>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<title>java注解 - A few thoughts</title>
+<meta name=renderer content="webkit">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=cache-control content="no-transform">
+<meta http-equiv=cache-control content="no-siteapp">
+<meta name=theme-color content="#f8f5ec">
+<meta name=msapplication-navbutton-color content="#f8f5ec">
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
+<meta name=author content="ozryan"><meta name=description content="1 Java注解是什么? 根据官方文档说明，Java注解是元数据的一种形式，它不直接影响我们代码本身的操作，但是有以下几个用途：
+ 给编译器提供信息-编译器可以用注解来检测错误或者抑制编译时的warning信息 编译和部署代码时进一步加工&amp;mdash;一些工具可以根据注解生成额外的代码或文件 运行时处理：一些注解可以在运行时被检测 ">
+<meta name=generator content="Hugo 0.88.1 with theme even">
+<link rel=canonical href=https://www.fewth.com/java%E6%B3%A8%E8%A7%A3/>
+<link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
+<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
+<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png>
+<link rel=manifest href=/manifest.json>
+<link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5>
+<link href=/sass/main.min.b5a744db6de49a86cadafb3b70f555ab443f83c307a483402259e94726b045ff.css rel=stylesheet>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous>
+<meta property="og:title" content="java注解">
+<meta property="og:description" content="1 Java注解是什么?
+根据官方文档说明，Java注解是元数据的一种形式，它不直接影响我们代码本身的操作，但是有以下几个用途：
+
+给编译器提供信息-编译器可以用注解来检测错误或者抑制编译时的warning信息
+编译和部署代码时进一步加工&mdash;一些工具可以根据注解生成额外的代码或文件
+运行时处理：一些注解可以在运行时被检测
+">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.fewth.com/java%E6%B3%A8%E8%A7%A3/"><meta property="article:section" content="post">
+<meta property="article:published_time" content="2021-05-07T22:43:01+00:00">
+<meta property="article:modified_time" content="2021-05-07T22:43:01+00:00">
+<meta itemprop=name content="java注解">
+<meta itemprop=description content="1 Java注解是什么?
+根据官方文档说明，Java注解是元数据的一种形式，它不直接影响我们代码本身的操作，但是有以下几个用途：
+
+给编译器提供信息-编译器可以用注解来检测错误或者抑制编译时的warning信息
+编译和部署代码时进一步加工&mdash;一些工具可以根据注解生成额外的代码或文件
+运行时处理：一些注解可以在运行时被检测
+"><meta itemprop=datePublished content="2021-05-07T22:43:01+00:00">
+<meta itemprop=dateModified content="2021-05-07T22:43:01+00:00">
+<meta itemprop=wordCount content="5157">
+<meta itemprop=keywords content><meta name=twitter:card content="summary">
+<meta name=twitter:title content="java注解">
+<meta name=twitter:description content="1 Java注解是什么?
+根据官方文档说明，Java注解是元数据的一种形式，它不直接影响我们代码本身的操作，但是有以下几个用途：
+
+给编译器提供信息-编译器可以用注解来检测错误或者抑制编译时的warning信息
+编译和部署代码时进一步加工&mdash;一些工具可以根据注解生成额外的代码或文件
+运行时处理：一些注解可以在运行时被检测
+"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
+</head>
+<body>
+<div id=mobile-navbar class=mobile-navbar>
+<div class=mobile-header-logo>
+<a href=/ class=logo>A few thoughts</a>
+</div>
+<div class=mobile-navbar-icon>
+<span></span>
+<span></span>
+<span></span>
+</div>
+</div>
+<nav id=mobile-menu class="mobile-menu slideout-menu">
+<ul class=mobile-menu-list>
+<a href=/>
+<li class=mobile-menu-item>主页</li>
+</a><a href=/post>
+<li class=mobile-menu-item>归档</li>
+</a><a href=/categories/>
+<li class=mobile-menu-item>分类</li>
+</a>
+</ul>
+</nav>
+<div class=container id=mobile-panel>
+<header id=header class=header>
+<div class=logo-wrapper>
+<a href=/ class=logo>A few thoughts</a>
+</div>
+<nav class=site-navbar>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a class=menu-item-link href=/>主页</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/post>归档</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/categories/>分类</a>
+</li>
+</ul>
+</nav>
+</header>
+<main id=main class=main>
+<div class=content-wrapper>
+<div id=content class=content>
+<article class=post>
+<header class=post-header>
+<h1 class=post-title>java注解</h1>
+<div class=post-meta>
+<span class=post-time> 2021-05-07 </span>
+<div class=post-category>
+<a href=/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E7%89%B9%E6%80%A7/> 编程语言特性 </a>
+</div>
+<span class=more-meta> 约 5157 字 </span>
+<span class=more-meta> 预计阅读 11 分钟 </span>
+</div>
+</header>
+<div class=post-toc id=post-toc>
+<h2 class=post-toc-title>文章目录</h2>
+<div class="post-toc-content always-active">
+<nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li><a href=#1-java注解是什么>1 Java注解是什么?</a></li>
+<li><a href=#2-注解的形式和定义>2 注解的形式和定义</a></li>
+<li><a href=#3-java-se-api-预定义的注解>3 Java SE API 预定义的注解</a>
+<ul>
+<li><a href=#31-编译器用的注解>3.1 编译器用的注解</a></li>
+<li><a href=#32-作用在注解上的注解>3.2 作用在注解上的注解</a></li>
+</ul>
+</li>
+<li><a href=#4-关于自定义注解>4 关于自定义注解</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+<div class=post-content>
+<h2 id=1-java注解是什么>1 Java注解是什么?</h2>
+<p>根据<a href=https://docs.oracle.com/javase/tutorial/java/annotations/>官方文档</a>说明，<code>Java注解</code>是元数据的一种形式，它不直接影响我们代码本身的操作，但是有以下几个用途：</p>
+<ul>
+<li>给编译器提供信息-编译器可以用注解来检测错误或者抑制编译时的warning信息</li>
+<li>编译和部署代码时进一步加工&mdash;一些工具可以根据注解生成额外的代码或文件</li>
+<li>运行时处理：一些注解可以在运行时被检测</li>
+</ul>
+<h2 id=2-注解的形式和定义>2 注解的形式和定义</h2>
+<p>注解是以<code>@</code>符号开头，后接注解名称，如果有参数的话，后面再用<code>（）</code>把参数写进去，参数都是<code>key=value</code>的形式传递，只有一个参数时默认是对应<code>value</code>这个<em>key</em>，可以不写。
+如：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=c1>//无参数
+</span><span class=c1></span><span class=nd>@Override</span>
+<span class=kt>void</span> <span class=nf>mySuperMethod</span><span class=o>()</span> <span class=o>{</span> <span class=o>...</span> <span class=o>}</span>
+<span class=c1>//一个参数
+</span><span class=c1></span><span class=nd>@SuppressWarnings</span><span class=o>(</span><span class=n>value</span> <span class=o>=</span> <span class=s>&#34;unchecked&#34;</span><span class=o>)</span>
+<span class=kt>void</span> <span class=nf>myMethod</span><span class=o>()</span> <span class=o>{</span> <span class=o>...</span> <span class=o>}</span>
+<span class=c1>//一个参数时可以省略key
+</span><span class=c1></span><span class=nd>@SuppressWarnings</span><span class=o>(</span><span class=s>&#34;unchecked&#34;</span><span class=o>)</span>
+<span class=kt>void</span> <span class=nf>myMethod</span><span class=o>()</span> <span class=o>{</span> <span class=o>...</span> <span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如何定义一个注解：<br>
+注解本质上是<code>interface</code>的一种形式，只是在<code>interface</code>关键字前加了个<code>@</code>符号，如：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@interface</span> <span class=n>ClassPreamble</span> <span class=o>{</span>
+   <span class=n>String</span> <span class=nf>author</span><span class=o>();</span>
+   <span class=n>String</span> <span class=nf>date</span><span class=o>();</span>
+   <span class=kt>int</span> <span class=nf>currentRevision</span><span class=o>()</span> <span class=k>default</span> <span class=n>1</span><span class=o>;</span>
+   <span class=n>String</span> <span class=nf>lastModified</span><span class=o>()</span> <span class=k>default</span> <span class=s>&#34;N/A&#34;</span><span class=o>;</span>
+   <span class=n>String</span> <span class=nf>lastModifiedBy</span><span class=o>()</span> <span class=k>default</span> <span class=s>&#34;N/A&#34;</span><span class=o>;</span>
+   <span class=c1>// Note use of array
+</span><span class=c1></span>   <span class=n>String</span><span class=o>[]</span> <span class=nf>reviewers</span><span class=o>();</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=3-java-se-api-预定义的注解>3 Java SE API 预定义的注解</h2>
+<p>预定义的注解有一些是给编译器使用的，另一些是给其它注解使用的(元注解）。</p>
+<h3 id=31-编译器用的注解>3.1 编译器用的注解</h3>
+<p>这些注解的定义本身也有元注解，后面再讲。</p>
+<h4 id=deprecated>@Deprecated：</h4>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@Documented</span>
+<span class=nd>@Retention</span><span class=o>(</span><span class=n>RetentionPolicy</span><span class=o>.</span><span class=na>RUNTIME</span><span class=o>)</span>
+<span class=nd>@Target</span><span class=o>(</span><span class=n>value</span><span class=o>={</span><span class=n>CONSTRUCTOR</span><span class=o>,</span> <span class=n>FIELD</span><span class=o>,</span> <span class=n>LOCAL_VARIABLE</span><span class=o>,</span> <span class=n>METHOD</span><span class=o>,</span> <span class=n>PACKAGE</span><span class=o>,</span> <span class=n>MODULE</span><span class=o>,</span> <span class=n>PARAMETER</span><span class=o>,</span> <span class=n>TYPE</span><span class=o>})</span>
+<span class=kd>public</span> <span class=nd>@interface</span> <span class=n>Deprecated</span> <span class=o>{</span>
+    <span class=n>String</span> <span class=nf>since</span><span class=o>()</span> <span class=k>default</span> <span class=s>&#34;&#34;</span><span class=o>;</span>
+    <span class=kt>boolean</span> <span class=nf>forRemoval</span><span class=o>()</span> <span class=k>default</span> <span class=kc>false</span><span class=o>;</span>
+<span class=o>}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>表示一个元素（类、方法或属性）被废弃。语言和框架等一直在更新，一些元素因为安全或者性能原因在新版本中被新的类或方法取代，此时旧的方法不能直接删除（为了保持兼容性），但又不建议使用，所以标记为<code>@Deprecated</code>，当编译器编译时，如果发现你的代码中使用了标记为<code>@Deprecated</code>的元素，就会生成warning</p>
+<h4 id=override>@Override：</h4>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@Target</span><span class=o>(</span><span class=n>ElementType</span><span class=o>.</span><span class=na>METHOD</span><span class=o>)</span>
+<span class=nd>@Retention</span><span class=o>(</span><span class=n>RetentionPolicy</span><span class=o>.</span><span class=na>SOURCE</span><span class=o>)</span>
+<span class=kd>public</span> <span class=nd>@interface</span> <span class=n>Override</span> <span class=o>{</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>表示一个方法是重载父类的方法或者实现接口的方法。主要是避免方法名称拼写错误，如果出现了拼写错误，编译器会报错。现在<em>IDE</em>越来越智能，这类错误很少出现了。</p>
+<h4 id=suppresswarnings>@SuppressWarnings：</h4>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@Target</span><span class=o>({</span><span class=n>TYPE</span><span class=o>,</span> <span class=n>FIELD</span><span class=o>,</span> <span class=n>METHOD</span><span class=o>,</span> <span class=n>PARAMETER</span><span class=o>,</span> <span class=n>CONSTRUCTOR</span><span class=o>,</span> <span class=n>LOCAL_VARIABLE</span><span class=o>,</span> <span class=n>MODULE</span><span class=o>})</span>
+<span class=nd>@Retention</span><span class=o>(</span><span class=n>RetentionPolicy</span><span class=o>.</span><span class=na>SOURCE</span><span class=o>)</span>
+<span class=kd>public</span> <span class=nd>@interface</span> <span class=n>SuppressWarnings</span> <span class=o>{</span>
+    <span class=n>String</span><span class=o>[]</span> <span class=nf>value</span><span class=o>();</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>让编译器不要显示<code>warning</code>。比如一个方法调用了另一个标记为<code>deprecated</code>的方法，正常编译器会生成<code>warning</code>,用<code>@SuppressWarnings("deprecation")</code>可以不让其显示。<code>warning</code>有很多种,比如<code>deprecation</code>和<code>unchecked</code>，可以选择同时阻止多个<code>warning</code>：<code>@SuppressWarnings({"unchecked", "deprecation"})</code></p>
+<h4 id=safevarargs>@SafeVarargs</h4>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@Documented</span>
+<span class=nd>@Retention</span><span class=o>(</span><span class=n>RetentionPolicy</span><span class=o>.</span><span class=na>RUNTIME</span><span class=o>)</span>
+<span class=nd>@Target</span><span class=o>({</span><span class=n>ElementType</span><span class=o>.</span><span class=na>CONSTRUCTOR</span><span class=o>,</span> <span class=n>ElementType</span><span class=o>.</span><span class=na>METHOD</span><span class=o>})</span>
+<span class=kd>public</span> <span class=nd>@interface</span> <span class=n>SafeVarargs</span> <span class=o>{}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>1.7引入<br>
+作用对象：变长参数的【构造函数或者方法】，方法必须是<code>final</code>或者<code>static</code>，java9开始也可以是<code>private</code>,这个限制主要是为了不让方法被重载。如果参数是固定长度的，或者方法的修饰符不满足上面的要求，编译器都会报错。</p>
+<p>效果：（程序员）声明函数体本身不会对变长参数进行潜在的不安全操作,让编译器不生成<code>unchecked warning</code>。</p>
+<p>什么是对变长参数的潜在不安全操作呢？简单说明一下：</p>
+<details>
+<summary>查看详细内容</summary>
+<p>当你的变长参数跟泛型有关（<code>non-reifiable</code>)的时候，就可能会出现类型转换的安全问题。用官方API的例子来解释：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java> <span class=nd>@SafeVarargs</span> <span class=c1>// Not actually safe!
+</span><span class=c1></span> <span class=kd>static</span> <span class=kt>void</span> <span class=nf>m</span><span class=o>(</span><span class=n>List</span><span class=o>&lt;</span><span class=n>String</span><span class=o>&gt;...</span> <span class=n>stringLists</span><span class=o>)</span> <span class=o>{</span>
+   <span class=n>Object</span><span class=o>[]</span> <span class=n>array</span> <span class=o>=</span> <span class=n>stringLists</span><span class=o>;</span>
+   <span class=n>List</span><span class=o>&lt;</span><span class=n>Integer</span><span class=o>&gt;</span> <span class=n>tmpList</span> <span class=o>=</span> <span class=n>Arrays</span><span class=o>.</span><span class=na>asList</span><span class=o>(</span><span class=n>42</span><span class=o>);</span>
+   <span class=n>array</span><span class=o>[</span><span class=n>0</span><span class=o>]</span> <span class=o>=</span> <span class=n>tmpList</span><span class=o>;</span> <span class=c1>// Semantically invalid, but compiles without warnings
+</span><span class=c1></span>   <span class=n>String</span> <span class=n>s</span> <span class=o>=</span> <span class=n>stringLists</span><span class=o>[</span><span class=n>0</span><span class=o>].</span><span class=na>get</span><span class=o>(</span><span class=n>0</span><span class=o>);</span> <span class=c1>// Oh no, ClassCastException at runtime!
+</span><span class=c1></span> <span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这是一个不正确的使用<code>@SafeVarargs</code>注解的例子，因为这段代码会抛出运行时异常。一行行分析：</p>
+<p>首先，方法传入了一个变长参数，形式是<code>List&lt;String>... stringLists</code>，变长参数在编译时会转化为<em>数组</em>，所以，这个参数在转化后就变成<code>List&lt;String>[] stringLists</code>,Java不是不支持泛型数组吗？？？事实上，对于可变参数使用泛型的这种形式是支持的，所以它也会导致那些泛型数组会带来的问题。</p>
+<p><code>Object[] array = stringLists;</code><br>
+然后我们创建了一个<code>Object[]</code>数组变量<code>array</code>,并且初始化为<code>stringLists</code>，这里因为<em>类型擦除</em>，所以在编译后<code>stringLists</code>指向的类型是<code>List&lt;Object>[]</code>。因为数组赋值是传递的<em>数组对象的引用</em>，所以<code>array</code>也是指向的<code>stringLists</code>的地址，也就是<code>List&lt;Object>[]</code>，<strong>这里是伏笔</strong>。</p>
+<p><code>List&lt;Integer> tmpList = Arrays.asList(42);</code><br>
+这一行新建一个<code>List&lt;Integer></code>,里面只有一个元素42</p>
+<p><code>array[0] = tmpList;</code><br>
+把上面新建的这个<code>List</code>存到<code>array[0]</code>的位置。<strong>因为前面的类型擦除</strong>，所以这里是把一个<code>List&lt;Integer></code>对象放到<code>List&lt;Object>[0]</code>里面，编译时没有问题，运行到这一步也没有问题。如果我们的参数<code>stringLists</code>不是泛型，而是普通的类型比如<code>String</code>,修改例子中的相应代码，那么这一步就会报运行时错误<code>ArrayStoreException</code>。</p>
+<p><code>String s = stringLists[0].get(0);</code>右边读取的是<code>Integer</code>类型的42，想要转化成<code>String</code>失败，抛出运行时异常，在这一步抛出异常并不清晰，直到使用数组的元素时我们才发现存错了，如果代码复杂一点，会非常难以排查。</p>
+</details>
+<p>概括一下：实际上，&ldquo;潜在的不安全操作"有很多种情况，大致都是由于数组和泛型的混用引起。<code>@SafeVarargs</code>可以在方法源头阻止编译器生成<code>unchecked warning</code>，否则的话需要在每个调用方使用<code>@SuppressWarnings</code>来抑制这些<code>warning</code>。使用<code>@SafeVarargs</code>时要注意几点:</p>
+<ul>
+<li>只有在你真的确定代码是安全的情况下才使用<code>@SafeVarargs</code>，不然会让你的异常更加排查，通常有两个准则需要遵守：
+<ul>
+<li>不直接修改泛型数组变量，只读不改</li>
+<li>不对外开放泛型数组变量的引用，本质也是同上</li>
+</ul>
+</li>
+<li>可以考虑用<code>List</code>来替换可变参数，虽然代码会冗长一点，也更安全。</li>
+</ul>
+<h4 id=functionalinterface>@FunctionalInterface</h4>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@Documented</span>
+<span class=nd>@Retention</span><span class=o>(</span><span class=n>RetentionPolicy</span><span class=o>.</span><span class=na>RUNTIME</span><span class=o>)</span>
+<span class=nd>@Target</span><span class=o>(</span><span class=n>ElementType</span><span class=o>.</span><span class=na>TYPE</span><span class=o>)</span>
+<span class=kd>public</span> <span class=nd>@interface</span> <span class=n>FunctionalInterface</span> <span class=o>{}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>1.8引入<br>
+表明一个接口是一个函数接口（有且仅有一个抽象方法的接口），如果不满足这个定义，或者这个注解不是被用在接口上，编译器都会报错。<br>
+事实上，就算没有这个注解，只要接口满足函数接口的要求，编译器也会把它当成函数接口，所以这个注解提供了一个检测功能。</p>
+<h4 id=native>@Native</h4>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@Documented</span>
+<span class=nd>@Target</span><span class=o>(</span><span class=n>ElementType</span><span class=o>.</span><span class=na>FIELD</span><span class=o>)</span>
+<span class=nd>@Retention</span><span class=o>(</span><span class=n>RetentionPolicy</span><span class=o>.</span><span class=na>SOURCE</span><span class=o>)</span>
+<span class=kd>public</span> <span class=nd>@interface</span> <span class=n>Native</span> <span class=o>{</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>1.8引入<br>
+用在一个定义常量的字段上，表明这个字段的值可能引用<code>native code</code>(比如平台相关的底层库)。一些生成<code>native code</code>头文件的工具通过这个注解来判断是否需要生成相应的头文件，以及在头文件中应该包含哪些声明。这个注解用的少，通常跟<a href=https://en.wikipedia.org/wiki/Java_Native_Interface><code>JNI</code></a>有关。</p>
+<h3 id=32-作用在注解上的注解>3.2 作用在注解上的注解</h3>
+<p>下面的这些注解只用在其它注解定义时,被称为<em>元注解</em></p>
+<h4 id=retention>@Retention</h4>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@Documented</span>
+<span class=nd>@Retention</span><span class=o>(</span><span class=n>RetentionPolicy</span><span class=o>.</span><span class=na>RUNTIME</span><span class=o>)</span>
+<span class=nd>@Target</span><span class=o>(</span><span class=n>ElementType</span><span class=o>.</span><span class=na>ANNOTATION_TYPE</span><span class=o>)</span>
+<span class=kd>public</span> <span class=nd>@interface</span> <span class=n>Retention</span> <span class=o>{</span>
+    <span class=n>RetentionPolicy</span> <span class=nf>value</span><span class=o>();</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>表明注解在哪个阶段(含)之前持续存在,接收一个参数<code>value</code>，类型是<code>RetentionPolicy</code>,这是一个<code>Enum</code>类型，包含3个值，如果没有指定<code>value</code>的值，默认是<code>RetentionPolicy.CLASS</code>：</p>
+<ul>
+<li><code>RetentionPolicy.SOURCE</code>：表示注解只存在源代码中，在编译器使用后就抛弃，不写入<code>.class</code>文件。上面介绍过的<code>@Override</code>,<code>@SuppressWarnings</code>都是<code>SOURCE</code>级别</li>
+<li><code>RetentionPolicy.CLASS</code>：表示注解存在于<code>.class</code>文件中，但虚拟机执行时会抛弃这些注解</li>
+<li><code>RetentionPolicy.RUNTIME</code>：表示注解一直存在，包括虚拟机执行时。<code>@SafeVarargs</code>,<code>@FunctonalInterface</code>都是<code>RUNTIME</code>级别，主要是为了可以在运行时通过<em>反射</em>获取注解信息</li>
+</ul>
+<p><code>CLASS</code>和<code>RUNTIME</code>的区别：<br>
+两者都在字节码文件可见，区别是<code>CLASS</code>会生成一个<code>RuntimeInvisibleAnnotations</code>，而<code>RUNTIME</code>会生成<code>RuntimeVisibleAnnotations</code>，就是注解是否对虚拟机可见，不过这个行为可以被命令行参数覆盖。<br>
+通常都直接使用<code>RUNTIME</code>或者<code>SOURCE</code>，<code>CLASS</code>的适用场景并不多</p>
+<h4 id=documented>@Documented</h4>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@Documented</span>
+<span class=nd>@Retention</span><span class=o>(</span><span class=n>RetentionPolicy</span><span class=o>.</span><span class=na>RUNTIME</span><span class=o>)</span>
+<span class=nd>@Target</span><span class=o>(</span><span class=n>ElementType</span><span class=o>.</span><span class=na>ANNOTATION_TYPE</span><span class=o>)</span>
+<span class=kd>public</span> <span class=nd>@interface</span> <span class=n>Documented</span> <span class=o>{</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>当在一个注解上标记<code>@Documented</code>时，表示所有使用这个注解的对象在生成<em>javadoc</em>时都会显示<strong>这个注解</strong>，默认情况<em>javadoc</em>生成时是不包含注解的。如果一个对象有多个注解，那么生成<em>javadoc</em>时是否显示这些注解是根据每一个注解自身是否使用了<code>@Documented</code>分别决定的。</p>
+<h4 id=target>@Target</h4>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@Documented</span>
+<span class=nd>@Retention</span><span class=o>(</span><span class=n>RetentionPolicy</span><span class=o>.</span><span class=na>RUNTIME</span><span class=o>)</span>
+<span class=nd>@Target</span><span class=o>(</span><span class=n>ElementType</span><span class=o>.</span><span class=na>ANNOTATION_TYPE</span><span class=o>)</span>
+<span class=kd>public</span> <span class=nd>@interface</span> <span class=n>Target</span> <span class=o>{</span>
+    <span class=n>ElementType</span><span class=o>[]</span> <span class=nf>value</span><span class=o>();</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>表示注解可以作用的对象。接收一个<code>ElementType[]</code>，<code>ElementType</code>是一个<code>Enum</code>类型，可以有如下取值（基于jdk11)：</p>
+<ul>
+<li><code>ElementType.TYPE</code>：所有<code>class,inteface,enum</code>类型的声明，<strong>其中<code>inteface</code>也包括了注解</strong></li>
+<li><code>ElementType.FIELD</code>：字段的声明，包括<code>Enum</code>里面的常量</li>
+<li><code>ElementType.METHOD</code>：方法的声明</li>
+<li><code>ElementType.PARAMETER</code>：形参的声明</li>
+<li><code>ElementType.CONSTRUCTOR</code>：构造函数的声明</li>
+<li><code>ElementType.LOCAL_VARIABLE</code>：本地变量的声明</li>
+<li><code>ElementType.ANNOTATION_TYPE</code>：注解的声明</li>
+<li><code>ElementType.PACKAGE</code>：package的声明</li>
+<li><code>ElementType.TYPE_PARAMETER</code>：1.8引入，类型参数的声明,如<code>public &lt;@MyAnnotation T> T retT(T t){ return t; }</code></li>
+<li><code>ElementType.TYPE_USE</code>：1.8引入，<code>TYPE</code>可以用的地方它都可以用。在1.8之前，注解只能用在“声明”的时候，有了<code>TYPE_USE</code>，可以在任何跟<code>Type</code>有关的地方使用它。官方提供了以下几个例子：</li>
+</ul>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nl>Class实例创建时:</span>
+    <span class=k>new</span> <span class=nd>@Interned</span> <span class=n>MyObject</span><span class=o>();</span>
+<span class=nl>
+</span><span class=nl>类型转换时:</span>
+    <span class=n>myString</span> <span class=o>=</span> <span class=o>(</span><span class=nd>@NonNull</span> <span class=n>String</span><span class=o>)</span> <span class=n>str</span><span class=o>;</span>
+<span class=nl>
+</span><span class=nl>implements语句里:</span>
+    <span class=kd>class</span> <span class=nc>UnmodifiableList</span><span class=o>&lt;</span><span class=n>T</span><span class=o>&gt;</span> <span class=kd>implements</span>
+        <span class=nd>@Readonly</span> <span class=n>List</span><span class=o>&lt;</span><span class=nd>@Readonly</span> <span class=n>T</span><span class=o>&gt;</span> <span class=o>{</span> <span class=o>...</span> <span class=o>}</span>
+
+<span class=n>Thrown</span> <span class=n>exception的声明语句里</span><span class=o>:</span>
+    <span class=kt>void</span> <span class=nf>monitorTemperature</span><span class=o>()</span> <span class=kd>throws</span>
+        <span class=nd>@Critical</span> <span class=n>TemperatureException</span> <span class=o>{</span> <span class=o>...</span> <span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><code>ElementType.MODULE</code>：1.8引入，module的声明</li>
+</ul>
+<h4 id=inherited>@Inherited</h4>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@Documented</span>
+<span class=nd>@Retention</span><span class=o>(</span><span class=n>RetentionPolicy</span><span class=o>.</span><span class=na>RUNTIME</span><span class=o>)</span>
+<span class=nd>@Target</span><span class=o>(</span><span class=n>ElementType</span><span class=o>.</span><span class=na>ANNOTATION_TYPE</span><span class=o>)</span>
+<span class=kd>public</span> <span class=nd>@interface</span> <span class=n>Inherited</span> <span class=o>{</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如果一个注解被标记为<code>@Inherited</code>,那么使用了这个注解的类在被继承的时候，类上的注解也会一起被“继承”。这里注解的“继承”表现为：在子类上可以通过反射获取到自身没有但父类有的注解。<br>
+一个简单的例子：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=c1>//定义一个注解，标记为@Inherited
+</span><span class=c1></span><span class=nd>@Retention</span><span class=o>(</span><span class=n>RetentionPolicy</span><span class=o>.</span><span class=na>RUNTIME</span><span class=o>)</span>
+<span class=nd>@Documented</span>
+<span class=nd>@Target</span><span class=o>(</span><span class=n>ElementType</span><span class=o>.</span><span class=na>TYPE</span><span class=o>)</span>
+<span class=nd>@Inherited</span>
+<span class=kd>public</span> <span class=nd>@interface</span> <span class=n>MyAnnotation</span> <span class=o>{</span>
+<span class=o>}</span>
+
+
+<span class=c1>//测试类
+</span><span class=c1></span><span class=kd>public</span> <span class=kd>class</span> <span class=nc>Test</span><span class=o>{</span>
+    <span class=kd>public</span> <span class=kd>static</span> <span class=kt>void</span> <span class=nf>main</span><span class=o>(</span><span class=n>String</span><span class=o>[]</span> <span class=n>args</span><span class=o>)</span> <span class=o>{</span>
+      <span class=c1>//从子类获取注解信息
+</span><span class=c1></span>        <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=n>SubTest</span><span class=o>.</span><span class=na>class</span><span class=o>.</span><span class=na>isAnnotationPresent</span><span class=o>(</span><span class=n>MyAnnotation</span><span class=o>.</span><span class=na>class</span><span class=o>));</span><span class=c1>//true
+</span><span class=c1></span>    <span class=o>}</span>
+<span class=o>}</span>
+<span class=c1>//父类使用了注解
+</span><span class=c1></span><span class=nd>@MyAnnotation</span>
+<span class=kd>class</span> <span class=nc>ParentTest</span><span class=o>{}</span>
+<span class=c1>//子类没有使用注解
+</span><span class=c1></span><span class=kd>class</span> <span class=nc>SubTest</span> <span class=kd>extends</span> <span class=n>ParentTest</span><span class=o>{}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>注意：<code>@Inherited</code>只在<code>class</code>上生效，<code>interface</code>无效。</strong></p>
+<h4 id=repeatable>@Repeatable</h4>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@Documented</span>
+<span class=nd>@Retention</span><span class=o>(</span><span class=n>RetentionPolicy</span><span class=o>.</span><span class=na>RUNTIME</span><span class=o>)</span>
+<span class=nd>@Target</span><span class=o>(</span><span class=n>ElementType</span><span class=o>.</span><span class=na>ANNOTATION_TYPE</span><span class=o>)</span>
+<span class=kd>public</span> <span class=nd>@interface</span> <span class=n>Repeatable</span> <span class=o>{</span>
+    <span class=n>Class</span><span class=o>&lt;?</span> <span class=kd>extends</span> <span class=n>Annotation</span><span class=o>&gt;</span> <span class=nf>value</span><span class=o>();</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>1.8引入。<br>
+表示一个注解可以在同一个地方被使用多次。接收一个参数<code>Class&lt;? extends Annotation> value()</code>,这是一个注解类型的<code>Class</code>，要解释这个，先从没有<code>@Repeatable</code>的版本说起。<br>
+在1.7版本，同一个注解不能在一个地方出现两次，为了实现类似功能，需要用另一个注解的数组参数把两个相同的注解“封装”起来。比如：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=c1>//Schedule注解
+</span><span class=c1></span><span class=kd>public</span> <span class=nd>@interface</span> <span class=n>Schedule</span> <span class=o>{</span>
+    <span class=n>String</span> <span class=nf>dayOfMonth</span><span class=o>()</span> <span class=k>default</span> <span class=s>&#34;first&#34;</span><span class=o>;</span>
+    <span class=n>String</span> <span class=nf>dayOfWeek</span><span class=o>()</span> <span class=k>default</span> <span class=s>&#34;Mon&#34;</span><span class=o>;</span>
+    <span class=kt>int</span> <span class=nf>hour</span><span class=o>()</span> <span class=k>default</span> <span class=n>12</span><span class=o>;</span>
+<span class=o>}</span>
+<span class=c1>//Schedules注解，接收一个参数@Schedule[]，注意这里声明变量时Schedule前不加@
+</span><span class=c1></span><span class=kd>public</span> <span class=nd>@interface</span> <span class=n>Schedules</span> <span class=o>{</span>
+    <span class=n>Schedule</span><span class=o>[]</span> <span class=nf>value</span><span class=o>();</span>
+<span class=o>}</span>
+
+<span class=c1>//调用@Schedules,间接调用多个@Schedule
+</span><span class=c1></span><span class=nd>@Schedules</span><span class=o>(</span><span class=n>value</span> <span class=o>=</span> <span class=o>{</span><span class=nd>@Schedule</span><span class=o>(</span><span class=n>dayOfMonth</span> <span class=o>=</span> <span class=s>&#34;last&#34;</span><span class=o>),</span><span class=nd>@Schedule</span><span class=o>(</span><span class=n>dayOfWeek</span> <span class=o>=</span> <span class=s>&#34;Fri&#34;</span><span class=o>,</span><span class=n>hour</span> <span class=o>=</span><span class=n>23</span><span class=o>)})</span>
+<span class=kd>public</span> <span class=kt>void</span> <span class=nf>doSth</span><span class=o>(){}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>1.8以后上面的代码可以写成：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@Repeatable</span><span class=o>(</span><span class=n>Schedules</span><span class=o>.</span><span class=na>class</span><span class=o>)</span>
+<span class=kd>public</span> <span class=nd>@interface</span> <span class=n>Schedule</span> <span class=o>{</span>
+    <span class=n>String</span> <span class=nf>dayOfMonth</span><span class=o>()</span> <span class=k>default</span> <span class=s>&#34;first&#34;</span><span class=o>;</span>
+    <span class=n>String</span> <span class=nf>dayOfWeek</span><span class=o>()</span> <span class=k>default</span> <span class=s>&#34;Mon&#34;</span><span class=o>;</span>
+    <span class=kt>int</span> <span class=nf>hour</span><span class=o>()</span> <span class=k>default</span> <span class=n>12</span><span class=o>;</span>
+<span class=o>}</span>
+
+<span class=kd>public</span> <span class=nd>@interface</span> <span class=n>Schedules</span> <span class=o>{</span>
+    <span class=n>Schedule</span><span class=o>[]</span> <span class=nf>value</span><span class=o>();</span>
+<span class=o>}</span>
+
+<span class=nd>@Schedule</span><span class=o>(</span><span class=n>dayOfMonth</span> <span class=o>=</span> <span class=s>&#34;last&#34;</span><span class=o>)</span>
+<span class=nd>@Schedule</span><span class=o>(</span><span class=n>dayOfWeek</span> <span class=o>=</span> <span class=s>&#34;Fri&#34;</span><span class=o>,</span><span class=n>hour</span> <span class=o>=</span><span class=n>23</span><span class=o>)</span>
+<span class=kd>public</span> <span class=kt>void</span> <span class=nf>doSth</span><span class=o>(){}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>对比可以发现，依然需要3个步骤，不同的是<code>@Schedule</code>定义的时候多了一个<code>@Repeatable(Schedules.class)</code>注解，这一步是指明我们用了哪一个注解来包装我们的<code>@Schedule</code>，这里是<code>@Schedules</code>，所以传入<code>Schedules.class</code>，然后我们就可以多次使用<code>@Schedule</code>了，<strong>看上去repeatable</strong>。<br>
+实际上，这只是语法糖，通过编译后的class文件我们可以发现，两个版本都有如下<strong>相同</strong>内容：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nl>RuntimeInvisibleAnnotations:</span>
+  <span class=n>0</span><span class=o>:</span> <span class=err>#</span><span class=n>17</span><span class=o>(</span><span class=err>#</span><span class=n>18</span><span class=o>=[</span><span class=err>@#</span><span class=n>19</span><span class=o>(</span><span class=err>#</span><span class=n>20</span><span class=o>=</span><span class=n>s</span><span class=err>#</span><span class=n>21</span><span class=o>),</span><span class=err>@#</span><span class=n>19</span><span class=o>(</span><span class=err>#</span><span class=n>22</span><span class=o>=</span><span class=n>s</span><span class=err>#</span><span class=n>23</span><span class=o>,</span><span class=err>#</span><span class=n>24</span><span class=o>=</span><span class=n>I</span><span class=err>#</span><span class=n>25</span><span class=o>)])</span>
+    <span class=n>Schedules</span><span class=o>(</span>
+      <span class=n>value</span><span class=o>=[</span><span class=nd>@Schedule</span><span class=o>(</span>
+        <span class=n>dayOfMonth</span><span class=o>=</span><span class=s>&#34;last&#34;</span>
+      <span class=o>),</span><span class=nd>@Schedule</span><span class=o>(</span>
+        <span class=n>dayOfWeek</span><span class=o>=</span><span class=s>&#34;Fri&#34;</span>
+        <span class=n>hour</span><span class=o>=</span><span class=n>23</span>
+      <span class=o>)]</span>
+    <span class=o>)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这个形式跟我们在1.7版本没有引入<code>@Repeatable</code>之前是一样的</p>
+<h2 id=4-关于自定义注解>4 关于自定义注解</h2>
+<p>前面介绍的JAVA原生支持的注解，直接使用就有效果。自定义注解不一样，你直接使用一个自定义注解的时候，编译器和虚拟机无法理解你想表达什么，你需要自己写"注解解析器&rdquo;，根据注解信息执行相应操作，而注解信息则通过反射获取，所以自定义注解通常要标记为<code>@Retention(RetentionPolicy.RUNTIME)</code>。<code>Spring</code>等框架就大量使用了自定义注解。</p>
+</div>
+<div class=post-copyright>
+<p class=copyright-item>
+<span class=item-title>本文链接</span>
+<span class=item-content><a href=https://www.fewth.com/java%E6%B3%A8%E8%A7%A3/>https://www.fewth.com/java注解</a></span>
+</p>
+<p class=copyright-item>
+<span class=item-title>版权声明</span>
+<span class=item-content>本文采用<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-sa/4.0/ target=_blank>CC BY-NC-SA 4.0</a>许可协议，转载请注明出处。</span>
+</p>
+</div>
+<footer class=post-footer>
+<nav class=post-nav>
+<a class=prev href=/jvm%E4%B9%8Bclass%E6%96%87%E4%BB%B6%E5%8F%8A%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E5%92%8C%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B/>
+<i class="iconfont icon-left"></i>
+<span class="prev-text nav-default">jvm之class文件及类加载机制和双亲委派模型</span>
+<span class="prev-text nav-mobile">上一篇</span>
+</a>
+<a class=next href=/elasticsearch%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/>
+<span class="next-text nav-default">elasticsearch分布式搜索引擎</span>
+<span class="next-text nav-mobile">下一篇</span>
+<i class="iconfont icon-right"></i>
+</a>
+</nav>
+</footer>
+</article>
+</div>
+<div id=vcomments></div>
+<script src=//cdn1.lncld.net/static/js/3.0.4/av-min.js></script>
+<script src=//unpkg.com/valine/dist/Valine.min.js></script>
+<script type=text/javascript>new Valine({el:'#vcomments',appId:'BmT2lGTnBMBj6625uiiWM1xV-MdYXbMMI',appKey:'tasHQvivyFQEjq66DERC31Ja',notify:!1,verify:!1,avatar:'mm',placeholder:'说点什么吧...',visitor:!1})</script>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=social-links>
+<a href=https://github.com/ozryan class="iconfont icon-github" title=github></a>
+<a href=https://www.fewth.com/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a>
+</div>
+<div class=copyright>
+<span class=copyright-year>
+&copy;
+2020 -
+2021<span class=heart><i class="iconfont icon-heart"></i></span><span>ozryan</span>
+</span>
+</div>
+</footer>
+<div class=back-to-top id=back-to-top>
+<i class="iconfont icon-up"></i>
+</div>
+</div>
+<script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script>
+<script type=text/javascript src=/js/main.min.c99b103c33d1539acf3025e1913697534542c4a5aa5af0ccc20475ed2863603b.js></script>
+<script type=text/javascript>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]}}</script>
+<script async src=https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin=anonymous></script>
+</body>
+</html>
