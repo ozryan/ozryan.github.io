@@ -11,8 +11,8 @@
 <meta name=msapplication-navbutton-color content="#f8f5ec">
 <meta name=apple-mobile-web-app-capable content="yes">
 <meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
-<meta name=author content="ozryan"><meta name=description content="本文主要介绍快速选择算法的实现，并给出该算法的期望运行时间，文中辅以图片帮助理解。">
-<meta name=generator content="Hugo 0.88.1 with theme even">
+<meta name=author content="ozryan"><meta name=description content="本文主要介绍快速选择算法的实现，并给出该算法的期望运行时间的证明，文中结合实际代码以及图片进行详细的讲解。">
+<meta name=generator content="Hugo 0.89.0 with theme even">
 <link rel=canonical href=https://www.fewth.com/%E7%AC%ACk%E4%B8%AA%E9%A1%BA%E5%BA%8F%E7%BB%9F%E8%AE%A1%E9%87%8F-%E6%95%B0%E7%BB%84%E4%B8%AD%E7%AC%ACk%E5%B0%8F%E7%9A%84%E5%85%83%E7%B4%A0/>
 <link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
 <link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
@@ -22,18 +22,18 @@
 <link href=/sass/main.min.b5a744db6de49a86cadafb3b70f555ab443f83c307a483402259e94726b045ff.css rel=stylesheet>
 <link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous>
 <meta property="og:title" content="第k个顺序统计量-数组中第k小的元素">
-<meta property="og:description" content="本文主要介绍快速选择算法的实现，并给出该算法的期望运行时间，文中辅以图片帮助理解。">
+<meta property="og:description" content="本文主要介绍快速选择算法的实现，并给出该算法的期望运行时间的证明，文中结合实际代码以及图片进行详细的讲解。">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://www.fewth.com/%E7%AC%ACk%E4%B8%AA%E9%A1%BA%E5%BA%8F%E7%BB%9F%E8%AE%A1%E9%87%8F-%E6%95%B0%E7%BB%84%E4%B8%AD%E7%AC%ACk%E5%B0%8F%E7%9A%84%E5%85%83%E7%B4%A0/"><meta property="article:section" content="post">
 <meta property="article:published_time" content="2021-10-24T00:00:00+00:00">
 <meta property="article:modified_time" content="2021-10-30T00:00:00+00:00">
 <meta itemprop=name content="第k个顺序统计量-数组中第k小的元素">
-<meta itemprop=description content="本文主要介绍快速选择算法的实现，并给出该算法的期望运行时间，文中辅以图片帮助理解。"><meta itemprop=datePublished content="2021-10-24T00:00:00+00:00">
+<meta itemprop=description content="本文主要介绍快速选择算法的实现，并给出该算法的期望运行时间的证明，文中结合实际代码以及图片进行详细的讲解。"><meta itemprop=datePublished content="2021-10-24T00:00:00+00:00">
 <meta itemprop=dateModified content="2021-10-30T00:00:00+00:00">
 <meta itemprop=wordCount content="2500">
 <meta itemprop=keywords content><meta name=twitter:card content="summary">
 <meta name=twitter:title content="第k个顺序统计量-数组中第k小的元素">
-<meta name=twitter:description content="本文主要介绍快速选择算法的实现，并给出该算法的期望运行时间，文中辅以图片帮助理解。"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<meta name=twitter:description content="本文主要介绍快速选择算法的实现，并给出该算法的期望运行时间的证明，文中结合实际代码以及图片进行详细的讲解。"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
 <script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
 </head>
 <body>
@@ -55,6 +55,8 @@
 <li class=mobile-menu-item>归档</li>
 </a><a href=/categories/>
 <li class=mobile-menu-item>分类</li>
+</a><a href=/about>
+<li class=mobile-menu-item>关于</li>
 </a>
 </ul>
 </nav>
@@ -71,6 +73,8 @@
 <a class=menu-item-link href=/post>归档</a>
 </li><li class=menu-item>
 <a class=menu-item-link href=/categories/>分类</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/about>关于</a>
 </li>
 </ul>
 </nav>
@@ -237,8 +241,8 @@
 \begin{aligned}
 T(n)=
 \begin{cases}
-T(left)+\theta (n),&k-1&lt;left \\<br>
-T(n-1-left)+ \theta (n),&k-1>left \\<br>
+T(left)+\theta (n),&k-1&lt;left \\
+T(n-1-left)+ \theta (n),&k-1>left \\
 O(1)+ \theta(n),&k-1==left
 \end{cases}
 \end{aligned}
@@ -255,9 +259,9 @@ $$</p>
 <p>要证明上面的递归式，我们用替代法，替代法最重要的步骤就是猜，猜出算法的时间复杂度，然后代入到方程中求证，猜测通常需要一点经验，这里我们的猜测是：当n足够大时，存在一个常数<code>a</code>，使得$T(n)&lt; an $成立，因为递归式中还有$\theta (n)$部分，所以用$bn$来代替它的上限，对上面的方程整理后得:</p>
 <p>$$
 \begin{aligned}
-E[T(n)]&lt;=&\frac {2a}{n}\frac {(n-1+\lceil \frac {n-1}{2} \rceil )}{2}(n- \lceil \frac {n-1}{2}\rceil )+ bn \\<br>
-&lt;=&\frac {a}{n}(n-1+\frac {n}{2})(n-\frac {n}{2})+bn \\<br>
-=&\frac {3}{4}an-\frac {a}{2}+bn \\<br>
+E[T(n)]&lt;=&\frac {2a}{n}\frac {(n-1+\lceil \frac {n-1}{2} \rceil )}{2}(n- \lceil \frac {n-1}{2}\rceil )+ bn \\
+&lt;=&\frac {a}{n}(n-1+\frac {n}{2})(n-\frac {n}{2})+bn \\
+=&\frac {3}{4}an-\frac {a}{2}+bn \\
 =&an+(bn-\frac {a}{2}-\frac {1}{4}an)
 \end{aligned}
 $$</p>
@@ -265,12 +269,12 @@ $$</p>
 </div>
 <div class=post-copyright>
 <p class=copyright-item>
-<span class=item-title>本文链接</span>
+<span class=item-title>原文链接</span>
 <span class=item-content><a href=https://www.fewth.com/%E7%AC%ACk%E4%B8%AA%E9%A1%BA%E5%BA%8F%E7%BB%9F%E8%AE%A1%E9%87%8F-%E6%95%B0%E7%BB%84%E4%B8%AD%E7%AC%ACk%E5%B0%8F%E7%9A%84%E5%85%83%E7%B4%A0/>https://www.fewth.com/第k个顺序统计量-数组中第k小的元素</a></span>
 </p>
 <p class=copyright-item>
 <span class=item-title>版权声明</span>
-<span class=item-content>本文采用<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-sa/4.0/ target=_blank>CC BY-NC-SA 4.0</a>许可协议，转载请注明出处。</span>
+<span class=item-content>本博客采用<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-sa/4.0/ target=_blank>CC BY-NC-SA 4.0</a>许可协议，转载请注明出自<a href=https://www.fewth.com>www.fewth.com</a>。</span>
 </p>
 </div>
 <footer class=post-footer>
@@ -284,10 +288,6 @@ $$</p>
 </footer>
 </article>
 </div>
-<div id=vcomments></div>
-<script src=//cdn1.lncld.net/static/js/3.0.4/av-min.js></script>
-<script src=//unpkg.com/valine/dist/Valine.min.js></script>
-<script type=text/javascript>new Valine({el:'#vcomments',appId:'BmT2lGTnBMBj6625uiiWM1xV-MdYXbMMI',appKey:'tasHQvivyFQEjq66DERC31Ja',notify:!1,verify:!1,avatar:'mm',placeholder:'说点什么吧...',visitor:!1})</script>
 </div>
 </main>
 <footer id=footer class=footer>

@@ -13,7 +13,7 @@
 <meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
 <meta name=author content="ozryan"><meta name=description content="本文先简单介绍虚拟机规范约定的class文件格式，并从一个示例class文件复原代码基本内容，最后描述虚拟机类加载机制以及介绍一下双亲委派模型。Java版本为11。
 ">
-<meta name=generator content="Hugo 0.88.1 with theme even">
+<meta name=generator content="Hugo 0.89.0 with theme even">
 <link rel=canonical href=https://www.fewth.com/jvm%E4%B9%8Bclass%E6%96%87%E4%BB%B6%E5%8F%8A%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E5%92%8C%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B/>
 <link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
 <link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
@@ -56,6 +56,8 @@
 <li class=mobile-menu-item>归档</li>
 </a><a href=/categories/>
 <li class=mobile-menu-item>分类</li>
+</a><a href=/about>
+<li class=mobile-menu-item>关于</li>
 </a>
 </ul>
 </nav>
@@ -72,6 +74,8 @@
 <a class=menu-item-link href=/post>归档</a>
 </li><li class=menu-item>
 <a class=menu-item-link href=/categories/>分类</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/about>关于</a>
 </li>
 </ul>
 </nav>
@@ -2276,20 +2280,19 @@ static final int=Integer.valueOf(0);//不符合常量表达式要求，返回的
 <span class=n>Iterator</span><span class=o>&lt;</span><span class=n>Driver</span><span class=o>&gt;</span> <span class=n>driversIterator</span> <span class=o>=</span> <span class=n>loadedDrivers</span><span class=o>.</span><span class=na>iterator</span><span class=o>();</span>
 </code></pre></td></tr></table>
 </div>
-</div><p>ServiceLoader.load方法会设置一个类加载器变量<code>ClassLoader cl = Thread.currentThread().getContextClassLoader()</code>，并在<code>ServiceLoader</code>类的构造方法中赋值给变量<code>loader</code><br>
-关键在于这个<code>driversIterator</code>变量，它的操作会通过<code>newLookupIterator</code>类型的变量来完成，当后面的代码调用<code>driversIterator.hasNext()</code>的时候，触发懒加载机制，最终来到<code>ServiceLoader</code>的内部类<code>LazyClassPathLookupIterator</code>的<code>hasNextService()</code>方法</p>
-</li>
+</div>ServiceLoader.load方法会设置一个类加载器变量<code>ClassLoader cl = Thread.currentThread().getContextClassLoader()</code>，并在<code>ServiceLoader</code>类的构造方法中赋值给变量<code>loader</code><br>
+关键在于这个<code>driversIterator</code>变量，它的操作会通过<code>newLookupIterator</code>类型的变量来完成，当后面的代码调用<code>driversIterator.hasNext()</code>的时候，触发懒加载机制，最终来到<code>ServiceLoader</code>的内部类<code>LazyClassPathLookupIterator</code>的<code>hasNextService()</code>方法</li>
 <li><code>hasNextService()</code>方法里调用了<code>nextProviderClass()</code>方法，这个方法去<code>META-INF</code>下查找第三方实现类的信息，方法最终返回<code>return Class.forName(cn, false, loader)</code>,这一步才加载真正的实现类，用的上面的变量<code>loader</code>所定义的加载器</li>
 </ul>
 </div>
 <div class=post-copyright>
 <p class=copyright-item>
-<span class=item-title>本文链接</span>
+<span class=item-title>原文链接</span>
 <span class=item-content><a href=https://www.fewth.com/jvm%E4%B9%8Bclass%E6%96%87%E4%BB%B6%E5%8F%8A%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E5%92%8C%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B/>https://www.fewth.com/jvm之class文件及类加载机制和双亲委派模型</a></span>
 </p>
 <p class=copyright-item>
 <span class=item-title>版权声明</span>
-<span class=item-content>本文采用<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-sa/4.0/ target=_blank>CC BY-NC-SA 4.0</a>许可协议，转载请注明出处。</span>
+<span class=item-content>本博客采用<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-sa/4.0/ target=_blank>CC BY-NC-SA 4.0</a>许可协议，转载请注明出自<a href=https://www.fewth.com>www.fewth.com</a>。</span>
 </p>
 </div>
 <footer class=post-footer>
@@ -2308,10 +2311,6 @@ static final int=Integer.valueOf(0);//不符合常量表达式要求，返回的
 </footer>
 </article>
 </div>
-<div id=vcomments></div>
-<script src=//cdn1.lncld.net/static/js/3.0.4/av-min.js></script>
-<script src=//unpkg.com/valine/dist/Valine.min.js></script>
-<script type=text/javascript>new Valine({el:'#vcomments',appId:'BmT2lGTnBMBj6625uiiWM1xV-MdYXbMMI',appKey:'tasHQvivyFQEjq66DERC31Ja',notify:!1,verify:!1,avatar:'mm',placeholder:'说点什么吧...',visitor:!1})</script>
 </div>
 </main>
 <footer id=footer class=footer>

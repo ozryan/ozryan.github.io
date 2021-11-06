@@ -17,7 +17,7 @@ kebab-case
 PascalCase
 首先，DOM模板内部元素的属性名称是不区分大小写的，比如以下三种表示是等价的：
 ">
-<meta name=generator content="Hugo 0.88.1 with theme even">
+<meta name=generator content="Hugo 0.89.0 with theme even">
 <link rel=canonical href=https://www.fewth.com/vue%E4%B8%AD%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%86%99/>
 <link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
 <link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
@@ -72,6 +72,8 @@ PascalCase
 <li class=mobile-menu-item>归档</li>
 </a><a href=/categories/>
 <li class=mobile-menu-item>分类</li>
+</a><a href=/about>
+<li class=mobile-menu-item>关于</li>
 </a>
 </ul>
 </nav>
@@ -88,6 +90,8 @@ PascalCase
 <a class=menu-item-link href=/post>归档</a>
 </li><li class=menu-item>
 <a class=menu-item-link href=/categories/>分类</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/about>关于</a>
 </li>
 </ul>
 </nav>
@@ -179,7 +183,7 @@ PascalCase
 <pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>components/
 |- MyComponent.vue
 
-components/
+
 |- my-component.vue
 </code></pre></td></tr></table>
 </div>
@@ -207,6 +211,7 @@ components/
 </span><span class=lnt> 8
 </span><span class=lnt> 9
 </span><span class=lnt>10
+</span><span class=lnt>11
 </span></code></pre></td>
 <td class=lntd>
 <pre tabindex=0 class=chroma><code class=language-js data-lang=js><span class=nx>Vue</span><span class=p>.</span><span class=nx>component</span><span class=p>(</span><span class=s1>&#39;blog-post&#39;</span><span class=p>,</span> <span class=p>{</span>
@@ -219,6 +224,7 @@ components/
 <span class=c>&lt;!--</span> <span class=nx>在</span> <span class=nx>HTML</span> <span class=nx>中是</span> <span class=nx>kebab</span><span class=o>-</span><span class=k>case</span> <span class=nx>的</span> <span class=o>--&gt;</span>
 <span class=o>&lt;</span><span class=nx>blog</span><span class=o>-</span><span class=nx>post</span> <span class=nx>post</span><span class=o>-</span><span class=nx>title</span><span class=o>=</span><span class=s2>&#34;hello!&#34;</span><span class=o>&gt;&lt;</span><span class=err>/blog-post&gt;</span>
 
+
 </code></pre></td></tr></table>
 </div>
 </div></li>
@@ -226,12 +232,12 @@ components/
 </div>
 <div class=post-copyright>
 <p class=copyright-item>
-<span class=item-title>本文链接</span>
+<span class=item-title>原文链接</span>
 <span class=item-content><a href=https://www.fewth.com/vue%E4%B8%AD%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%86%99/>https://www.fewth.com/vue中的大小写</a></span>
 </p>
 <p class=copyright-item>
 <span class=item-title>版权声明</span>
-<span class=item-content>本文采用<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-sa/4.0/ target=_blank>CC BY-NC-SA 4.0</a>许可协议，转载请注明出处。</span>
+<span class=item-content>本博客采用<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-sa/4.0/ target=_blank>CC BY-NC-SA 4.0</a>许可协议，转载请注明出自<a href=https://www.fewth.com>www.fewth.com</a>。</span>
 </p>
 </div>
 <footer class=post-footer>
@@ -250,10 +256,6 @@ components/
 </footer>
 </article>
 </div>
-<div id=vcomments></div>
-<script src=//cdn1.lncld.net/static/js/3.0.4/av-min.js></script>
-<script src=//unpkg.com/valine/dist/Valine.min.js></script>
-<script type=text/javascript>new Valine({el:'#vcomments',appId:'BmT2lGTnBMBj6625uiiWM1xV-MdYXbMMI',appKey:'tasHQvivyFQEjq66DERC31Ja',notify:!1,verify:!1,avatar:'mm',placeholder:'说点什么吧...',visitor:!1})</script>
 </div>
 </main>
 <footer id=footer class=footer>

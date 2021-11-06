@@ -15,7 +15,7 @@
  主要思路 首先，在同一个页面文件中实现弹窗功能一般没什么问题，定义一个状态变量控制组件的显示就行了。这里主要介绍弹窗作为一个单独的单文件组件时的情况，涉及父子组件通信及属性绑定的问题。
 实现：
 ">
-<meta name=generator content="Hugo 0.88.1 with theme even">
+<meta name=generator content="Hugo 0.89.0 with theme even">
 <link rel=canonical href=https://www.fewth.com/%E7%94%A8vue%E5%92%8Celement-ui%E4%B8%8D%E5%80%9F%E5%8A%A9vuex%E5%AE%9E%E7%8E%B0%E5%BC%B9%E7%AA%97%E7%99%BB%E5%BD%95/>
 <link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
 <link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
@@ -73,6 +73,8 @@
 <li class=mobile-menu-item>归档</li>
 </a><a href=/categories/>
 <li class=mobile-menu-item>分类</li>
+</a><a href=/about>
+<li class=mobile-menu-item>关于</li>
 </a>
 </ul>
 </nav>
@@ -89,6 +91,8 @@
 <a class=menu-item-link href=/post>归档</a>
 </li><li class=menu-item>
 <a class=menu-item-link href=/categories/>分类</a>
+</li><li class=menu-item>
+<a class=menu-item-link href=/about>关于</a>
 </li>
 </ul>
 </nav>
@@ -577,12 +581,12 @@
 </div>
 <div class=post-copyright>
 <p class=copyright-item>
-<span class=item-title>本文链接</span>
+<span class=item-title>原文链接</span>
 <span class=item-content><a href=https://www.fewth.com/%E7%94%A8vue%E5%92%8Celement-ui%E4%B8%8D%E5%80%9F%E5%8A%A9vuex%E5%AE%9E%E7%8E%B0%E5%BC%B9%E7%AA%97%E7%99%BB%E5%BD%95/>https://www.fewth.com/用vue和element-ui不借助vuex实现弹窗登录</a></span>
 </p>
 <p class=copyright-item>
 <span class=item-title>版权声明</span>
-<span class=item-content>本文采用<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-sa/4.0/ target=_blank>CC BY-NC-SA 4.0</a>许可协议，转载请注明出处。</span>
+<span class=item-content>本博客采用<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-sa/4.0/ target=_blank>CC BY-NC-SA 4.0</a>许可协议，转载请注明出自<a href=https://www.fewth.com>www.fewth.com</a>。</span>
 </p>
 </div>
 <footer class=post-footer>
@@ -601,10 +605,6 @@
 </footer>
 </article>
 </div>
-<div id=vcomments></div>
-<script src=//cdn1.lncld.net/static/js/3.0.4/av-min.js></script>
-<script src=//unpkg.com/valine/dist/Valine.min.js></script>
-<script type=text/javascript>new Valine({el:'#vcomments',appId:'BmT2lGTnBMBj6625uiiWM1xV-MdYXbMMI',appKey:'tasHQvivyFQEjq66DERC31Ja',notify:!1,verify:!1,avatar:'mm',placeholder:'说点什么吧...',visitor:!1})</script>
 </div>
 </main>
 <footer id=footer class=footer>
