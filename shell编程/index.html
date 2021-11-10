@@ -12,7 +12,7 @@
 <meta name=apple-mobile-web-app-capable content="yes">
 <meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
 <meta name=author content="ozryan"><meta name=description content="本文是一篇入门文章，主要介绍shell的基本语法，以帮助理解shell编程和阅读脚本。">
-<meta name=generator content="Hugo 0.89.0 with theme even">
+<meta name=generator content="Hugo 0.89.2 with theme even">
 <link rel=canonical href=https://www.fewth.com/shell%E7%BC%96%E7%A8%8B/>
 <link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
 <link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
@@ -30,7 +30,7 @@
 <meta itemprop=name content="shell编程">
 <meta itemprop=description content="本文是一篇入门文章，主要介绍shell的基本语法，以帮助理解shell编程和阅读脚本。"><meta itemprop=datePublished content="2021-10-18T15:00:33+00:00">
 <meta itemprop=dateModified content="2021-10-18T15:00:33+00:00">
-<meta itemprop=wordCount content="4876">
+<meta itemprop=wordCount content="4901">
 <meta itemprop=keywords content><meta name=twitter:card content="summary">
 <meta name=twitter:title content="shell编程">
 <meta name=twitter:description content="本文是一篇入门文章，主要介绍shell的基本语法，以帮助理解shell编程和阅读脚本。"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
@@ -90,7 +90,7 @@
 <div class=post-category>
 <a href=/categories/linux/> linux </a>
 </div>
-<span class=more-meta> 约 4876 字 </span>
+<span class=more-meta> 约 4901 字 </span>
 <span class=more-meta> 预计阅读 10 分钟 </span>
 </div>
 </header>
@@ -328,31 +328,31 @@ echo $((~13))   //-14  这里是对所有位取反，显示补码下的结果，
 <span class=k>then</span> <span class=nb>echo</span> <span class=s2>&#34;run succ&#34;</span>
 <span class=k>fi</span>
 
-
+<span class=k>if</span> <span class=o>((</span>3&lt;4<span class=o>))</span>
 <span class=k>then</span> <span class=nb>echo</span> <span class=s2>&#34;((3&lt;4)) 3&lt;4 is a true,so true equal to exp&#39;s result=0&#34;</span>
 <span class=k>fi</span>
 
-
+<span class=k>if</span> <span class=o>((</span>3&gt;4<span class=o>))</span>
 <span class=k>then</span> <span class=nb>echo</span> <span class=s2>&#34;((3&gt;4)) 3&gt;4 is false,so this msg will not show up&#34;</span> <span class=c1>#不显示</span>
 <span class=k>fi</span>
 
-
+<span class=k>if</span> <span class=o>((</span>0<span class=o>))</span>
 <span class=k>then</span> <span class=nb>echo</span> <span class=s2>&#34;((0)) 0 means the exp=false,so the ((exp))!=0,so this msg will not show up&#34;</span> <span class=c1>#不显示</span>
 <span class=k>fi</span>
 
-
+<span class=k>if</span> <span class=o>((</span>345<span class=o>))</span>
 <span class=k>then</span> <span class=nb>echo</span> <span class=s2>&#34;((345)) non-zero mean&#39;s the exp succ,so ((345))=0,this msg will show up&#34;</span>
 <span class=k>fi</span>
 
-
+<span class=k>if</span> <span class=o>{</span> <span class=nb>echo</span> <span class=s2>&#34;if {list} run succ,show&#34;</span><span class=p>;</span> <span class=o>}</span>
 <span class=k>then</span> <span class=nb>echo</span> <span class=s2>&#34;run succ&#34;</span>
 <span class=k>fi</span>
 
-
+<span class=k>if</span> <span class=o>{</span> <span class=nb>echo</span> 1<span class=p>;</span> <span class=o>}</span>
 <span class=k>then</span> <span class=nb>echo</span> <span class=s2>&#34;{ echo 1} show 1 as result,but it run succ,so this msg will show up&#34;</span>
 <span class=k>fi</span>
 
-
+<span class=k>if</span> <span class=o>[[</span> <span class=s2>&#34;str&#34;</span><span class=o>==</span><span class=s2>&#34;str&#34;</span> <span class=o>]]</span>
 <span class=k>then</span> <span class=nb>echo</span> <span class=s2>&#34;[[ &#39;str&#39;==&#39;str&#39; ]] is true,so this msg show up&#34;</span>
 <span class=k>fi</span>
 </code></pre></td></tr></table>
