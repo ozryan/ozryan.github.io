@@ -13,7 +13,7 @@
 <meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
 <meta name=author content="ozryan"><meta name=description content="Java11虚拟机规范中描述的，当执行一个程序时需要用到的几个运行时数据区域，具体的虚拟机实现可能并没有严格按照这个划分。
 ">
-<meta name=generator content="Hugo 0.89.2 with theme even">
+<meta name=generator content="Hugo 0.89.3 with theme even">
 <link rel=canonical href=https://www.fewth.com/jvm%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F/>
 <link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
 <link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
@@ -111,7 +111,11 @@
 <li><a href=#3-本地方法栈native-method-stacks>3 本地方法栈(Native Method Stacks)</a></li>
 <li><a href=#4-堆heap>4 堆(Heap)</a>
 <ul>
-<li><a href=#41-方法区method-area>4.1 方法区(Method Area)</a></li>
+<li><a href=#41-方法区method-area>4.1 方法区(Method Area)</a>
+<ul>
+<li><a href=#411-运行时常量池run-time-constant-pool>4.1.1 运行时常量池(Run-Time Constant Pool)</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -184,12 +188,8 @@
 </div>
 <div class=post-copyright>
 <p class=copyright-item>
-<span class=item-title>原文链接</span>
-<span class=item-content><a href=https://www.fewth.com/jvm%E4%B9%8B%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F/>https://www.fewth.com/jvm之运行时数据区域</a></span>
-</p>
-<p class=copyright-item>
 <span class=item-title>版权声明</span>
-<span class=item-content>本博客采用<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-sa/4.0/ target=_blank>CC BY-NC-SA 4.0</a>许可协议，转载请注明出自<a href=https://www.fewth.com>www.fewth.com</a>。</span>
+<span class=item-content>本博客使用<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh# target=_blank>CC BY-NC-SA 4.0</a>许可协议(创意共享4.0:保留署名-非商业性使用-相同方式共享)。</span>
 </p>
 </div>
 <footer class=post-footer>

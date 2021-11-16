@@ -13,7 +13,7 @@
 <meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
 <meta name=author content="ozryan"><meta name=description content="本文先简单介绍虚拟机规范约定的class文件格式，并从一个示例class文件复原代码基本内容，最后描述虚拟机类加载机制以及介绍一下双亲委派模型。Java版本为11。
 ">
-<meta name=generator content="Hugo 0.89.2 with theme even">
+<meta name=generator content="Hugo 0.89.3 with theme even">
 <link rel=canonical href=https://www.fewth.com/jvm%E4%B9%8Bclass%E6%96%87%E4%BB%B6%E5%8F%8A%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E5%92%8C%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B/>
 <link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
 <link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
@@ -128,16 +128,74 @@
 <li><a href=#minor_version-1>minor_version</a></li>
 <li><a href=#major_version-1>major_version</a></li>
 <li><a href=#constant_pool_count-1>constant_pool_count</a></li>
-<li><a href=#constant_poolconstant_pool_count-1-1>constant_pool[constant_pool_count-1]</a></li>
+<li><a href=#constant_poolconstant_pool_count-1-1>constant_pool[constant_pool_count-1]</a>
+<ul>
+<li><a href=#1-constant_methodref>1 CONSTANT_Methodref</a></li>
+<li><a href=#2-constant_fieldref>2 CONSTANT_Fieldref</a></li>
+<li><a href=#3-constant_string>3 CONSTANT_String</a></li>
+<li><a href=#4-constant_fieldref>4 CONSTANT_Fieldref</a></li>
+<li><a href=#5-constant_fieldref>5 CONSTANT_Fieldref</a>
+<ul>
+<li><a href=#6-constant_methodref>6 CONSTANT_Methodref</a></li>
+</ul>
+</li>
+<li><a href=#7-constant_class>7 CONSTANT_Class</a></li>
+<li><a href=#8-constant_class>8 CONSTANT_Class</a></li>
+<li><a href=#9-constant_class>9 CONSTANT_Class</a></li>
+<li><a href=#10-constant_utf8>10 CONSTANT_Utf8</a></li>
+<li><a href=#11-constant_utf8>11 CONSTANT_Utf8</a></li>
+<li><a href=#12-constant_utf8>12 CONSTANT_Utf8</a></li>
+<li><a href=#13-constant_utf8>13 CONSTANT_Utf8</a></li>
+<li><a href=#14-constant_utf8>14 CONSTANT_Utf8</a></li>
+<li><a href=#15-constant_utf8>15 CONSTANT_Utf8</a></li>
+<li><a href=#16-constant_utf8>16 CONSTANT_Utf8</a></li>
+<li><a href=#17-constant_utf8>17 CONSTANT_Utf8</a></li>
+<li><a href=#18-constant_utf8>18 CONSTANT_Utf8</a></li>
+<li><a href=#19-constant_utf8>19 CONSTANT_Utf8</a></li>
+<li><a href=#20-constant_utf8>20 CONSTANT_Utf8</a></li>
+<li><a href=#21-constant_utf8>21 CONSTANT_Utf8</a></li>
+<li><a href=#22-constant_utf8>22 CONSTANT_Utf8</a></li>
+<li><a href=#23-constant_utf8>23 CONSTANT_Utf8</a></li>
+<li><a href=#24-constant_utf8>24 CONSTANT_Utf8</a></li>
+<li><a href=#25-constant_utf8>25 CONSTANT_Utf8</a></li>
+<li><a href=#26-constant_utf8>26 CONSTANT_Utf8</a></li>
+<li><a href=#27-constant_nameandtype>27 CONSTANT_NameAndType</a></li>
+<li><a href=#28-constant_nameandtype>28 CONSTANT_NameAndType</a></li>
+<li><a href=#29-constant_utf8>29 CONSTANT_Utf8</a></li>
+<li><a href=#30-constant_nameandtype>30 CONSTANT_NameAndType</a></li>
+<li><a href=#31-constant_class>31 CONSTANT_Class</a></li>
+<li><a href=#32-constant_nameandtype>32 CONSTANT_NameAndType</a></li>
+<li><a href=#33-constant_class>33 CONSTANT_Class</a></li>
+<li><a href=#34-constant_nameandtype>34 CONSTANT_NameAndType</a></li>
+<li><a href=#35-constant_utf8>35 CONSTANT_Utf8</a></li>
+<li><a href=#36-constant_utf8>36 CONSTANT_Utf8</a></li>
+<li><a href=#37-constant_utf8>37 CONSTANT_Utf8</a></li>
+<li><a href=#38-constant_utf8>38 CONSTANT_Utf8</a></li>
+<li><a href=#39-constant_utf8>39 CONSTANT_Utf8</a></li>
+<li><a href=#40-constant_utf8>40 CONSTANT_Utf8</a></li>
+<li><a href=#41-constant_utf8>41 CONSTANT_Utf8</a></li>
+<li><a href=#42-constant_utf8>42 CONSTANT_Utf8</a></li>
+</ul>
+</li>
 <li><a href=#access_flags-1>access_flags</a></li>
 <li><a href=#this_class-1>this_class</a></li>
 <li><a href=#super_class-1>super_class</a></li>
 <li><a href=#interfaces_count-1>interfaces_count</a></li>
 <li><a href=#interfaces>interfaces[]</a></li>
 <li><a href=#fields_count-1>fields_count</a></li>
-<li><a href=#fieldsfields_count-1>fields[fields_count]</a></li>
+<li><a href=#fieldsfields_count-1>fields[fields_count]</a>
+<ul>
+<li><a href=#第1个field>第1个field</a></li>
+<li><a href=#第2个field>第2个field</a></li>
+</ul>
+</li>
 <li><a href=#methods_count-1>methods_count</a></li>
-<li><a href=#methodsmethods_count-1>methods[methods_count]</a></li>
+<li><a href=#methodsmethods_count-1>methods[methods_count]</a>
+<ul>
+<li><a href=#第一个方法>第一个方法</a></li>
+<li><a href=#第二个方法>第二个方法</a></li>
+</ul>
+</li>
 <li><a href=#attributes_count-1>attributes_count</a></li>
 <li><a href=#attributesattributes_count-1>attributes[attributes_count]</a></li>
 </ul>
@@ -145,7 +203,13 @@
 <li><a href=#3-jvm从加载class文件到class初始化的过程>3 JVM从加载class文件到Class初始化的过程</a>
 <ul>
 <li><a href=#31-创建和载入creation-and-loading>3.1 创建和载入(Creation and Loading)</a></li>
-<li><a href=#32-链接linking>3.2 链接（Linking)</a></li>
+<li><a href=#32-链接linking>3.2 链接（Linking)</a>
+<ul>
+<li><a href=#321-验证verification>3.2.1 验证(Verification)</a></li>
+<li><a href=#322-准备preparation>3.2.2 准备(Preparation)</a></li>
+<li><a href=#323-解析resolution>3.2.3 解析(Resolution)</a></li>
+</ul>
+</li>
 <li><a href=#33-初始化initialization>3.3 初始化（Initialization)</a></li>
 <li><a href=#类的卸载>类的卸载</a></li>
 </ul>
@@ -2287,12 +2351,8 @@ static final int=Integer.valueOf(0);//不符合常量表达式要求，返回的
 </div>
 <div class=post-copyright>
 <p class=copyright-item>
-<span class=item-title>原文链接</span>
-<span class=item-content><a href=https://www.fewth.com/jvm%E4%B9%8Bclass%E6%96%87%E4%BB%B6%E5%8F%8A%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E5%92%8C%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B/>https://www.fewth.com/jvm之class文件及类加载机制和双亲委派模型</a></span>
-</p>
-<p class=copyright-item>
 <span class=item-title>版权声明</span>
-<span class=item-content>本博客采用<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-sa/4.0/ target=_blank>CC BY-NC-SA 4.0</a>许可协议，转载请注明出自<a href=https://www.fewth.com>www.fewth.com</a>。</span>
+<span class=item-content>本博客使用<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh# target=_blank>CC BY-NC-SA 4.0</a>许可协议(创意共享4.0:保留署名-非商业性使用-相同方式共享)。</span>
 </p>
 </div>
 <footer class=post-footer>

@@ -13,7 +13,7 @@
 <meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
 <meta name=author content="ozryan"><meta name=description content="本文用一个空的Spring Boot项目演示，从main方法开始顺着源码大概过一遍启动流程。
 ">
-<meta name=generator content="Hugo 0.89.2 with theme even">
+<meta name=generator content="Hugo 0.89.3 with theme even">
 <link rel=canonical href=https://www.fewth.com/spring-boot%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/>
 <link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
 <link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
@@ -105,8 +105,34 @@
 <li><a href=#1-新建项目>1 新建项目</a></li>
 <li><a href=#2-分析源码>2 分析源码</a>
 <ul>
-<li><a href=#21-实例化springapplicationspan-id21>2.1 实例化SpringApplication<span id=2.1></a></li>
-<li><a href=#22-运行run方法>2.2 运行run方法</a></li>
+<li><a href=#21-实例化springapplicationspan-id21>2.1 实例化SpringApplication<span id=2.1></a>
+<ul>
+<li><a href=#211-span-id211webapplicationtypespan>2.1.1 <span id=2.1.1>webApplicationType</span></a></li>
+<li><a href=#212-bootstrapregistryinitializers>2.1.2 bootstrapRegistryInitializers</a></li>
+<li><a href=#213-span-id213setinitializersspan>2.1.3 <span id=2.1.3>setInitializers</span></a></li>
+<li><a href=#214-span-id214setlistenersspan>2.1.4 <span id=2.1.4>setListeners</span></a></li>
+<li><a href=#215-mainapplicationclass>2.1.5 mainApplicationClass</a></li>
+</ul>
+</li>
+<li><a href=#22-运行run方法>2.2 运行run方法</a>
+<ul>
+<li><a href=#221-bootstrapcontext>2.2.1 bootstrapContext</a></li>
+<li><a href=#222-configureheadlessproperty>2.2.2 configureHeadlessProperty()</a></li>
+<li><a href=#223-listeners>2.2.3 listeners</a>
+<ul>
+<li><a href=#223-1-声明并初始化listeners变量>2.2.3-1 声明并初始化listeners变量</a></li>
+<li><a href=#223-2-listenersstartingbootstrapcontext-thismainapplicationclass>2.2.3-2 listeners.starting(bootstrapContext, this.mainApplicationClass)</a></li>
+</ul>
+</li>
+<li><a href=#224-applicationarguments-applicationarguments--new-defaultapplicationargumentsargs>2.2.4 ApplicationArguments applicationArguments = new DefaultApplicationArguments(args)</a></li>
+<li><a href=#225-prepareenvironment>2.2.5 prepareEnvironment</a></li>
+<li><a href=#226-configureignorebeaninfoenvironment>2.2.6 configureIgnoreBeanInfo(environment)</a></li>
+<li><a href=#227-createapplicationcontext>2.2.7 createApplicationContext()</a></li>
+<li><a href=#228-contextsetapplicationstartupthisapplicationstartup>2.2.8 context.setApplicationStartup(this.applicationStartup)</a></li>
+<li><a href=#229-preparecontext>2.2.9 prepareContext</a></li>
+<li><a href=#2210-refreshcontext>2.2.10 refreshContext</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href=#3-总结>3 总结</a></li>
@@ -1348,12 +1374,8 @@ spring boot程序通常都运行在服务器上，服务器没有图形显示功
 </div>
 <div class=post-copyright>
 <p class=copyright-item>
-<span class=item-title>原文链接</span>
-<span class=item-content><a href=https://www.fewth.com/spring-boot%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/>https://www.fewth.com/spring-boot启动流程</a></span>
-</p>
-<p class=copyright-item>
 <span class=item-title>版权声明</span>
-<span class=item-content>本博客采用<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-sa/4.0/ target=_blank>CC BY-NC-SA 4.0</a>许可协议，转载请注明出自<a href=https://www.fewth.com>www.fewth.com</a>。</span>
+<span class=item-content>本博客使用<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh# target=_blank>CC BY-NC-SA 4.0</a>许可协议(创意共享4.0:保留署名-非商业性使用-相同方式共享)。</span>
 </p>
 </div>
 <footer class=post-footer>

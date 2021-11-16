@@ -13,7 +13,7 @@
 <meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
 <meta name=author content="ozryan"><meta name=description content="自动内存管理主要作用在堆(heap)上，而虚拟机规范并没有限定自动内存管理的实现方式，本文以时下流行的HotSpot虚拟机为例，介绍其中的自动内存管理（主要是垃圾回收）机制，以及它提供的几款垃圾回收器（Garbage Collector,简称GC）。
 ">
-<meta name=generator content="Hugo 0.89.2 with theme even">
+<meta name=generator content="Hugo 0.89.3 with theme even">
 <link rel=canonical href=https://www.fewth.com/jvm%E4%B9%8B%E8%87%AA%E5%8A%A8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/>
 <link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
 <link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
@@ -105,17 +105,61 @@
 <li><a href=#1-什么是gc垃圾回收器>1 什么是GC（垃圾回收器)</a></li>
 <li><a href=#2-gc的实现方式和性能指标>2 GC的实现方式和性能指标</a>
 <ul>
-<li><a href=#垃圾判断>垃圾判断</a></li>
-<li><a href=#垃圾回收>垃圾回收</a></li>
-<li><a href=#性能指标>性能指标</a></li>
+<li><a href=#垃圾判断>垃圾判断</a>
+<ul>
+<li><a href=#三色标记法tri-color-marking>三色标记法（Tri-color marking）</a></li>
+</ul>
+</li>
+<li><a href=#垃圾回收>垃圾回收</a>
+<ul>
+<li><a href=#分代垃圾收集generational-garbage-collection>分代垃圾收集（Generational Garbage Collection)</a></li>
+</ul>
+</li>
+<li><a href=#性能指标>性能指标</a>
+<ul>
+<li><a href=#停顿时间pause-time>停顿时间(pause-time)</a></li>
+<li><a href=#吞吐量throughtput>吞吐量(throughtput)</a></li>
+<li><a href=#堆内存大小footprint>堆内存大小（footprint)</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href=#3-不同的垃圾收集器>3 不同的垃圾收集器</a>
 <ul>
 <li><a href=#31-serial-collector>3.1 Serial Collector</a></li>
-<li><a href=#32-parallel-collector>3.2 Parallel Collector</a></li>
-<li><a href=#33-concurrent-mark-sweepcms-collector>3.3 Concurrent Mark Sweep(CMS) Collector</a></li>
-<li><a href=#34-garbage-firstg1-garbage-collector>3.4 Garbage-First(G1) Garbage Collector</a></li>
+<li><a href=#32-parallel-collector>3.2 Parallel Collector</a>
+<ul>
+<li><a href=#多线程调用>多线程调用</a>
+<ul>
+<li><a href=#多线程引起的内存碎片问题>多线程引起的内存碎片问题</a></li>
+</ul>
+</li>
+<li><a href=#性能参数调整及优先级>性能参数调整及优先级</a></li>
+<li><a href=#堆内存大小自动调整细节>堆内存大小自动调整细节</a></li>
+</ul>
+</li>
+<li><a href=#33-concurrent-mark-sweepcms-collector>3.3 Concurrent Mark Sweep(CMS) Collector</a>
+<ul>
+<li><a href=#并发中的stop-the-world现象和浮动垃圾>“并发”中的stop the world现象和浮动垃圾</a>
+<ul>
+<li><a href=#stop-the-world现象>stop the world现象</a></li>
+<li><a href=#浮动垃圾>浮动垃圾</a></li>
+</ul>
+</li>
+<li><a href=#触发垃圾回收的时机>触发垃圾回收的时机</a></li>
+</ul>
+</li>
+<li><a href=#34-garbage-firstg1-garbage-collector>3.4 Garbage-First(G1) Garbage Collector</a>
+<ul>
+<li><a href=#堆内存分区region>堆内存分区(region)</a>
+<ul>
+<li><a href=#处理对象分配>处理对象分配</a></li>
+<li><a href=#处理内存回收>处理内存回收</a></li>
+</ul>
+</li>
+<li><a href=#垃圾回收流程>垃圾回收流程</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -376,12 +420,8 @@
 </div>
 <div class=post-copyright>
 <p class=copyright-item>
-<span class=item-title>原文链接</span>
-<span class=item-content><a href=https://www.fewth.com/jvm%E4%B9%8B%E8%87%AA%E5%8A%A8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/>https://www.fewth.com/jvm之自动内存管理-垃圾回收机制</a></span>
-</p>
-<p class=copyright-item>
 <span class=item-title>版权声明</span>
-<span class=item-content>本博客采用<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-sa/4.0/ target=_blank>CC BY-NC-SA 4.0</a>许可协议，转载请注明出自<a href=https://www.fewth.com>www.fewth.com</a>。</span>
+<span class=item-content>本博客使用<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh# target=_blank>CC BY-NC-SA 4.0</a>许可协议(创意共享4.0:保留署名-非商业性使用-相同方式共享)。</span>
 </p>
 </div>
 <footer class=post-footer>
