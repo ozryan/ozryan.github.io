@@ -142,20 +142,17 @@ sin(a+b)=cosasinb+sinacosb
 <p>其它的差形式、多倍角形式等同理,有了sin,cos的和差化积公式，tan及cot等变化也可求出。</p>
 <h2 id=3-积化和差>3 积化和差</h2>
 <p>积化和差没这么直观，因为已知项在展开式的右边，比如<code>sinacosb</code>这个积，在上面的和差化积展开里面出现了，如果我们再展开一个<code>a-b</code>的积形式，那么4个方程解4个未知数，就可以用和差的方式表示出<code>sinacosb,sinasinb,cosacosb,cosasinb</code>这4个未知量，但是这种方法过于牵强。</p>
-<p>积化和差、和差化积，本质上互逆的两种形式，所以我们可以尝试用 e<sup>ix</sup> 反向的去表示<code>sinx,conx</code>，然后从e<sup>ix</sup>相应的积中寻找指数部分和差的影子。</p>
+<p>积化和差、和差化积，本质上是互逆的两种形式，所以我们可以尝试用 e<sup>ix</sup> 反向的去表示<code>sinx,cosx</code>，然后从e<sup>ix</sup>相应的积中寻找指数部分和差的影子。</p>
 <p>因为cosx 是偶函数，sinx是奇函数，令<code>x=-x</code>,有</p>
 <p>$$
 e^{-ix}=cosx-isinx
 $$</p>
-<p>结合欧拉公式，不难得出</p>
+<p>跟欧拉公式联立，不难得出</p>
 <p>$$\begin{align}
 cosx&=\frac{e^{ix}+e^{-ix}}{2} \\
 sinx&=\frac{e^{ix}-e^{-ix}}{2i}
 \end{align}$$</p>
 <p>现在考虑一个积形式<code>cosasinb</code>，推导它的和差形式</p>
-<p>$$ \begin{align}
-cosasinb=\frac{sin(a+b)-sin(a-b)}{2}
-\end{align}$$</p>
 <p>$$\begin{align}
 cosasinb&=\frac{e^{ia}+e^{-ia}}{2}*\frac{e^{ib}-e^{-ib}}{2i} \\
 &=\frac{e^{ia}*e^{ib}-e^{ia}*e^{-ib}+e^{-ia}*e^{ib}-e^{-ia}*e^{-ib}}{4i} \\
@@ -177,7 +174,8 @@ sin\frac{x}{2}=\frac{e^{\frac{ix}{2}}-e^{\frac{-ix}{2}}}{2i}
 $$</p>
 <p>观察上面这个等式，指数部分的系数是1/2，运算起来不方便，两边取平方，得</p>
 <p>$$\begin{align}
-(sin\frac{x}{2})^2&=\frac{1}{-2}\frac{e^{ix}+e^{-ix}}{2}+\frac{1}{2} \\
+(sin\frac{x}{2})^2&=\frac{e^{ix}+e^{-ix}-2e^{ix}e^{-ix}}{-4} \\
+&=\frac{1}{-2}\frac{e^{ix}+e^{-ix}}{2}+\frac{1}{2} \\
 &=\frac{1}{-2}cosx+\frac{1}{2} \\
 &=\frac{1-cosx}{2}
 \end{align}$$</p>
