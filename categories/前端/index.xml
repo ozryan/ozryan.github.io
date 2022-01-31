@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>前端 on A few thoughts</title><link>https://www.fewth.com/categories/%E5%89%8D%E7%AB%AF/</link><description>Recent content in 前端 on A few thoughts</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 16 Aug 2020 16:46:45 +0000</lastBuildDate><atom:link href="https://www.fewth.com/categories/%E5%89%8D%E7%AB%AF/index.xml" rel="self" type="application/rss+xml"/><item><title>vue中的大小写</title><link>https://www.fewth.com/vue%E4%B8%AD%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%86%99/</link><pubDate>Sun, 16 Aug 2020 16:46:45 +0000</pubDate><guid>https://www.fewth.com/vue%E4%B8%AD%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%86%99/</guid><description>&lt;p>命名方法主要分三种,效果如其名称:&lt;/p>
-&lt;p>camelCase&lt;/p>
-&lt;p>kebab-case&lt;/p>
-&lt;p>PascalCase&lt;/p>
-&lt;p>首先，DOM模板内部元素的属性名称是不区分大小写的，比如以下三种表示是等价的：&lt;/p></description></item><item><title>vue生命周期勾子</title><link>https://www.fewth.com/vue%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%8B%BE%E5%AD%90/</link><pubDate>Sun, 16 Aug 2020 16:44:21 +0000</pubDate><guid>https://www.fewth.com/vue%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%8B%BE%E5%AD%90/</guid><description>&lt;p>官方原图：
-&lt;img src="https://cn.vuejs.org/images/lifecycle.png" alt="img">
-上图中红色部分为常用的&lt;strong>实例生命周期钩子&lt;/strong>，可以用在vue实例运行的各个阶段，按大概时间线：&lt;/p></description></item></channel></rss>
