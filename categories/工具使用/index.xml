@@ -2,7 +2,4 @@
 写markdown文件保存-&amp;gt;&lt;code>hexo generate&lt;/code>生成文件-&amp;gt;&lt;code>hexo deploy&lt;/code>部署到github仓库-&amp;gt;把源文件备份到博客仓库的source分支或者备份到一个私有仓库&lt;/p>
 &lt;p>利用&lt;code>Github-Actions&lt;/code>+&lt;code>Powershell脚本&lt;/code>可以把写博客的流程简化为：&lt;br>
 写markdown文件保存-&amp;gt;打开powershell，输入&lt;code>pushhexo&lt;/code>指令完成上面的所有步骤&lt;/p></description></item><item><title>windows用docker部署redis集群</title><link>https://www.fewth.com/windows%E7%94%A8docker%E9%83%A8%E7%BD%B2redis%E9%9B%86%E7%BE%A4/</link><pubDate>Wed, 14 Apr 2021 12:23:02 +0000</pubDate><guid>https://www.fewth.com/windows%E7%94%A8docker%E9%83%A8%E7%BD%B2redis%E9%9B%86%E7%BE%A4/</guid><description>&lt;h2 id="1-预备知识">1 预备知识&lt;/h2>
-&lt;p>除了知道&lt;code>Docker&lt;/code>和&lt;code>Redis cluster&lt;/code>的基本概念和常规部署流程外，还需要知道&lt;code>Docker&lt;/code>里的几个概念：&lt;/p></description></item><item><title>windows用powershell连接vps(以googlecloud为例）</title><link>https://www.fewth.com/windows%E7%94%A8powershell%E8%BF%9E%E6%8E%A5vps%E4%BB%A5googlecloud%E4%B8%BA%E4%BE%8B/</link><pubDate>Tue, 28 Jul 2020 00:00:00 +0000</pubDate><guid>https://www.fewth.com/windows%E7%94%A8powershell%E8%BF%9E%E6%8E%A5vps%E4%BB%A5googlecloud%E4%B8%BA%E4%BE%8B/</guid><description>&lt;blockquote>
-&lt;p>Powershell已经内置OpenSSH,用起来比Xshell还方便，并且用root账号或开启密码登陆都存在安全隐患，所以这里只介绍普通用户+ssh的登陆方式。&lt;/p>
-&lt;/blockquote>
-&lt;p>基本步骤：&lt;/p></description></item></channel></rss>
+&lt;p>除了知道&lt;code>Docker&lt;/code>和&lt;code>Redis cluster&lt;/code>的基本概念和常规部署流程外，还需要知道&lt;code>Docker&lt;/code>里的几个概念：&lt;/p></description></item></channel></rss>

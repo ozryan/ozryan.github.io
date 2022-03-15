@@ -1,237 +1,54 @@
-<!doctype html><html lang=zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<title>用欧拉公式推导三角函数积化和差及和差化积等公式 - A few thoughts</title>
-<meta name=renderer content="webkit">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=cache-control content="no-transform">
-<meta http-equiv=cache-control content="no-siteapp">
-<meta name=theme-color content="#f8f5ec">
-<meta name=msapplication-navbutton-color content="#f8f5ec">
-<meta name=apple-mobile-web-app-capable content="yes">
-<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
-<meta name=author content="ozryan"><meta name=description content="本文演示了如何用欧拉公式推导三角函数的和差化积、积化和差，多倍角、半角等公式，并解释了在不同情况下如何选取切入点。">
-<meta name=generator content="Hugo 0.92.1 with theme even">
-<link rel=canonical href=https://www.fewth.com/%E7%94%A8%E6%AC%A7%E6%8B%89%E5%85%AC%E5%BC%8F%E6%8E%A8%E5%AF%BC%E4%B8%89%E8%A7%92%E5%87%BD%E6%95%B0%E7%A7%AF%E5%8C%96%E5%92%8C%E5%B7%AE%E5%8F%8A%E5%92%8C%E5%B7%AE%E5%8C%96%E7%A7%AF%E7%AD%89%E5%85%AC%E5%BC%8F/>
-<link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
-<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
-<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png>
-<link rel=manifest href=/manifest.json>
-<link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5>
-<link href=/sass/main.min.b5a744db6de49a86cadafb3b70f555ab443f83c307a483402259e94726b045ff.css rel=stylesheet>
-<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous>
-<meta property="og:title" content="用欧拉公式推导三角函数积化和差及和差化积等公式">
-<meta property="og:description" content="本文演示了如何用欧拉公式推导三角函数的和差化积、积化和差，多倍角、半角等公式，并解释了在不同情况下如何选取切入点。">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.fewth.com/%E7%94%A8%E6%AC%A7%E6%8B%89%E5%85%AC%E5%BC%8F%E6%8E%A8%E5%AF%BC%E4%B8%89%E8%A7%92%E5%87%BD%E6%95%B0%E7%A7%AF%E5%8C%96%E5%92%8C%E5%B7%AE%E5%8F%8A%E5%92%8C%E5%B7%AE%E5%8C%96%E7%A7%AF%E7%AD%89%E5%85%AC%E5%BC%8F/"><meta property="article:section" content="post">
-<meta property="article:published_time" content="2022-01-30T10:09:32+08:00">
-<meta property="article:modified_time" content="2022-01-30T10:09:32+08:00">
-<meta itemprop=name content="用欧拉公式推导三角函数积化和差及和差化积等公式">
-<meta itemprop=description content="本文演示了如何用欧拉公式推导三角函数的和差化积、积化和差，多倍角、半角等公式，并解释了在不同情况下如何选取切入点。"><meta itemprop=datePublished content="2022-01-30T10:09:32+08:00">
-<meta itemprop=dateModified content="2022-01-30T10:09:32+08:00">
-<meta itemprop=wordCount content="814">
-<meta itemprop=keywords content><meta name=twitter:card content="summary">
-<meta name=twitter:title content="用欧拉公式推导三角函数积化和差及和差化积等公式">
-<meta name=twitter:description content="本文演示了如何用欧拉公式推导三角函数的和差化积、积化和差，多倍角、半角等公式，并解释了在不同情况下如何选取切入点。"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
-<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
-<script data-ad-client=ca-pub-9786889114957630 async src=https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js></script>
-</head>
-<body>
-<div id=mobile-navbar class=mobile-navbar>
-<div class=mobile-header-logo>
-<a href=/ class=logo>A few thoughts</a>
-</div>
-<div class=mobile-navbar-icon>
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>用欧拉公式推导三角函数积化和差及和差化积等公式 - A few thoughts</title><meta name=renderer content="webkit"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=theme-color content="#f8f5ec"><meta name=msapplication-navbutton-color content="#f8f5ec"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec"><meta name=author content="ozryan"><meta name=description content="本文演示了如何用欧拉公式推导三角函数的和差化积、积化和差，多倍角、半角等公式，并解释了在不同情况下如何选取切入点。"><meta name=generator content="Hugo 0.94.2 with theme even"><link rel=canonical href=https://www.fewth.com/%E7%94%A8%E6%AC%A7%E6%8B%89%E5%85%AC%E5%BC%8F%E6%8E%A8%E5%AF%BC%E4%B8%89%E8%A7%92%E5%87%BD%E6%95%B0%E7%A7%AF%E5%8C%96%E5%92%8C%E5%B7%AE%E5%8F%8A%E5%92%8C%E5%B7%AE%E5%8C%96%E7%A7%AF%E7%AD%89%E5%85%AC%E5%BC%8F/><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/manifest.json><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link href=/sass/main.min.b5a744db6de49a86cadafb3b70f555ab443f83c307a483402259e94726b045ff.css rel=stylesheet><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous><meta property="og:title" content="用欧拉公式推导三角函数积化和差及和差化积等公式"><meta property="og:description" content="本文演示了如何用欧拉公式推导三角函数的和差化积、积化和差，多倍角、半角等公式，并解释了在不同情况下如何选取切入点。"><meta property="og:type" content="article"><meta property="og:url" content="https://www.fewth.com/%E7%94%A8%E6%AC%A7%E6%8B%89%E5%85%AC%E5%BC%8F%E6%8E%A8%E5%AF%BC%E4%B8%89%E8%A7%92%E5%87%BD%E6%95%B0%E7%A7%AF%E5%8C%96%E5%92%8C%E5%B7%AE%E5%8F%8A%E5%92%8C%E5%B7%AE%E5%8C%96%E7%A7%AF%E7%AD%89%E5%85%AC%E5%BC%8F/"><meta property="article:section" content="post"><meta property="article:published_time" content="2022-01-30T10:09:32+08:00"><meta property="article:modified_time" content="2022-01-30T10:09:32+08:00"><meta itemprop=name content="用欧拉公式推导三角函数积化和差及和差化积等公式"><meta itemprop=description content="本文演示了如何用欧拉公式推导三角函数的和差化积、积化和差，多倍角、半角等公式，并解释了在不同情况下如何选取切入点。"><meta itemprop=datePublished content="2022-01-30T10:09:32+08:00"><meta itemprop=dateModified content="2022-01-30T10:09:32+08:00"><meta itemprop=wordCount content="814"><meta itemprop=keywords content><meta name=twitter:card content="summary"><meta name=twitter:title content="用欧拉公式推导三角函数积化和差及和差化积等公式"><meta name=twitter:description content="本文演示了如何用欧拉公式推导三角函数的和差化积、积化和差，多倍角、半角等公式，并解释了在不同情况下如何选取切入点。"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--><script data-ad-client=ca-pub-9786889114957630 async src=https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js></script></head><body><div id=mobile-navbar class=mobile-navbar><div class=mobile-header-logo><a href=/ class=logo>A few thoughts</a></div><div class=mobile-navbar-icon><span></span>
 <span></span>
-<span></span>
-<span></span>
-</div>
-</div>
-<nav id=mobile-menu class="mobile-menu slideout-menu">
-<ul class=mobile-menu-list>
-<a href=/>
-<li class=mobile-menu-item>主页</li>
-</a><a href=/post>
-<li class=mobile-menu-item>归档</li>
-</a><a href=/categories/>
-<li class=mobile-menu-item>分类</li>
-</a><a href=/about>
-<li class=mobile-menu-item>关于</li>
-</a>
-</ul>
-</nav>
-<div class=container id=mobile-panel>
-<header id=header class=header>
-<div class=logo-wrapper>
-<a href=/ class=logo>A few thoughts</a>
-</div>
-<nav class=site-navbar>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a class=menu-item-link href=/>主页</a>
-</li><li class=menu-item>
-<a class=menu-item-link href=/post>归档</a>
-</li><li class=menu-item>
-<a class=menu-item-link href=/categories/>分类</a>
-</li><li class=menu-item>
-<a class=menu-item-link href=/about>关于</a>
-</li>
-</ul>
-</nav>
-</header>
-<main id=main class=main>
-<div class=content-wrapper>
-<div id=content class=content>
-<article class=post>
-<header class=post-header>
-<h1 class=post-title>用欧拉公式推导三角函数积化和差及和差化积等公式</h1>
-<div class=post-meta>
-<span class=post-time> 2022-01-30 </span>
-<div class=post-category>
-<a href=/categories/%E6%95%B0%E5%AD%A6/> 数学 </a>
-</div>
-<span class=more-meta> 约 814 字 </span>
-<span class=more-meta> 预计阅读 2 分钟 </span>
-</div>
-</header>
-<div class=post-toc id=post-toc>
-<h2 class=post-toc-title>文章目录</h2>
-<div class="post-toc-content always-active">
-<nav id=TableOfContents>
-<ul>
-<li>
-<ul>
-<li><a href=#1-欧拉公式>1 欧拉公式</a></li>
-<li><a href=#2-和差化积>2 和差化积</a></li>
-<li><a href=#3-积化和差>3 积化和差</a></li>
-<li><a href=#4-半角公式>4 半角公式</a></li>
-</ul>
-</li>
-</ul>
-</nav>
-</div>
-</div>
-<div class=post-content>
-<p>三角函数的积化和差、和差化积公式非常多，不常用的话没必要记，用欧拉公式可以推导出大部分，剩下的再用推导出的结果也能得出。</p>
-<h2 id=1-欧拉公式>1 欧拉公式</h2>
-<p>$$
+<span></span></div></div><nav id=mobile-menu class="mobile-menu slideout-menu"><ul class=mobile-menu-list><a href=/><li class=mobile-menu-item>主页</li></a><a href=/post><li class=mobile-menu-item>归档</li></a><a href=/categories/><li class=mobile-menu-item>分类</li></a><a href=/about><li class=mobile-menu-item>关于</li></a></ul></nav><div class=container id=mobile-panel><header id=header class=header><div class=logo-wrapper><a href=/ class=logo>A few thoughts</a></div><nav class=site-navbar><ul id=menu class=menu><li class=menu-item><a class=menu-item-link href=/>主页</a></li><li class=menu-item><a class=menu-item-link href=/post>归档</a></li><li class=menu-item><a class=menu-item-link href=/categories/>分类</a></li><li class=menu-item><a class=menu-item-link href=/about>关于</a></li></ul></nav></header><main id=main class=main><div class=content-wrapper><div id=content class=content><article class=post><header class=post-header><h1 class=post-title>用欧拉公式推导三角函数积化和差及和差化积等公式</h1><div class=post-meta><span class=post-time>2022-01-30</span><div class=post-category><a href=/categories/%E6%95%B0%E5%AD%A6/>数学</a></div><span class=more-meta>约 814 字</span>
+<span class=more-meta>预计阅读 2 分钟</span></div></header><div class=post-toc id=post-toc><h2 class=post-toc-title>文章目录</h2><div class="post-toc-content always-active"><nav id=TableOfContents><ul><li><ul><li><a href=#1-欧拉公式>1 欧拉公式</a></li><li><a href=#2-和差化积>2 和差化积</a></li><li><a href=#3-积化和差>3 积化和差</a></li><li><a href=#4-半角公式>4 半角公式</a></li></ul></li></ul></nav></div></div><div class=post-content><p>三角函数的积化和差、和差化积公式非常多，不常用的话没必要记，用欧拉公式可以推导出大部分，剩下的再用推导出的结果也能得出。</p><h2 id=1-欧拉公式>1 欧拉公式</h2><p>$$
 e^{ix}=cosx+isinx，i=\sqrt {-1}
-$$</p>
-<p>虽然欧拉公式中涉及虚数，但是我们只需要用到该等式中的性质，它左边部分是指数形式，而右边部分是三角函数的二项式，所以有</p>
-<p>$$
+$$</p><p>虽然欧拉公式中涉及虚数，但是我们只需要用到该等式中的性质，它左边部分是指数形式，而右边部分是三角函数的二项式，所以有</p><p>$$
 e^{ia}e^{ib}=e^{i(a+b)}=cos(a+b)+isin(a+b)=(cosa+isina)(cosb+isinb)
-$$</p>
-<p>上面的等式中，最右边的项展开也可以整理成a+bi的形式，然后把实部和虚部分别对应，即可得到相应的和差化积公式。</p>
-<h2 id=2-和差化积>2 和差化积</h2>
-<p>和差化积主要就是利用两个同底带指数的数相乘可以转化成同底指数部分相加，那么相乘的形式可以展开成积，而相加的形式则可以用和差表示。</p>
-<p>根据</p>
-<p>$$
+$$</p><p>上面的等式中，最右边的项展开也可以整理成a+bi的形式，然后把实部和虚部分别对应，即可得到相应的和差化积公式。</p><h2 id=2-和差化积>2 和差化积</h2><p>和差化积主要就是利用两个同底带指数的数相乘可以转化成同底指数部分相加，那么相乘的形式可以展开成积，而相加的形式则可以用和差表示。</p><p>根据</p><p>$$
 e^{ia}e^{ib}=e^{i(a+b)}
-$$</p>
-<p>可得</p>
-<p>$$ \begin{align}
+$$</p><p>可得</p><p>$$ \begin{align}
 cos(a+b)+isin(a+b)&=(cosa+isina)(cosb+isinb) \\
 &=cosacosb+icosasinb+isinacosb+iisinasinb \\
 &=cosacosb-sinasinb+i(cosasinb+sinacosb)
-\end{align}$$</p>
-<p>把实部和虚部分别对应，可得</p>
-<p>$$\begin{align}
+\end{align}$$</p><p>把实部和虚部分别对应，可得</p><p>$$\begin{align}
 cos(a+b)=cosacosb-sinasinb \\
 sin(a+b)=cosasinb+sinacosb
-\end{align}$$</p>
-<p>其它的差形式、多倍角形式等同理,有了sin,cos的和差化积公式，tan及cot等变化也可求出。</p>
-<h2 id=3-积化和差>3 积化和差</h2>
-<p>积化和差没这么直观，因为已知项在展开式的右边，比如<code>sinacosb</code>这个积，在上面的和差化积展开里面出现了，如果我们再展开一个<code>a-b</code>的积形式，那么4个方程解4个未知数，就可以用和差的方式表示出<code>sinacosb,sinasinb,cosacosb,cosasinb</code>这4个未知量，但是这种方法过于牵强。</p>
-<p>积化和差、和差化积，本质上是互逆的两种形式，所以我们可以尝试用 e<sup>ix</sup> 反向的去表示<code>sinx,cosx</code>，然后从e<sup>ix</sup>相应的积中寻找指数部分和差的影子。</p>
-<p>因为cosx 是偶函数，sinx是奇函数，令<code>x=-x</code>,有</p>
-<p>$$
+\end{align}$$</p><p>其它的差形式、多倍角形式等同理,有了sin,cos的和差化积公式，tan及cot等变化也可求出。</p><h2 id=3-积化和差>3 积化和差</h2><p>积化和差没这么直观，因为已知项在展开式的右边，比如<code>sinacosb</code>这个积，在上面的和差化积展开里面出现了，如果我们再展开一个<code>a-b</code>的积形式，那么4个方程解4个未知数，就可以用和差的方式表示出<code>sinacosb,sinasinb,cosacosb,cosasinb</code>这4个未知量，但是这种方法过于牵强。</p><p>积化和差、和差化积，本质上是互逆的两种形式，所以我们可以尝试用 e<sup>ix</sup> 反向的去表示<code>sinx,cosx</code>，然后从e<sup>ix</sup>相应的积中寻找指数部分和差的影子。</p><p>因为cosx 是偶函数，sinx是奇函数，令<code>x=-x</code>,有</p><p>$$
 e^{-ix}=cosx-isinx
-$$</p>
-<p>跟欧拉公式联立，不难得出</p>
-<p>$$\begin{align}
+$$</p><p>跟欧拉公式联立，不难得出</p><p>$$\begin{align}
 cosx&=\frac{e^{ix}+e^{-ix}}{2} \\
 sinx&=\frac{e^{ix}-e^{-ix}}{2i}
-\end{align}$$</p>
-<p>现在考虑一个积形式<code>cosasinb</code>，推导它的和差形式</p>
-<p>$$\begin{align}
+\end{align}$$</p><p>现在考虑一个积形式<code>cosasinb</code>，推导它的和差形式</p><p>$$\begin{align}
 cosasinb&=\frac{e^{ia}+e^{-ia}}{2}*\frac{e^{ib}-e^{-ib}}{2i} \\
 &=\frac{e^{ia}*e^{ib}-e^{ia}*e^{-ib}+e^{-ia}*e^{ib}-e^{-ia}*e^{-ib}}{4i} \\
 &=\frac{e^{ia+ib}-e^{ia-ib}+e^{-ia+ib}-e^{-ia-ib}}{4i} \\
 &=\frac{e^{i(a+b)}-e^{i(a-b)}+e^{-i(a-b)}-e^{-i(a+b)}}{4i} \\
 &=\frac{e^{i(a+b)}-e^{-i(a+b)}-(e^{i(a-b)}-e^{-i(a-b)})}{4i} \\
 &=\frac{1}{2}(\frac{e^{i(a+b)}-e^{-i(a+b)}}{2i} - \frac{(e^{i(a-b)}-e^{-i(a-b)})}{2i})
-\end{align}$$</p>
-<p>令x=a+b,x=a-b，即可得</p>
-<p>$$ \begin{align}
+\end{align}$$</p><p>令x=a+b,x=a-b，即可得</p><p>$$ \begin{align}
 cosasinb=\frac{sin(a+b)-sin(a-b)}{2}
-\end{align}$$</p>
-<p>其它的几种积化和差公式同理。</p>
-<h2 id=4-半角公式>4 半角公式</h2>
-<p>跟积化和差类似，我们先把半角转化成用e<sup>ix</sup>表示，再找规律</p>
-<p>比如</p>
-<p>$$
+\end{align}$$</p><p>其它的几种积化和差公式同理。</p><h2 id=4-半角公式>4 半角公式</h2><p>跟积化和差类似，我们先把半角转化成用e<sup>ix</sup>表示，再找规律</p><p>比如</p><p>$$
 sin\frac{x}{2}=\frac{e^{\frac{ix}{2}}-e^{\frac{-ix}{2}}}{2i}
-$$</p>
-<p>观察上面这个等式，指数部分的系数是1/2，运算起来不方便，两边取平方，得</p>
-<p>$$\begin{align}
+$$</p><p>观察上面这个等式，指数部分的系数是1/2，运算起来不方便，两边取平方，得</p><p>$$\begin{align}
 (sin\frac{x}{2})^2&=\frac{e^{ix}+e^{-ix}-2e^{ix}e^{-ix}}{-4} \\
 &=\frac{1}{-2}\frac{e^{ix}+e^{-ix}}{2}+\frac{1}{2} \\
 &=\frac{1}{-2}cosx+\frac{1}{2} \\
 &=\frac{1-cosx}{2}
-\end{align}$$</p>
-<p>开方得</p>
-<p>$$\begin{align}
+\end{align}$$</p><p>开方得</p><p>$$\begin{align}
 sin\frac{x}{2}=\pm \sqrt {\frac{1-cosx}{2}}
-\end{align}$$</p>
-<p>其中正负号根据x/2所在的象限判断。</p>
-</div>
-<div class=post-copyright>
-<p class=copyright-item>
-<span class=item-title>版权声明</span>
-<span class=item-content>本博客使用<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh# target=_blank>CC BY-NC-SA 4.0</a>许可协议(创意共享4.0:保留署名-非商业性使用-相同方式共享)。</span>
-</p>
-</div>
-<footer class=post-footer>
-<nav class=post-nav>
-<a class=prev href=/ping%E7%A8%8B%E5%BA%8F%E5%8E%9F%E7%90%86/>
-<i class="iconfont icon-left"></i>
+\end{align}$$</p><p>其中正负号根据x/2所在的象限判断。</p></div><div class=post-copyright><p class=copyright-item><span class=item-title>版权声明</span>
+<span class=item-content>本博客使用<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh# target=_blank>CC BY-NC-SA 4.0</a>许可协议(创意共享4.0:保留署名-非商业性使用-相同方式共享)。</span></p></div><footer class=post-footer><nav class=post-nav><a class=prev href=/ping%E7%A8%8B%E5%BA%8F%E5%8E%9F%E7%90%86/><i class="iconfont icon-left"></i>
 <span class="prev-text nav-default">ping程序原理</span>
-<span class="prev-text nav-mobile">上一篇</span>
-</a>
-<a class=next href=/tcp%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E5%8F%AF%E9%9D%A0%E7%9A%84%E4%BC%A0%E8%BE%93/>
-<span class="next-text nav-default">tcp如何实现可靠的传输</span>
+<span class="prev-text nav-mobile">上一篇</span></a>
+<a class=next href=/tcp%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E5%8F%AF%E9%9D%A0%E7%9A%84%E4%BC%A0%E8%BE%93/><span class="next-text nav-default">tcp如何实现可靠的传输</span>
 <span class="next-text nav-mobile">下一篇</span>
-<i class="iconfont icon-right"></i>
-</a>
-</nav>
-</footer>
-</article>
-</div>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=social-links>
-<a href=https://github.com/ozryan class="iconfont icon-github" title=github></a>
-<a href=https://www.fewth.com/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a>
-</div>
-<div class=copyright>
-<span class=copyright-year>
-&copy;
+<i class="iconfont icon-right"></i></a></nav></footer></article></div></div></main><footer id=footer class=footer><div class=social-links><a href=https://github.com/ozryan class="iconfont icon-github" title=github></a>
+<a href=https://www.fewth.com/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a></div><div class=copyright><span class=copyright-year>&copy;
 2020 -
-2022<span class=heart><i class="iconfont icon-heart"></i></span><span>ozryan</span>
-</span>
-</div>
-</footer>
-<div class=back-to-top id=back-to-top>
-<i class="iconfont icon-up"></i>
-</div>
-</div>
-<script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script>
+2022<span class=heart><i class="iconfont icon-heart"></i></span><span>ozryan</span></span></div></footer><div class=back-to-top id=back-to-top><i class="iconfont icon-up"></i></div></div><script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script>
 <script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script>
 <script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script>
-<script type=text/javascript src=/js/main.min.c99b103c33d1539acf3025e1913697534542c4a5aa5af0ccc20475ed2863603b.js></script>
-<script type=text/javascript>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]}}</script>
-<script async src=https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin=anonymous></script>
-</body>
-</html>
+<script type=text/javascript src=/js/main.min.64437849d125a2d603b3e71d6de5225d641a32d17168a58106e0b61852079683.js></script>
+<script type=text/javascript>window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]]}}</script><script async src=https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin=anonymous></script></body></html>

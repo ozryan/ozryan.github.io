@@ -1,143 +1,16 @@
-<!doctype html><html lang=zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<title>java内部类和嵌套接口 - A few thoughts</title>
-<meta name=renderer content="webkit">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=cache-control content="no-transform">
-<meta http-equiv=cache-control content="no-siteapp">
-<meta name=theme-color content="#f8f5ec">
-<meta name=msapplication-navbutton-color content="#f8f5ec">
-<meta name=apple-mobile-web-app-capable content="yes">
-<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
-<meta name=author content="ozryan"><meta name=description content="主要介绍内部类，顺便提一下接口中的嵌套接口和嵌套类。
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>java内部类和嵌套接口 - A few thoughts</title><meta name=renderer content="webkit"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=theme-color content="#f8f5ec"><meta name=msapplication-navbutton-color content="#f8f5ec"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec"><meta name=author content="ozryan"><meta name=description content="主要介绍内部类，顺便提一下接口中的嵌套接口和嵌套类。
 1.内部类 内部类是定义在其它类中的类。这个定义很宽泛，因为内部类也可以定义在类中的方法里，可以用匿名内部类，还可以声明为public、private、protected、static，不同的情形下，内部类表现也不一致，分别举例说明。
-">
-<meta name=generator content="Hugo 0.92.1 with theme even">
-<link rel=canonical href=https://www.fewth.com/java%E5%86%85%E9%83%A8%E7%B1%BB%E5%92%8C%E5%B5%8C%E5%A5%97%E6%8E%A5%E5%8F%A3/>
-<link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png>
-<link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png>
-<link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png>
-<link rel=manifest href=/manifest.json>
-<link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5>
-<link href=/sass/main.min.b5a744db6de49a86cadafb3b70f555ab443f83c307a483402259e94726b045ff.css rel=stylesheet>
-<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous>
-<meta property="og:title" content="java内部类和嵌套接口">
-<meta property="og:description" content="主要介绍内部类，顺便提一下接口中的嵌套接口和嵌套类。
+"><meta name=generator content="Hugo 0.94.2 with theme even"><link rel=canonical href=https://www.fewth.com/java%E5%86%85%E9%83%A8%E7%B1%BB%E5%92%8C%E5%B5%8C%E5%A5%97%E6%8E%A5%E5%8F%A3/><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/manifest.json><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link href=/sass/main.min.b5a744db6de49a86cadafb3b70f555ab443f83c307a483402259e94726b045ff.css rel=stylesheet><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous><meta property="og:title" content="java内部类和嵌套接口"><meta property="og:description" content="主要介绍内部类，顺便提一下接口中的嵌套接口和嵌套类。
 1.内部类
-内部类是定义在其它类中的类。这个定义很宽泛，因为内部类也可以定义在类中的方法里，可以用匿名内部类，还可以声明为public、private、protected、static，不同的情形下，内部类表现也不一致，分别举例说明。">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://www.fewth.com/java%E5%86%85%E9%83%A8%E7%B1%BB%E5%92%8C%E5%B5%8C%E5%A5%97%E6%8E%A5%E5%8F%A3/"><meta property="article:section" content="post">
-<meta property="article:published_time" content="2020-11-17T10:54:40+00:00">
-<meta property="article:modified_time" content="2020-11-17T10:54:40+00:00">
-<meta itemprop=name content="java内部类和嵌套接口">
-<meta itemprop=description content="主要介绍内部类，顺便提一下接口中的嵌套接口和嵌套类。
+内部类是定义在其它类中的类。这个定义很宽泛，因为内部类也可以定义在类中的方法里，可以用匿名内部类，还可以声明为public、private、protected、static，不同的情形下，内部类表现也不一致，分别举例说明。"><meta property="og:type" content="article"><meta property="og:url" content="https://www.fewth.com/java%E5%86%85%E9%83%A8%E7%B1%BB%E5%92%8C%E5%B5%8C%E5%A5%97%E6%8E%A5%E5%8F%A3/"><meta property="article:section" content="post"><meta property="article:published_time" content="2020-11-17T10:54:40+00:00"><meta property="article:modified_time" content="2020-11-17T10:54:40+00:00"><meta itemprop=name content="java内部类和嵌套接口"><meta itemprop=description content="主要介绍内部类，顺便提一下接口中的嵌套接口和嵌套类。
 1.内部类
-内部类是定义在其它类中的类。这个定义很宽泛，因为内部类也可以定义在类中的方法里，可以用匿名内部类，还可以声明为public、private、protected、static，不同的情形下，内部类表现也不一致，分别举例说明。"><meta itemprop=datePublished content="2020-11-17T10:54:40+00:00">
-<meta itemprop=dateModified content="2020-11-17T10:54:40+00:00">
-<meta itemprop=wordCount content="3649">
-<meta itemprop=keywords content><meta name=twitter:card content="summary">
-<meta name=twitter:title content="java内部类和嵌套接口">
-<meta name=twitter:description content="主要介绍内部类，顺便提一下接口中的嵌套接口和嵌套类。
+内部类是定义在其它类中的类。这个定义很宽泛，因为内部类也可以定义在类中的方法里，可以用匿名内部类，还可以声明为public、private、protected、static，不同的情形下，内部类表现也不一致，分别举例说明。"><meta itemprop=datePublished content="2020-11-17T10:54:40+00:00"><meta itemprop=dateModified content="2020-11-17T10:54:40+00:00"><meta itemprop=wordCount content="3648"><meta itemprop=keywords content><meta name=twitter:card content="summary"><meta name=twitter:title content="java内部类和嵌套接口"><meta name=twitter:description content="主要介绍内部类，顺便提一下接口中的嵌套接口和嵌套类。
 1.内部类
 内部类是定义在其它类中的类。这个定义很宽泛，因为内部类也可以定义在类中的方法里，可以用匿名内部类，还可以声明为public、private、protected、static，不同的情形下，内部类表现也不一致，分别举例说明。"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
-<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
-<script data-ad-client=ca-pub-9786889114957630 async src=https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js></script>
-</head>
-<body>
-<div id=mobile-navbar class=mobile-navbar>
-<div class=mobile-header-logo>
-<a href=/ class=logo>A few thoughts</a>
-</div>
-<div class=mobile-navbar-icon>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--><script data-ad-client=ca-pub-9786889114957630 async src=https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js></script></head><body><div id=mobile-navbar class=mobile-navbar><div class=mobile-header-logo><a href=/ class=logo>A few thoughts</a></div><div class=mobile-navbar-icon><span></span>
 <span></span>
-<span></span>
-<span></span>
-</div>
-</div>
-<nav id=mobile-menu class="mobile-menu slideout-menu">
-<ul class=mobile-menu-list>
-<a href=/>
-<li class=mobile-menu-item>主页</li>
-</a><a href=/post>
-<li class=mobile-menu-item>归档</li>
-</a><a href=/categories/>
-<li class=mobile-menu-item>分类</li>
-</a><a href=/about>
-<li class=mobile-menu-item>关于</li>
-</a>
-</ul>
-</nav>
-<div class=container id=mobile-panel>
-<header id=header class=header>
-<div class=logo-wrapper>
-<a href=/ class=logo>A few thoughts</a>
-</div>
-<nav class=site-navbar>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a class=menu-item-link href=/>主页</a>
-</li><li class=menu-item>
-<a class=menu-item-link href=/post>归档</a>
-</li><li class=menu-item>
-<a class=menu-item-link href=/categories/>分类</a>
-</li><li class=menu-item>
-<a class=menu-item-link href=/about>关于</a>
-</li>
-</ul>
-</nav>
-</header>
-<main id=main class=main>
-<div class=content-wrapper>
-<div id=content class=content>
-<article class=post>
-<header class=post-header>
-<h1 class=post-title>java内部类和嵌套接口</h1>
-<div class=post-meta>
-<span class=post-time> 2020-11-17 </span>
-<div class=post-category>
-<a href=/categories//> [编程语言特性] </a>
-</div>
-<span class=more-meta> 约 3649 字 </span>
-<span class=more-meta> 预计阅读 8 分钟 </span>
-</div>
-</header>
-<div class=post-toc id=post-toc>
-<h2 class=post-toc-title>文章目录</h2>
-<div class="post-toc-content always-active">
-<nav id=TableOfContents>
-<ul>
-<li>
-<ul>
-<li><a href=#1内部类><strong>1.内部类</strong></a>
-<ul>
-<li><a href=#11-public-内部类><strong>1.1 public 内部类</strong></a></li>
-<li><a href=#12-protectedprivate内部类><strong>1.2 protected、private内部类</strong></a></li>
-<li><a href=#13-方法中的内部类local局部本地内部类><strong>1.3 方法中的内部类(local/局部/本地内部类)</strong></a></li>
-<li><a href=#14-匿名内部类><strong>1.4 匿名内部类</strong></a></li>
-<li><a href=#15-static内部类><strong>1.5 static内部类</strong></a></li>
-</ul>
-</li>
-<li><a href=#2接口中的嵌套接口和嵌套类><strong>2.接口中的嵌套接口和嵌套类</strong></a></li>
-<li><a href=#3-总结>3 总结</a></li>
-</ul>
-</li>
-</ul>
-</nav>
-</div>
-</div>
-<div class=post-content>
-<p>主要介绍内部类，顺便提一下接口中的嵌套接口和嵌套类。</p>
-<h2 id=1内部类><strong>1.内部类</strong></h2>
-<p>内部类是定义在其它类中的类。这个定义很宽泛，因为内部类也可以定义在类中的方法里，可以用匿名内部类，还可以声明为public、private、protected、static，不同的情形下，内部类表现也不一致，分别举例说明。</p>
-<h3 id=11-public-内部类><strong>1.1 public 内部类</strong></h3>
-<p>这是最普遍的情形，在一个类的内部定义另一个类，假设两个类分别叫<code>A</code>和<code>InnerA</code>，此时<code>InnerA</code>可以访问A中的属性，其它类也可以通过<code>A</code>的实例来实例化<code>InnerA</code>，因为<code>InnerA</code>是声明为<code>public</code>。为什么要通过<code>A</code>的实例呢？因为<code>InnerA</code>在<code>A</code>中跟其它属性、方法一样，属于“对象属性”,必须通过类的实例才能访问。</p>
-<p><code>firstpackage</code></p>
-<p>类<code>A</code></p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+<span></span></div></div><nav id=mobile-menu class="mobile-menu slideout-menu"><ul class=mobile-menu-list><a href=/><li class=mobile-menu-item>主页</li></a><a href=/post><li class=mobile-menu-item>归档</li></a><a href=/categories/><li class=mobile-menu-item>分类</li></a><a href=/about><li class=mobile-menu-item>关于</li></a></ul></nav><div class=container id=mobile-panel><header id=header class=header><div class=logo-wrapper><a href=/ class=logo>A few thoughts</a></div><nav class=site-navbar><ul id=menu class=menu><li class=menu-item><a class=menu-item-link href=/>主页</a></li><li class=menu-item><a class=menu-item-link href=/post>归档</a></li><li class=menu-item><a class=menu-item-link href=/categories/>分类</a></li><li class=menu-item><a class=menu-item-link href=/about>关于</a></li></ul></nav></header><main id=main class=main><div class=content-wrapper><div id=content class=content><article class=post><header class=post-header><h1 class=post-title>java内部类和嵌套接口</h1><div class=post-meta><span class=post-time>2020-11-17</span><div class=post-category><a href=/categories//>[编程语言特性]</a></div><span class=more-meta>约 3648 字</span>
+<span class=more-meta>预计阅读 8 分钟</span></div></header><div class=post-toc id=post-toc><h2 class=post-toc-title>文章目录</h2><div class="post-toc-content always-active"><nav id=TableOfContents><ul><li><ul><li><a href=#1内部类><strong>1.内部类</strong></a><ul><li><a href=#11-public-内部类><strong>1.1 public 内部类</strong></a></li><li><a href=#12-protectedprivate内部类><strong>1.2 protected、private内部类</strong></a></li><li><a href=#13-方法中的内部类local局部本地内部类><strong>1.3 方法中的内部类(local/局部/本地内部类)</strong></a></li><li><a href=#14-匿名内部类><strong>1.4 匿名内部类</strong></a></li><li><a href=#15-static内部类><strong>1.5 static内部类</strong></a></li></ul></li><li><a href=#2接口中的嵌套接口和嵌套类><strong>2.接口中的嵌套接口和嵌套类</strong></a></li><li><a href=#3-总结>3 总结</a></li></ul></li></ul></nav></div></div><div class=post-content><p>主要介绍内部类，顺便提一下接口中的嵌套接口和嵌套类。</p><h2 id=1内部类><strong>1.内部类</strong></h2><p>内部类是定义在其它类中的类。这个定义很宽泛，因为内部类也可以定义在类中的方法里，可以用匿名内部类，还可以声明为public、private、protected、static，不同的情形下，内部类表现也不一致，分别举例说明。</p><h3 id=11-public-内部类><strong>1.1 public 内部类</strong></h3><p>这是最普遍的情形，在一个类的内部定义另一个类，假设两个类分别叫<code>A</code>和<code>InnerA</code>，此时<code>InnerA</code>可以访问A中的属性，其它类也可以通过<code>A</code>的实例来实例化<code>InnerA</code>，因为<code>InnerA</code>是声明为<code>public</code>。为什么要通过<code>A</code>的实例呢？因为<code>InnerA</code>在<code>A</code>中跟其它属性、方法一样，属于“对象属性”,必须通过类的实例才能访问。</p><p><code>firstpackage</code></p><p>类<code>A</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -155,33 +28,25 @@
 </span><span class=lnt>16
 </span><span class=lnt>17
 </span><span class=lnt>18
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=kn>package</span> <span class=nn>firstpackage</span><span class=o>;</span>
-
-<span class=kd>public</span> <span class=kd>class</span> <span class=nc>A</span><span class=o>{</span>
-    <span class=kd>private</span> <span class=n>String</span> <span class=n>propA</span><span class=o>;</span>
-    <span class=kd>public</span> <span class=nf>A</span><span class=o>(){};</span>
-    <span class=kd>public</span> <span class=nf>A</span><span class=o>(</span><span class=n>String</span> <span class=n>s</span><span class=o>){</span>
-        <span class=k>this</span><span class=o>.</span><span class=na>propA</span><span class=o>=</span><span class=n>s</span><span class=o>;</span>
-    <span class=o>}</span>
-    <span class=kd>public</span> <span class=kt>void</span> <span class=nf>say</span><span class=o>(){</span>
-        <span class=n>InnerA</span> <span class=n>innerA</span><span class=o>=</span><span class=k>new</span> <span class=n>InnerA</span><span class=o>();</span>
-        <span class=n>innerA</span><span class=o>.</span><span class=na>say</span><span class=o>();</span>
-    <span class=o>}</span>
-    <span class=kd>public</span> <span class=kd>class</span> <span class=nc>InnerA</span><span class=o>{</span>
-        <span class=kd>public</span> <span class=kt>void</span> <span class=nf>say</span><span class=o>(){</span>
-            <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;这是InnerA的say()方法，但是可以读取到外部类A的propA属性=====&gt;&#34;</span><span class=o>+</span><span class=n>propA</span><span class=o>);</span>
-        <span class=o>}</span>
-    <span class=o>}</span>
-<span class=o>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p><code>secondpackage</code></p>
-<p>类<code>TestB</code></p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kn>package</span> <span class=nn>firstpackage</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>A</span><span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=n>String</span> <span class=n>propA</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=nf>A</span><span class=o>(){};</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=nf>A</span><span class=o>(</span><span class=n>String</span> <span class=n>s</span><span class=o>){</span>
+</span></span><span class=line><span class=cl>        <span class=k>this</span><span class=o>.</span><span class=na>propA</span><span class=o>=</span><span class=n>s</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>void</span> <span class=nf>say</span><span class=o>(){</span>
+</span></span><span class=line><span class=cl>        <span class=n>InnerA</span> <span class=n>innerA</span><span class=o>=</span><span class=k>new</span> <span class=n>InnerA</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>        <span class=n>innerA</span><span class=o>.</span><span class=na>say</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>class</span> <span class=nc>InnerA</span><span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>public</span> <span class=kt>void</span> <span class=nf>say</span><span class=o>(){</span>
+</span></span><span class=line><span class=cl>            <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;这是InnerA的say()方法，但是可以读取到外部类A的propA属性=====&gt;&#34;</span><span class=o>+</span><span class=n>propA</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>        <span class=o>}</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>secondpackage</code></p><p>类<code>TestB</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -192,36 +57,19 @@
 </span><span class=lnt> 9
 </span><span class=lnt>10
 </span><span class=lnt>11
-</span><span class=lnt>12
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=kn>package</span> <span class=nn>secondpackage</span><span class=o>;</span>
-
-<span class=kn>import</span> <span class=nn>firstpackage.A</span><span class=o>;</span>
-
-<span class=kd>public</span> <span class=kd>class</span> <span class=nc>TestB</span> <span class=o>{</span>
-    <span class=kd>public</span> <span class=kd>static</span> <span class=kt>void</span> <span class=nf>main</span><span class=o>(</span><span class=n>String</span><span class=o>[]</span> <span class=n>args</span><span class=o>)</span> <span class=o>{</span>
-        <span class=n>A</span> <span class=n>a</span><span class=o>=</span><span class=k>new</span> <span class=n>A</span><span class=o>(</span><span class=s>&#34;一条来自secondpackage的信息&#34;</span><span class=o>);</span>
-        <span class=n>A</span><span class=o>.</span><span class=na>InnerA</span> <span class=n>innerA</span><span class=o>=</span><span class=n>a</span><span class=o>.</span><span class=na>new</span> <span class=nf>InnerA</span><span class=o>();</span>
-        <span class=n>innerA</span><span class=o>.</span><span class=na>say</span><span class=o>();</span>
-    <span class=o>}</span>
-<span class=o>}</span>
-
-</code></pre></td></tr></table>
-</div>
-</div><blockquote>
-<p>输出：“这是InnerA的say()方法，但是可以读取到外部类A的propA属性=====>一条来自secondpackage的信息”</p>
-</blockquote>
-<h3 id=12-protectedprivate内部类><strong>1.2 protected、private内部类</strong></h3>
-<p>这两个修饰符只能用在内部类上，普通类只能public或者不加修饰符（表示只能在同一个package内访问）。
-跟属性、方法的修饰符一样，protected表示包内可以访问(也可以被子类访问，内部类基本不会这么用)，private表示只能在该外部类内部访问到这个内部类，在其它地方通过外部类也无法访问到这个内部类。</p>
-<p>可以把上面的例子中的<code>TestB</code>类放到跟类<code>A</code>同一个package下来验证<code>protected</code>的行为或者把上面的例子中的<code>main</code>方法放到类<code>A</code>中来验证<code>private</code>的行为。</p>
-<h3 id=13-方法中的内部类local局部本地内部类><strong>1.3 方法中的内部类(local/局部/本地内部类)</strong></h3>
-<p>如果内部类只在方法中用到一次，那么直接把类声明在这个方法中也是可以的。这里并不能用修饰符，因为方法作用域中的内容不能被外部访问，这比<code>private</code>的作用域还要严格。方法中的内部类还可以获取方法参数传递进来的变量，并保存为本地变量。</p>
-<p>下面的例子中,通过<code>say(String s)</code>方法传递进来的字符串<code>s</code>，当方法结束后，变量<code>s</code>就消失了，但是<code>InnerA</code>在使用这个变量的时候保存在了本地，后续每一次事件触发时，都能正确的输出这个变量的值。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kn>package</span> <span class=nn>secondpackage</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>firstpackage.A</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>TestB</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>static</span> <span class=kt>void</span> <span class=nf>main</span><span class=o>(</span><span class=n>String</span><span class=o>[]</span> <span class=n>args</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>A</span> <span class=n>a</span><span class=o>=</span><span class=k>new</span> <span class=n>A</span><span class=o>(</span><span class=s>&#34;一条来自secondpackage的信息&#34;</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>        <span class=n>A</span><span class=o>.</span><span class=na>InnerA</span> <span class=n>innerA</span><span class=o>=</span><span class=n>a</span><span class=o>.</span><span class=na>new</span> <span class=nf>InnerA</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>        <span class=n>innerA</span><span class=o>.</span><span class=na>say</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></td></tr></table></div></div><blockquote><p>输出：“这是InnerA的say()方法，但是可以读取到外部类A的propA属性=====>一条来自secondpackage的信息”</p></blockquote><h3 id=12-protectedprivate内部类><strong>1.2 protected、private内部类</strong></h3><p>这两个修饰符只能用在内部类上，普通类只能public或者不加修饰符（表示只能在同一个package内访问）。
+跟属性、方法的修饰符一样，protected表示包内可以访问(也可以被子类访问，内部类基本不会这么用)，private表示只能在该外部类内部访问到这个内部类，在其它地方通过外部类也无法访问到这个内部类。</p><p>可以把上面的例子中的<code>TestB</code>类放到跟类<code>A</code>同一个package下来验证<code>protected</code>的行为或者把上面的例子中的<code>main</code>方法放到类<code>A</code>中来验证<code>private</code>的行为。</p><h3 id=13-方法中的内部类local局部本地内部类><strong>1.3 方法中的内部类(local/局部/本地内部类)</strong></h3><p>如果内部类只在方法中用到一次，那么直接把类声明在这个方法中也是可以的。这里并不能用修饰符，因为方法作用域中的内容不能被外部访问，这比<code>private</code>的作用域还要严格。方法中的内部类还可以获取方法参数传递进来的变量，并保存为本地变量。</p><p>下面的例子中,通过<code>say(String s)</code>方法传递进来的字符串<code>s</code>，当方法结束后，变量<code>s</code>就消失了，但是<code>InnerA</code>在使用这个变量的时候保存在了本地，后续每一次事件触发时，都能正确的输出这个变量的值。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -252,59 +100,43 @@
 </span><span class=lnt>29
 </span><span class=lnt>30
 </span><span class=lnt>31
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=kn>package</span> <span class=nn>firstpackage</span><span class=o>;</span>
-
-<span class=kn>import</span> <span class=nn>javax.swing.*</span><span class=o>;</span>
-<span class=kn>import</span> <span class=nn>java.awt.event.ActionEvent</span><span class=o>;</span>
-<span class=kn>import</span> <span class=nn>java.awt.event.ActionListener</span><span class=o>;</span>
-
-
-<span class=kd>public</span> <span class=kd>class</span> <span class=nc>A</span><span class=o>{</span>
-    <span class=kd>public</span> <span class=kd>static</span> <span class=kt>void</span> <span class=nf>main</span><span class=o>(</span><span class=n>String</span><span class=o>[]</span> <span class=n>args</span><span class=o>)</span> <span class=kd>throws</span> <span class=n>Exception</span><span class=o>{</span>
-        <span class=n>A</span> <span class=n>a</span><span class=o>=</span><span class=k>new</span> <span class=n>A</span><span class=o>(</span><span class=s>&#34;这是构造A的对象时传入的字符串&#34;</span><span class=o>);</span>
-        <span class=n>a</span><span class=o>.</span><span class=na>say</span><span class=o>(</span><span class=s>&#34;这是通过方法传递的字符串&#34;</span><span class=o>);</span>
-        <span class=c1>//这里只是为了让程序保持运行
-</span><span class=c1></span>        <span class=n>Thread</span><span class=o>.</span><span class=na>sleep</span><span class=o>(</span><span class=n>5000</span><span class=o>);</span>
-        <span class=n>System</span><span class=o>.</span><span class=na>exit</span><span class=o>(</span><span class=n>0</span><span class=o>);</span>
-    <span class=o>}</span>
-    <span class=kd>private</span> <span class=n>String</span> <span class=n>propA</span><span class=o>;</span>
-    <span class=kd>public</span> <span class=nf>A</span><span class=o>(){};</span>
-    <span class=kd>public</span> <span class=nf>A</span><span class=o>(</span><span class=n>String</span> <span class=n>s</span><span class=o>){</span>
-        <span class=k>this</span><span class=o>.</span><span class=na>propA</span><span class=o>=</span><span class=n>s</span><span class=o>;</span>
-    <span class=o>}</span>
-    <span class=kd>public</span> <span class=kt>void</span> <span class=nf>say</span><span class=o>(</span><span class=n>String</span> <span class=n>s</span><span class=o>){</span>
-        <span class=kd>class</span> <span class=nc>InnerA</span> <span class=kd>implements</span> <span class=n>ActionListener</span><span class=o>{</span>
-            <span class=nd>@Override</span>
-            <span class=kd>public</span> <span class=kt>void</span> <span class=nf>actionPerformed</span><span class=o>(</span><span class=n>ActionEvent</span> <span class=n>e</span><span class=o>)</span> <span class=o>{</span>
-                <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;这是内部类，但能获取外部类的属性========&gt;&#34;</span><span class=o>+</span><span class=n>propA</span><span class=o>+</span><span class=s>&#34;\n还可以获取方法的参数并保存为本地变量========&gt;&#34;</span><span class=o>+</span><span class=n>s</span><span class=o>);</span>
-            <span class=o>}</span>
-        <span class=o>}</span>
-        <span class=n>Timer</span> <span class=n>timer</span><span class=o>=</span><span class=k>new</span> <span class=n>Timer</span><span class=o>(</span><span class=n>1000</span><span class=o>,</span><span class=k>new</span> <span class=n>InnerA</span><span class=o>());</span>
-        <span class=n>timer</span><span class=o>.</span><span class=na>start</span><span class=o>();</span>
-    <span class=o>}</span>
-<span class=o>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><blockquote>
-<p>输出：</p>
-<p>这是内部类，但能获取外部类的属性========>这是构造A的对象时传入的字符串
-还可以获取方法的参数并保存为本地变量========>这是通过方法传递的字符串</p>
-<p>这是内部类，但能获取外部类的属性========>这是构造A的对象时传入的字符串
-还可以获取方法的参数并保存为本地变量========>这是通过方法传递的字符串</p>
-<p>这是内部类，但能获取外部类的属性========>这是构造A的对象时传入的字符串
-还可以获取方法的参数并保存为本地变量========>这是通过方法传递的字符串</p>
-<p>这是内部类，但能获取外部类的属性========>这是构造A的对象时传入的字符串
-还可以获取方法的参数并保存为本地变量========>这是通过方法传递的字符串</p>
-<p>这是内部类，但能获取外部类的属性========>这是构造A的对象时传入的字符串
-还可以获取方法的参数并保存为本地变量========>这是通过方法传递的字符串</p>
-</blockquote>
-<h3 id=14-匿名内部类><strong>1.4 匿名内部类</strong></h3>
-<p>上面的例子，<code>InnerA</code>只是为了实现<code>ActionListener</code>接口，这种情况下，可以进一步用匿名内部类简化，连类名都不需要，如下：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kn>package</span> <span class=nn>firstpackage</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>javax.swing.*</span><span class=o>;</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>java.awt.event.ActionEvent</span><span class=o>;</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>java.awt.event.ActionListener</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>A</span><span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>static</span> <span class=kt>void</span> <span class=nf>main</span><span class=o>(</span><span class=n>String</span><span class=o>[]</span> <span class=n>args</span><span class=o>)</span> <span class=kd>throws</span> <span class=n>Exception</span><span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>A</span> <span class=n>a</span><span class=o>=</span><span class=k>new</span> <span class=n>A</span><span class=o>(</span><span class=s>&#34;这是构造A的对象时传入的字符串&#34;</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>        <span class=n>a</span><span class=o>.</span><span class=na>say</span><span class=o>(</span><span class=s>&#34;这是通过方法传递的字符串&#34;</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>        <span class=c1>//这里只是为了让程序保持运行
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=n>Thread</span><span class=o>.</span><span class=na>sleep</span><span class=o>(</span><span class=n>5000</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>        <span class=n>System</span><span class=o>.</span><span class=na>exit</span><span class=o>(</span><span class=n>0</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=n>String</span> <span class=n>propA</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=nf>A</span><span class=o>(){};</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=nf>A</span><span class=o>(</span><span class=n>String</span> <span class=n>s</span><span class=o>){</span>
+</span></span><span class=line><span class=cl>        <span class=k>this</span><span class=o>.</span><span class=na>propA</span><span class=o>=</span><span class=n>s</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>void</span> <span class=nf>say</span><span class=o>(</span><span class=n>String</span> <span class=n>s</span><span class=o>){</span>
+</span></span><span class=line><span class=cl>        <span class=kd>class</span> <span class=nc>InnerA</span> <span class=kd>implements</span> <span class=n>ActionListener</span><span class=o>{</span>
+</span></span><span class=line><span class=cl>            <span class=nd>@Override</span>
+</span></span><span class=line><span class=cl>            <span class=kd>public</span> <span class=kt>void</span> <span class=nf>actionPerformed</span><span class=o>(</span><span class=n>ActionEvent</span> <span class=n>e</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>                <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;这是内部类，但能获取外部类的属性========&gt;&#34;</span><span class=o>+</span><span class=n>propA</span><span class=o>+</span><span class=s>&#34;\n还可以获取方法的参数并保存为本地变量========&gt;&#34;</span><span class=o>+</span><span class=n>s</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>            <span class=o>}</span>
+</span></span><span class=line><span class=cl>        <span class=o>}</span>
+</span></span><span class=line><span class=cl>        <span class=n>Timer</span> <span class=n>timer</span><span class=o>=</span><span class=k>new</span> <span class=n>Timer</span><span class=o>(</span><span class=n>1000</span><span class=o>,</span><span class=k>new</span> <span class=n>InnerA</span><span class=o>());</span>
+</span></span><span class=line><span class=cl>        <span class=n>timer</span><span class=o>.</span><span class=na>start</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></td></tr></table></div></div><blockquote><p>输出：</p><p>这是内部类，但能获取外部类的属性========>这是构造A的对象时传入的字符串
+还可以获取方法的参数并保存为本地变量========>这是通过方法传递的字符串</p><p>这是内部类，但能获取外部类的属性========>这是构造A的对象时传入的字符串
+还可以获取方法的参数并保存为本地变量========>这是通过方法传递的字符串</p><p>这是内部类，但能获取外部类的属性========>这是构造A的对象时传入的字符串
+还可以获取方法的参数并保存为本地变量========>这是通过方法传递的字符串</p><p>这是内部类，但能获取外部类的属性========>这是构造A的对象时传入的字符串
+还可以获取方法的参数并保存为本地变量========>这是通过方法传递的字符串</p><p>这是内部类，但能获取外部类的属性========>这是构造A的对象时传入的字符串
+还可以获取方法的参数并保存为本地变量========>这是通过方法传递的字符串</p></blockquote><h3 id=14-匿名内部类><strong>1.4 匿名内部类</strong></h3><p>上面的例子，<code>InnerA</code>只是为了实现<code>ActionListener</code>接口，这种情况下，可以进一步用匿名内部类简化，连类名都不需要，如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -334,78 +166,49 @@
 </span><span class=lnt>28
 </span><span class=lnt>29
 </span><span class=lnt>30
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=kn>package</span> <span class=nn>firstpackage</span><span class=o>;</span>
-
-<span class=kn>import</span> <span class=nn>javax.swing.*</span><span class=o>;</span>
-<span class=kn>import</span> <span class=nn>java.awt.event.ActionEvent</span><span class=o>;</span>
-<span class=kn>import</span> <span class=nn>java.awt.event.ActionListener</span><span class=o>;</span>
-
-
-<span class=kd>public</span> <span class=kd>class</span> <span class=nc>A</span><span class=o>{</span>
-    <span class=kd>public</span> <span class=kd>static</span> <span class=kt>void</span> <span class=nf>main</span><span class=o>(</span><span class=n>String</span><span class=o>[]</span> <span class=n>args</span><span class=o>)</span> <span class=kd>throws</span> <span class=n>Exception</span><span class=o>{</span>
-        <span class=n>A</span> <span class=n>a</span><span class=o>=</span><span class=k>new</span> <span class=n>A</span><span class=o>(</span><span class=s>&#34;这是构造A的对象时传入的字符串&#34;</span><span class=o>);</span>
-        <span class=n>a</span><span class=o>.</span><span class=na>say</span><span class=o>(</span><span class=s>&#34;这是通过方法传递的字符串&#34;</span><span class=o>);</span>
-        <span class=c1>//这里只是为了让程序保持运行
-</span><span class=c1></span>        <span class=n>Thread</span><span class=o>.</span><span class=na>sleep</span><span class=o>(</span><span class=n>5000</span><span class=o>);</span>
-        <span class=n>System</span><span class=o>.</span><span class=na>exit</span><span class=o>(</span><span class=n>0</span><span class=o>);</span>
-    <span class=o>}</span>
-    <span class=kd>private</span> <span class=n>String</span> <span class=n>propA</span><span class=o>;</span>
-    <span class=kd>public</span> <span class=nf>A</span><span class=o>(){};</span>
-    <span class=kd>public</span> <span class=nf>A</span><span class=o>(</span><span class=n>String</span> <span class=n>s</span><span class=o>){</span>
-        <span class=k>this</span><span class=o>.</span><span class=na>propA</span><span class=o>=</span><span class=n>s</span><span class=o>;</span>
-    <span class=o>}</span>
-    <span class=kd>public</span> <span class=kt>void</span> <span class=nf>say</span><span class=o>(</span><span class=n>String</span> <span class=n>s</span><span class=o>){</span>
-        <span class=n>Timer</span> <span class=n>timer</span><span class=o>=</span><span class=k>new</span> <span class=n>Timer</span><span class=o>(</span><span class=n>1000</span><span class=o>,</span> <span class=k>new</span> <span class=n>ActionListener</span><span class=o>()</span> <span class=o>{</span>
-            <span class=nd>@Override</span>
-            <span class=kd>public</span> <span class=kt>void</span> <span class=nf>actionPerformed</span><span class=o>(</span><span class=n>ActionEvent</span> <span class=n>e</span><span class=o>)</span> <span class=o>{</span>
-                <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;这是内部类，但能获取外部类的属性========&gt;&#34;</span><span class=o>+</span><span class=n>propA</span><span class=o>+</span><span class=s>&#34;\n还可以获取方法的参数并保存为本地变量========&gt;&#34;</span><span class=o>+</span><span class=n>s</span><span class=o>);</span>
-            <span class=o>}</span>
-        <span class=o>});</span>
-        <span class=n>timer</span><span class=o>.</span><span class=na>start</span><span class=o>();</span>
-    <span class=o>}</span>
-<span class=o>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>后来，<code>java</code>引入<code>lambda</code>表达式进一步简化了这种写法，上面的<code>say()</code>方法可以改为：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kn>package</span> <span class=nn>firstpackage</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>javax.swing.*</span><span class=o>;</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>java.awt.event.ActionEvent</span><span class=o>;</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>java.awt.event.ActionListener</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>A</span><span class=o>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>static</span> <span class=kt>void</span> <span class=nf>main</span><span class=o>(</span><span class=n>String</span><span class=o>[]</span> <span class=n>args</span><span class=o>)</span> <span class=kd>throws</span> <span class=n>Exception</span><span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>A</span> <span class=n>a</span><span class=o>=</span><span class=k>new</span> <span class=n>A</span><span class=o>(</span><span class=s>&#34;这是构造A的对象时传入的字符串&#34;</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>        <span class=n>a</span><span class=o>.</span><span class=na>say</span><span class=o>(</span><span class=s>&#34;这是通过方法传递的字符串&#34;</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>        <span class=c1>//这里只是为了让程序保持运行
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=n>Thread</span><span class=o>.</span><span class=na>sleep</span><span class=o>(</span><span class=n>5000</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>        <span class=n>System</span><span class=o>.</span><span class=na>exit</span><span class=o>(</span><span class=n>0</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=n>String</span> <span class=n>propA</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=nf>A</span><span class=o>(){};</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=nf>A</span><span class=o>(</span><span class=n>String</span> <span class=n>s</span><span class=o>){</span>
+</span></span><span class=line><span class=cl>        <span class=k>this</span><span class=o>.</span><span class=na>propA</span><span class=o>=</span><span class=n>s</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>void</span> <span class=nf>say</span><span class=o>(</span><span class=n>String</span> <span class=n>s</span><span class=o>){</span>
+</span></span><span class=line><span class=cl>        <span class=n>Timer</span> <span class=n>timer</span><span class=o>=</span><span class=k>new</span> <span class=n>Timer</span><span class=o>(</span><span class=n>1000</span><span class=o>,</span> <span class=k>new</span> <span class=n>ActionListener</span><span class=o>()</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>            <span class=nd>@Override</span>
+</span></span><span class=line><span class=cl>            <span class=kd>public</span> <span class=kt>void</span> <span class=nf>actionPerformed</span><span class=o>(</span><span class=n>ActionEvent</span> <span class=n>e</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>                <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;这是内部类，但能获取外部类的属性========&gt;&#34;</span><span class=o>+</span><span class=n>propA</span><span class=o>+</span><span class=s>&#34;\n还可以获取方法的参数并保存为本地变量========&gt;&#34;</span><span class=o>+</span><span class=n>s</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>            <span class=o>}</span>
+</span></span><span class=line><span class=cl>        <span class=o>});</span>
+</span></span><span class=line><span class=cl>        <span class=n>timer</span><span class=o>.</span><span class=na>start</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>后来，<code>java</code>引入<code>lambda</code>表达式进一步简化了这种写法，上面的<code>say()</code>方法可以改为：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=kd>public</span> <span class=kt>void</span> <span class=nf>say</span><span class=o>(</span><span class=n>String</span> <span class=n>s</span><span class=o>){</span>
-    <span class=n>Timer</span> <span class=n>timer</span><span class=o>=</span><span class=k>new</span> <span class=n>Timer</span><span class=o>(</span><span class=n>1000</span><span class=o>,</span> <span class=o>(</span><span class=n>ActionEvent</span> <span class=n>e</span><span class=o>)-&gt;{</span>
-        <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;这是内部类，但能获取外部类的属性========&gt;&#34;</span><span class=o>+</span><span class=n>propA</span><span class=o>+</span><span class=s>&#34;\n还可以获取方法的参数并保存为本地变量========&gt;&#34;</span><span class=o>+</span><span class=n>s</span><span class=o>);</span>
-    <span class=o>});</span>
-    <span class=n>timer</span><span class=o>.</span><span class=na>start</span><span class=o>();</span>
-<span class=o>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p><strong>PS：<code>lambda</code>表达式只能用于代替实现<code>FunctionalInterface</code>接口的内部类，就是内部只有一个抽象方法的接口（default方法数量不限）</strong></p>
-<h3 id=15-static内部类><strong>1.5 static内部类</strong></h3>
-<p><code>static</code>内部类和别的内部类有几点区别：</p>
-<ul>
-<li>因为是static,所以使用该类时不需要外部类的实例</li>
-<li>无法访问外部类的信息</li>
-<li>可以声明<code>static</code>的变量和方法</li>
-</ul>
-<p><code>static</code>内部类的作用类似package，只是让内部类更深了一层，可以让代码的结构更清晰，减少重名问题等，所以<code>static</code>内部类跟普通的类很像，很多地方称之为"嵌套类"。</p>
-<p>关于<code>static</code>和其它内部类实例化的区别：跟类中的<code>static</code>属性一样，在外部类加载完成后，<code>static</code>内部类也加载完成了，所以如果要实例化<code>static</code>内部类，只要用<code>new Outer.Inner()</code>的表达方式就可以了。而普通的非<code>static</code>内部类，因为是定义在类中，属于"对象属性"级别，在外部类加载完成时，这些"对象属性"还不存在，等到外部类实例化时，内部类才作为这个外部类实例对象的"对象属性"加载进来，但此时只是有内部类完成，还没有实例化，需要使用外部类的对象来实例化内部类。</p>
-<h2 id=2接口中的嵌套接口和嵌套类><strong>2.接口中的嵌套接口和嵌套类</strong></h2>
-<p>接口中的类型成员，包括类和接口，都默认是<code>public staic</code>，也强制只能是<code>public static</code>。</p>
-<p>首先，接口不能被实例化，所以，任何非<code>static</code>的内容都毫无意义。至于<code>public</code>，<a href=https://docs.oracle.com/javase/tutorial/java/IandI/interfaceDef.html>JavaSE规范</a>中规定，接口中的类型成员不是<code>public</code>就会在编译时报错。</p>
-<p>关于这两个嵌套类型，举个例子，<code>spring boot</code>源码中有一个接口叫<code>DeferredImportSelector</code>，代码如下：</p>
-<details>
-<summary>显示代码</summary>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kd>public</span> <span class=kt>void</span> <span class=nf>say</span><span class=o>(</span><span class=n>String</span> <span class=n>s</span><span class=o>){</span>
+</span></span><span class=line><span class=cl>    <span class=n>Timer</span> <span class=n>timer</span><span class=o>=</span><span class=k>new</span> <span class=n>Timer</span><span class=o>(</span><span class=n>1000</span><span class=o>,</span> <span class=o>(</span><span class=n>ActionEvent</span> <span class=n>e</span><span class=o>)-&gt;{</span>
+</span></span><span class=line><span class=cl>        <span class=n>System</span><span class=o>.</span><span class=na>out</span><span class=o>.</span><span class=na>println</span><span class=o>(</span><span class=s>&#34;这是内部类，但能获取外部类的属性========&gt;&#34;</span><span class=o>+</span><span class=n>propA</span><span class=o>+</span><span class=s>&#34;\n还可以获取方法的参数并保存为本地变量========&gt;&#34;</span><span class=o>+</span><span class=n>s</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>    <span class=o>});</span>
+</span></span><span class=line><span class=cl>    <span class=n>timer</span><span class=o>.</span><span class=na>start</span><span class=o>();</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></td></tr></table></div></div><p><strong>PS：<code>lambda</code>表达式只能用于代替实现<code>FunctionalInterface</code>接口的内部类，就是内部只有一个抽象方法的接口（default方法数量不限）</strong></p><h3 id=15-static内部类><strong>1.5 static内部类</strong></h3><p><code>static</code>内部类和别的内部类有几点区别：</p><ul><li>因为是static,所以使用该类时不需要外部类的实例</li><li>无法访问外部类的信息</li><li>可以声明<code>static</code>的变量和方法</li></ul><p><code>static</code>内部类的作用类似package，只是让内部类更深了一层，可以让代码的结构更清晰，减少重名问题等，所以<code>static</code>内部类跟普通的类很像，很多地方称之为"嵌套类"。</p><p>关于<code>static</code>和其它内部类实例化的区别：跟类中的<code>static</code>属性一样，在外部类加载完成后，<code>static</code>内部类也加载完成了，所以如果要实例化<code>static</code>内部类，只要用<code>new Outer.Inner()</code>的表达方式就可以了。而普通的非<code>static</code>内部类，因为是定义在类中，属于"对象属性"级别，在外部类加载完成时，这些"对象属性"还不存在，等到外部类实例化时，内部类才作为这个外部类实例对象的"对象属性"加载进来，但此时只是有内部类完成，还没有实例化，需要使用外部类的对象来实例化内部类。</p><h2 id=2接口中的嵌套接口和嵌套类><strong>2.接口中的嵌套接口和嵌套类</strong></h2><p>接口中的类型成员，包括类和接口，都默认是<code>public staic</code>，也强制只能是<code>public static</code>。</p><p>首先，接口不能被实例化，所以，任何非<code>static</code>的内容都毫无意义。至于<code>public</code>，<a href=https://docs.oracle.com/javase/tutorial/java/IandI/interfaceDef.html>JavaSE规范</a>中规定，接口中的类型成员不是<code>public</code>就会在编译时报错。</p><p>关于这两个嵌套类型，举个例子，<code>spring boot</code>源码中有一个接口叫<code>DeferredImportSelector</code>，代码如下：</p><details><summary>显示代码</summary><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -467,124 +270,79 @@
 </span><span class=lnt>60
 </span><span class=lnt>61
 </span><span class=lnt>62
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=kn>package</span> <span class=nn>org.springframework.context.annotation</span><span class=o>;</span>
-
-<span class=kn>import</span> <span class=nn>org.springframework.core.type.AnnotationMetadata</span><span class=o>;</span>
-<span class=kn>import</span> <span class=nn>org.springframework.lang.Nullable</span><span class=o>;</span>
-
-<span class=kd>public</span> <span class=kd>interface</span> <span class=nc>DeferredImportSelector</span> <span class=kd>extends</span> <span class=n>ImportSelector</span> <span class=o>{</span>
-
-	<span class=nd>@Nullable</span>
-	<span class=k>default</span> <span class=n>Class</span><span class=o>&lt;?</span> <span class=kd>extends</span> <span class=n>Group</span><span class=o>&gt;</span> <span class=nf>getImportGroup</span><span class=o>()</span> <span class=o>{</span>
-		<span class=k>return</span> <span class=kc>null</span><span class=o>;</span>
-	<span class=o>}</span>
-
-	<span class=kd>interface</span> <span class=nc>Group</span> <span class=o>{</span>
-
-		<span class=kt>void</span> <span class=nf>process</span><span class=o>(</span><span class=n>AnnotationMetadata</span> <span class=n>metadata</span><span class=o>,</span> <span class=n>DeferredImportSelector</span> <span class=n>selector</span><span class=o>);</span>
-
-		<span class=n>Iterable</span><span class=o>&lt;</span><span class=n>Entry</span><span class=o>&gt;</span> <span class=nf>selectImports</span><span class=o>();</span>
-
-		<span class=kd>class</span> <span class=nc>Entry</span> <span class=o>{</span>
-
-			<span class=kd>private</span> <span class=kd>final</span> <span class=n>AnnotationMetadata</span> <span class=n>metadata</span><span class=o>;</span>
-
-			<span class=kd>private</span> <span class=kd>final</span> <span class=n>String</span> <span class=n>importClassName</span><span class=o>;</span>
-
-			<span class=kd>public</span> <span class=nf>Entry</span><span class=o>(</span><span class=n>AnnotationMetadata</span> <span class=n>metadata</span><span class=o>,</span> <span class=n>String</span> <span class=n>importClassName</span><span class=o>)</span> <span class=o>{</span>
-				<span class=k>this</span><span class=o>.</span><span class=na>metadata</span> <span class=o>=</span> <span class=n>metadata</span><span class=o>;</span>
-				<span class=k>this</span><span class=o>.</span><span class=na>importClassName</span> <span class=o>=</span> <span class=n>importClassName</span><span class=o>;</span>
-			<span class=o>}</span>
-
-			<span class=kd>public</span> <span class=n>AnnotationMetadata</span> <span class=nf>getMetadata</span><span class=o>()</span> <span class=o>{</span>
-				<span class=k>return</span> <span class=k>this</span><span class=o>.</span><span class=na>metadata</span><span class=o>;</span>
-			<span class=o>}</span>
-
-			<span class=kd>public</span> <span class=n>String</span> <span class=nf>getImportClassName</span><span class=o>()</span> <span class=o>{</span>
-				<span class=k>return</span> <span class=k>this</span><span class=o>.</span><span class=na>importClassName</span><span class=o>;</span>
-			<span class=o>}</span>
-
-			<span class=nd>@Override</span>
-			<span class=kd>public</span> <span class=kt>boolean</span> <span class=nf>equals</span><span class=o>(</span><span class=nd>@Nullable</span> <span class=n>Object</span> <span class=n>other</span><span class=o>)</span> <span class=o>{</span>
-				<span class=k>if</span> <span class=o>(</span><span class=k>this</span> <span class=o>==</span> <span class=n>other</span><span class=o>)</span> <span class=o>{</span>
-					<span class=k>return</span> <span class=kc>true</span><span class=o>;</span>
-				<span class=o>}</span>
-				<span class=k>if</span> <span class=o>(</span><span class=n>other</span> <span class=o>==</span> <span class=kc>null</span> <span class=o>||</span> <span class=n>getClass</span><span class=o>()</span> <span class=o>!=</span> <span class=n>other</span><span class=o>.</span><span class=na>getClass</span><span class=o>())</span> <span class=o>{</span>
-					<span class=k>return</span> <span class=kc>false</span><span class=o>;</span>
-				<span class=o>}</span>
-				<span class=n>Entry</span> <span class=n>entry</span> <span class=o>=</span> <span class=o>(</span><span class=n>Entry</span><span class=o>)</span> <span class=n>other</span><span class=o>;</span>
-				<span class=k>return</span> <span class=o>(</span><span class=k>this</span><span class=o>.</span><span class=na>metadata</span><span class=o>.</span><span class=na>equals</span><span class=o>(</span><span class=n>entry</span><span class=o>.</span><span class=na>metadata</span><span class=o>)</span> <span class=o>&amp;&amp;</span> <span class=k>this</span><span class=o>.</span><span class=na>importClassName</span><span class=o>.</span><span class=na>equals</span><span class=o>(</span><span class=n>entry</span><span class=o>.</span><span class=na>importClassName</span><span class=o>));</span>
-			<span class=o>}</span>
-
-			<span class=nd>@Override</span>
-			<span class=kd>public</span> <span class=kt>int</span> <span class=nf>hashCode</span><span class=o>()</span> <span class=o>{</span>
-				<span class=k>return</span> <span class=o>(</span><span class=k>this</span><span class=o>.</span><span class=na>metadata</span><span class=o>.</span><span class=na>hashCode</span><span class=o>()</span> <span class=o>*</span> <span class=n>31</span> <span class=o>+</span> <span class=k>this</span><span class=o>.</span><span class=na>importClassName</span><span class=o>.</span><span class=na>hashCode</span><span class=o>());</span>
-			<span class=o>}</span>
-
-			<span class=nd>@Override</span>
-			<span class=kd>public</span> <span class=n>String</span> <span class=nf>toString</span><span class=o>()</span> <span class=o>{</span>
-				<span class=k>return</span> <span class=k>this</span><span class=o>.</span><span class=na>importClassName</span><span class=o>;</span>
-			<span class=o>}</span>
-		<span class=o>}</span>
-	<span class=o>}</span>
-
-<span class=o>}</span>
-</code></pre></td></tr></table>
-</div>
-</div></details>
-<p><code>DeferredImportSelector</code>接口中有一个抽象方法<code>getImportGroup</code>，返回的是实现<code>Group</code>接口的对象的Class，<code>Group</code>是一个嵌套接口。通过IDE查看实现或者使用<code>Group</code>的地方，都跟<code>DeferredImportSelector</code>有关，所以定义在其内部作为嵌套接口比较直观、合理。虽然两者经常搭配使用，但从语法上来说，实现外部接口和它的嵌套接口没有必然联系，可以只实现其中的一个。</p>
-<p><code>Group</code>接口中还包含一个静态内部类<code>Entry</code>。<code>Group</code>接口中有个抽象方法<code>selectImports</code>返回的是<code>Iterable&lt;Entry></code>,<code>Entry</code>这个名称很普遍，放到内部类里可以避免重名，并且可以通过外部类的名称直观的看出这个类的作用。</p>
-<h2 id=3-总结>3 总结</h2>
-<p><code>spring</code>的源码中就经常使用内部类、内部接口等，可以让源码可读性更好，让外部类和内部类直接联系起来。总的来说，内部类和嵌套类、嵌套接口是为了提高程序代码的内聚性而存在的，也是封装思想的一种体现。</p>
-</div>
-<div class=post-copyright>
-<p class=copyright-item>
-<span class=item-title>版权声明</span>
-<span class=item-content>本博客使用<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh# target=_blank>CC BY-NC-SA 4.0</a>许可协议(创意共享4.0:保留署名-非商业性使用-相同方式共享)。</span>
-</p>
-</div>
-<footer class=post-footer>
-<nav class=post-nav>
-<a class=prev href=/java%E6%B3%9B%E5%9E%8B%E5%92%8Cc-%E6%A8%A1%E6%9D%BF%E7%9A%84%E5%8C%BA%E5%88%AB/>
-<i class="iconfont icon-left"></i>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kn>package</span> <span class=nn>org.springframework.context.annotation</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>org.springframework.core.type.AnnotationMetadata</span><span class=o>;</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>org.springframework.lang.Nullable</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>interface</span> <span class=nc>DeferredImportSelector</span> <span class=kd>extends</span> <span class=n>ImportSelector</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=nd>@Nullable</span>
+</span></span><span class=line><span class=cl>	<span class=k>default</span> <span class=n>Class</span><span class=o>&lt;?</span> <span class=kd>extends</span> <span class=n>Group</span><span class=o>&gt;</span> <span class=nf>getImportGroup</span><span class=o>()</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>return</span> <span class=kc>null</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>	<span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=kd>interface</span> <span class=nc>Group</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>		<span class=kt>void</span> <span class=nf>process</span><span class=o>(</span><span class=n>AnnotationMetadata</span> <span class=n>metadata</span><span class=o>,</span> <span class=n>DeferredImportSelector</span> <span class=n>selector</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>		<span class=n>Iterable</span><span class=o>&lt;</span><span class=n>Entry</span><span class=o>&gt;</span> <span class=nf>selectImports</span><span class=o>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>		<span class=kd>class</span> <span class=nc>Entry</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>			<span class=kd>private</span> <span class=kd>final</span> <span class=n>AnnotationMetadata</span> <span class=n>metadata</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>			<span class=kd>private</span> <span class=kd>final</span> <span class=n>String</span> <span class=n>importClassName</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>			<span class=kd>public</span> <span class=nf>Entry</span><span class=o>(</span><span class=n>AnnotationMetadata</span> <span class=n>metadata</span><span class=o>,</span> <span class=n>String</span> <span class=n>importClassName</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>				<span class=k>this</span><span class=o>.</span><span class=na>metadata</span> <span class=o>=</span> <span class=n>metadata</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>				<span class=k>this</span><span class=o>.</span><span class=na>importClassName</span> <span class=o>=</span> <span class=n>importClassName</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>			<span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>			<span class=kd>public</span> <span class=n>AnnotationMetadata</span> <span class=nf>getMetadata</span><span class=o>()</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>				<span class=k>return</span> <span class=k>this</span><span class=o>.</span><span class=na>metadata</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>			<span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>			<span class=kd>public</span> <span class=n>String</span> <span class=nf>getImportClassName</span><span class=o>()</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>				<span class=k>return</span> <span class=k>this</span><span class=o>.</span><span class=na>importClassName</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>			<span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>			<span class=nd>@Override</span>
+</span></span><span class=line><span class=cl>			<span class=kd>public</span> <span class=kt>boolean</span> <span class=nf>equals</span><span class=o>(</span><span class=nd>@Nullable</span> <span class=n>Object</span> <span class=n>other</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>				<span class=k>if</span> <span class=o>(</span><span class=k>this</span> <span class=o>==</span> <span class=n>other</span><span class=o>)</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>					<span class=k>return</span> <span class=kc>true</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>				<span class=o>}</span>
+</span></span><span class=line><span class=cl>				<span class=k>if</span> <span class=o>(</span><span class=n>other</span> <span class=o>==</span> <span class=kc>null</span> <span class=o>||</span> <span class=n>getClass</span><span class=o>()</span> <span class=o>!=</span> <span class=n>other</span><span class=o>.</span><span class=na>getClass</span><span class=o>())</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>					<span class=k>return</span> <span class=kc>false</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>				<span class=o>}</span>
+</span></span><span class=line><span class=cl>				<span class=n>Entry</span> <span class=n>entry</span> <span class=o>=</span> <span class=o>(</span><span class=n>Entry</span><span class=o>)</span> <span class=n>other</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>				<span class=k>return</span> <span class=o>(</span><span class=k>this</span><span class=o>.</span><span class=na>metadata</span><span class=o>.</span><span class=na>equals</span><span class=o>(</span><span class=n>entry</span><span class=o>.</span><span class=na>metadata</span><span class=o>)</span> <span class=o>&amp;&amp;</span> <span class=k>this</span><span class=o>.</span><span class=na>importClassName</span><span class=o>.</span><span class=na>equals</span><span class=o>(</span><span class=n>entry</span><span class=o>.</span><span class=na>importClassName</span><span class=o>));</span>
+</span></span><span class=line><span class=cl>			<span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>			<span class=nd>@Override</span>
+</span></span><span class=line><span class=cl>			<span class=kd>public</span> <span class=kt>int</span> <span class=nf>hashCode</span><span class=o>()</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>				<span class=k>return</span> <span class=o>(</span><span class=k>this</span><span class=o>.</span><span class=na>metadata</span><span class=o>.</span><span class=na>hashCode</span><span class=o>()</span> <span class=o>*</span> <span class=n>31</span> <span class=o>+</span> <span class=k>this</span><span class=o>.</span><span class=na>importClassName</span><span class=o>.</span><span class=na>hashCode</span><span class=o>());</span>
+</span></span><span class=line><span class=cl>			<span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>			<span class=nd>@Override</span>
+</span></span><span class=line><span class=cl>			<span class=kd>public</span> <span class=n>String</span> <span class=nf>toString</span><span class=o>()</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>				<span class=k>return</span> <span class=k>this</span><span class=o>.</span><span class=na>importClassName</span><span class=o>;</span>
+</span></span><span class=line><span class=cl>			<span class=o>}</span>
+</span></span><span class=line><span class=cl>		<span class=o>}</span>
+</span></span><span class=line><span class=cl>	<span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></td></tr></table></div></div></details><p><code>DeferredImportSelector</code>接口中有一个抽象方法<code>getImportGroup</code>，返回的是实现<code>Group</code>接口的对象的Class，<code>Group</code>是一个嵌套接口。通过IDE查看实现或者使用<code>Group</code>的地方，都跟<code>DeferredImportSelector</code>有关，所以定义在其内部作为嵌套接口比较直观、合理。虽然两者经常搭配使用，但从语法上来说，实现外部接口和它的嵌套接口没有必然联系，可以只实现其中的一个。</p><p><code>Group</code>接口中还包含一个静态内部类<code>Entry</code>。<code>Group</code>接口中有个抽象方法<code>selectImports</code>返回的是<code>Iterable&lt;Entry></code>,<code>Entry</code>这个名称很普遍，放到内部类里可以避免重名，并且可以通过外部类的名称直观的看出这个类的作用。</p><h2 id=3-总结>3 总结</h2><p><code>spring</code>的源码中就经常使用内部类、内部接口等，可以让源码可读性更好，让外部类和内部类直接联系起来。总的来说，内部类和嵌套类、嵌套接口是为了提高程序代码的内聚性而存在的，也是封装思想的一种体现。</p></div><div class=post-copyright><p class=copyright-item><span class=item-title>版权声明</span>
+<span class=item-content>本博客使用<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh# target=_blank>CC BY-NC-SA 4.0</a>许可协议(创意共享4.0:保留署名-非商业性使用-相同方式共享)。</span></p></div><footer class=post-footer><nav class=post-nav><a class=prev href=/java%E6%B3%9B%E5%9E%8B%E5%92%8Cc-%E6%A8%A1%E6%9D%BF%E7%9A%84%E5%8C%BA%E5%88%AB/><i class="iconfont icon-left"></i>
 <span class="prev-text nav-default">java泛型和c++模板的区别</span>
-<span class="prev-text nav-mobile">上一篇</span>
-</a>
-<a class=next href=/spring-boot%E7%94%A8java-bean-validation%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E9%AA%8C%E8%AF%81/>
-<span class="next-text nav-default">spring boot用java bean validation进行数据验证</span>
+<span class="prev-text nav-mobile">上一篇</span></a>
+<a class=next href=/spring-boot%E7%94%A8java-bean-validation%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E9%AA%8C%E8%AF%81/><span class="next-text nav-default">spring boot用java bean validation进行数据验证</span>
 <span class="next-text nav-mobile">下一篇</span>
-<i class="iconfont icon-right"></i>
-</a>
-</nav>
-</footer>
-</article>
-</div>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=social-links>
-<a href=https://github.com/ozryan class="iconfont icon-github" title=github></a>
-<a href=https://www.fewth.com/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a>
-</div>
-<div class=copyright>
-<span class=copyright-year>
-&copy;
+<i class="iconfont icon-right"></i></a></nav></footer></article></div></div></main><footer id=footer class=footer><div class=social-links><a href=https://github.com/ozryan class="iconfont icon-github" title=github></a>
+<a href=https://www.fewth.com/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a></div><div class=copyright><span class=copyright-year>&copy;
 2020 -
-2022<span class=heart><i class="iconfont icon-heart"></i></span><span>ozryan</span>
-</span>
-</div>
-</footer>
-<div class=back-to-top id=back-to-top>
-<i class="iconfont icon-up"></i>
-</div>
-</div>
-<script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script>
+2022<span class=heart><i class="iconfont icon-heart"></i></span><span>ozryan</span></span></div></footer><div class=back-to-top id=back-to-top><i class="iconfont icon-up"></i></div></div><script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script>
 <script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script>
 <script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script>
-<script type=text/javascript src=/js/main.min.c99b103c33d1539acf3025e1913697534542c4a5aa5af0ccc20475ed2863603b.js></script>
-<script type=text/javascript>window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]}}</script>
-<script async src=https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin=anonymous></script>
-</body>
-</html>
+<script type=text/javascript src=/js/main.min.64437849d125a2d603b3e71d6de5225d641a32d17168a58106e0b61852079683.js></script>
+<script type=text/javascript>window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]]}}</script><script async src=https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin=anonymous></script></body></html>
