@@ -1,0 +1,159 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>DNS简述 - A few thoughts</title><meta name=renderer content="webkit"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=theme-color content="#f8f5ec"><meta name=msapplication-navbutton-color content="#f8f5ec"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec"><meta name=author content="ozryan"><meta name=description content="介绍DNS基本概念，包括解析器及整套域名解析系统的运行原理，域名层次结构，如何从域名解析IP地址以及从IP地址解析域名"><meta name=generator content="Hugo 0.101.0 with theme even"><link rel=canonical href=https://www.fewth.com/dns%E7%AE%80%E8%BF%B0/><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/manifest.json><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link href=/sass/main.min.b5a744db6de49a86cadafb3b70f555ab443f83c307a483402259e94726b045ff.css rel=stylesheet><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous><meta property="og:title" content="DNS简述"><meta property="og:description" content="介绍DNS基本概念，包括解析器及整套域名解析系统的运行原理，域名层次结构，如何从域名解析IP地址以及从IP地址解析域名"><meta property="og:type" content="article"><meta property="og:url" content="https://www.fewth.com/dns%E7%AE%80%E8%BF%B0/"><meta property="article:section" content="post"><meta property="article:published_time" content="2022-08-03T00:00:00+00:00"><meta property="article:modified_time" content="2022-08-03T00:00:00+00:00"><meta itemprop=name content="DNS简述"><meta itemprop=description content="介绍DNS基本概念，包括解析器及整套域名解析系统的运行原理，域名层次结构，如何从域名解析IP地址以及从IP地址解析域名"><meta itemprop=datePublished content="2022-08-03T00:00:00+00:00"><meta itemprop=dateModified content="2022-08-03T00:00:00+00:00"><meta itemprop=wordCount content="2600"><meta itemprop=keywords content><meta name=twitter:card content="summary"><meta name=twitter:title content="DNS简述"><meta name=twitter:description content="介绍DNS基本概念，包括解析器及整套域名解析系统的运行原理，域名层次结构，如何从域名解析IP地址以及从IP地址解析域名"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9786889114957630" crossorigin=anonymous></script></head><body><div id=mobile-navbar class=mobile-navbar><div class=mobile-header-logo><a href=/ class=logo>A few thoughts</a></div><div class=mobile-navbar-icon><span></span>
+<span></span>
+<span></span></div></div><nav id=mobile-menu class="mobile-menu slideout-menu"><ul class=mobile-menu-list><a href=/><li class=mobile-menu-item>主页</li></a><a href=/post><li class=mobile-menu-item>归档</li></a><a href=/categories/><li class=mobile-menu-item>分类</li></a><a href=/about><li class=mobile-menu-item>关于</li></a></ul></nav><div class=container id=mobile-panel><header id=header class=header><div class=logo-wrapper><a href=/ class=logo>A few thoughts</a></div><nav class=site-navbar><ul id=menu class=menu><li class=menu-item><a class=menu-item-link href=/>主页</a></li><li class=menu-item><a class=menu-item-link href=/post>归档</a></li><li class=menu-item><a class=menu-item-link href=/categories/>分类</a></li><li class=menu-item><a class=menu-item-link href=/about>关于</a></li></ul></nav></header><main id=main class=main><div class=content-wrapper><div id=content class=content><article class=post><header class=post-header><h1 class=post-title>DNS简述</h1><div class=post-meta><span class=post-time>2022-08-03</span><div class=post-category><a href=/categories/%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/>网络基础</a></div><span class=more-meta>约 2600 字</span>
+<span class=more-meta>预计阅读 6 分钟</span></div></header><div class=post-toc id=post-toc><h2 class=post-toc-title>文章目录</h2><div class="post-toc-content always-active"><nav id=TableOfContents><ul><li><ul><li><a href=#1-dns是什么>1 DNS是什么</a></li><li><a href=#2-dns解析器是什么>2 DNS解析器是什么</a></li><li><a href=#3-dns服务器和域名管理>3 DNS服务器和域名管理</a><ul><li><a href=#根域名服务器root-name-server>根域名服务器(Root name server)</a></li></ul></li><li><a href=#4-域名和ip地址的相互解析过程>4 域名和IP地址的相互解析过程</a><ul><li><a href=#41-从域名解析ip地址>4.1 从域名解析IP地址</a></li><li><a href=#42-从ip地址解析域名>4.2 从IP地址解析域名</a><ul><li><a href=#为什么没有对应的arpadomain>为什么没有对应的<code>arpa.domain</code></a></li></ul></li></ul></li></ul></li></ul></nav></div></div><div class=post-content><h2 id=1-dns是什么>1 DNS是什么</h2><p>DNS(Domain Name System)是互联网的一个重要组成部分，它的主要功能是进行域名管理并且实现<code>域名</code>和<code>IP地址</code>的相互转换。在TCP/IP网络模型(也就是当今互联网)中，IP层是通过32位的IP地址(ipv4)进行通信的，而不是域名，域名是方便人类记忆的一种形式，而且在人类和IP地址之间增加一层域名接口，可以增加灵活性，比如一个网站从服务器A搬到了B，你访问的依然是同一个<a href=www.fewth.com>网址</a>，不用关心它实际的服务器地址发生了变化(当然域名只是网址的一部分)。</p><p>DNS的数据存储在世界各地的服务器中，每一个可以联网的程序，都有一个<code>DNS解析器</code>，它可以理解为一个功能函数，当你用域名进行通信时，程序会先把域名发送给解析器，等它返回IP地址后再传递给传输层。</p><h2 id=2-dns解析器是什么>2 DNS解析器是什么</h2><p>只要可以实现域名和IP地址转化的功能模块，我们都可以称为<code>DNS解析器</code>，它通过查找本地缓存或者查询外部的DNS服务器实现这个功能。程序中有解析器，操作系统中也有解析器，程序的<code>解析器</code>本质上依赖的还是操作系统的解析功能。</p><p>比如一个用<code>Java</code>写的程序，在编写的时候不用显式调用解析器功能，<code>JDK</code>都封装好了，只需要用域名进行连接就行，<code>JDK</code>会完成解析过程。</p><p>简单看一下<code>JDK</code>源码的实现，略过查找缓存等，在<code>InetAddress</code>这个类中，有一个内部静态类<code>PlatformNameService</code>,它的作用是进行域名和IP地址的转换，从注释中可以看到其功能实现是依赖操作系统的。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=cm>/**
+</span></span></span><span class=line><span class=cl><span class=cm>    * The default NameService implementation, which delegates to the underlying
+</span></span></span><span class=line><span class=cl><span class=cm>    * OS network libraries to resolve host address mappings.
+</span></span></span><span class=line><span class=cl><span class=cm>    *
+</span></span></span><span class=line><span class=cl><span class=cm>    * @since 9
+</span></span></span><span class=line><span class=cl><span class=cm>    */</span>
+</span></span><span class=line><span class=cl><span class=kd>private</span> <span class=kd>static</span> <span class=kd>final</span> <span class=kd>class</span> <span class=nc>PlatformNameService</span> <span class=kd>implements</span> <span class=n>NameService</span> <span class=o>{</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>InetAddress</span><span class=o>[]</span> <span class=nf>lookupAllHostAddr</span><span class=o>(</span><span class=n>String</span> <span class=n>host</span><span class=o>)</span>
+</span></span><span class=line><span class=cl>        <span class=kd>throws</span> <span class=n>UnknownHostException</span>
+</span></span><span class=line><span class=cl>    <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>impl</span><span class=o>.</span><span class=na>lookupAllHostAddr</span><span class=o>(</span><span class=n>host</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>String</span> <span class=nf>getHostByAddr</span><span class=o>(</span><span class=kt>byte</span><span class=o>[]</span> <span class=n>addr</span><span class=o>)</span>
+</span></span><span class=line><span class=cl>        <span class=kd>throws</span> <span class=n>UnknownHostException</span>
+</span></span><span class=line><span class=cl>    <span class=o>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>impl</span><span class=o>.</span><span class=na>getHostByAddr</span><span class=o>(</span><span class=n>addr</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>    <span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>impl</code>表示<code>InetAddressImpl</code>这个接口，而这个接口有2个实现，<code>Inet4AddressImpl</code>和<code>Inet6AddressImpl</code>，看一下ipv4的实现：</p><p><img src=%E4%BE%9D%E8%B5%96%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%86%85%E9%83%A8%E6%96%B9%E6%B3%95.png alt=依赖操作系统内部方法></p><p>可以看到最终就是调用的系统内部的方法</p><h2 id=3-dns服务器和域名管理>3 DNS服务器和域名管理</h2><p>上面提到，所有的数据都是存在<code>DNS</code>服务器中，那么这些服务器都在哪里呢？</p><p>这跟域名管理的方式有关，域名是按层次组织管理的，像<code>.com</code>,<code>.org</code>,<code>.cn</code>这种都是顶级域名，他们都必须具备自己的<code>DNS</code>服务器(至少是一主一从的配置),顶级域名的管理都是由<code>ICANN(Internet Corporation for Assigned Names and Numbers)</code>委托的，比如中国大陆的的管理机构是<code>CNNIC</code>,它管理2个顶级域名<code>.cn</code>和<code>.中国</code>，像<code>.com</code>,<code>.org</code>这些早期的顶级域名大部分都是由美国的相关机构管理的，而二级域名则是在顶级域名的下一级，是为了细分某个顶级域名而存在的，像中国的政府网站专用域名<code>.gov.cn</code>里的<code>.gov</code>，二级域名的存在只跟相应的顶级域名有关，<code>ICANN</code>并不关心，所有的二级域名和IP地址的映射关系等都存在二级域名的服务器上，而顶级域名服务器则保存了它下面所有二级域名服务器的地址。</p><p>那么所有的顶级域名服务器之间怎么通信呢？这个关键角色就是根域名服务器。</p><h3 id=根域名服务器root-name-server>根域名服务器(Root name server)</h3><p>根域名服务器一共有13组，由12个不同的机构管理，具体可以在<a href=https://root-servers.org/>https://root-servers.org/</a>中看到，根域名服务器中有所有的顶级域名服务器的地址。当一个<code>DNS服务器</code>查询不到相关的域名时，就会向根服务器查询，而根服务器会根据顶级域名的名称来回应相应的<code>DNS服务器地址</code>，然后发送方再向这个返回的地址去查询。</p><h2 id=4-域名和ip地址的相互解析过程>4 域名和IP地址的相互解析过程</h2><h3 id=41-从域名解析ip地址>4.1 从域名解析IP地址</h3><p>在linux系统中可以用<code>dig</code>工具来测试域名解析流程，本文以<code>debian</code>为例，先安装<code>dig</code>工具：</p><p><code>sudo apt update</code></p><p><code>sudo apt install dnsutils</code></p><p>然后再<code>dig -v</code>测试一下是否安装成功。</p><p>测试一下解析<code>fewth.com</code>过程,输入<code>dig +trace fewth.com</code>,结果如下：</p><details><summary>点击展开结果</summary><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1+deb10u7-Debian &lt;&lt;&gt;&gt; +trace fewth.com
+</span></span><span class=line><span class=cl>;; global options: +cmd
+</span></span><span class=line><span class=cl>.                       255035  IN      NS      m.root-servers.net.
+</span></span><span class=line><span class=cl>.                       255035  IN      NS      j.root-servers.net.
+</span></span><span class=line><span class=cl>.                       255035  IN      NS      b.root-servers.net.
+</span></span><span class=line><span class=cl>.                       255035  IN      NS      f.root-servers.net.
+</span></span><span class=line><span class=cl>.                       255035  IN      NS      g.root-servers.net.
+</span></span><span class=line><span class=cl>.                       255035  IN      NS      d.root-servers.net.
+</span></span><span class=line><span class=cl>.                       255035  IN      NS      h.root-servers.net.
+</span></span><span class=line><span class=cl>.                       255035  IN      NS      c.root-servers.net.
+</span></span><span class=line><span class=cl>.                       255035  IN      NS      k.root-servers.net.
+</span></span><span class=line><span class=cl>.                       255035  IN      NS      e.root-servers.net.
+</span></span><span class=line><span class=cl>.                       255035  IN      NS      a.root-servers.net.
+</span></span><span class=line><span class=cl>.                       255035  IN      NS      l.root-servers.net.
+</span></span><span class=line><span class=cl>.                       255035  IN      NS      i.root-servers.net.
+</span></span><span class=line><span class=cl>.                       448832  IN      RRSIG   NS 8 0 518400 20220815050000 20220802040000 20826 . CNeNM9WwPqq41Tb6572NxGG7H8pyvSds+Twvwde9dQxj0/3w+q5rvI1l O9GitOQ46g29KfRiSuBPso8EARn0dq1ddoDvVKsKDLkIz2FDWDTPdfy1 mVheiEhdfJVtXIRXMOi2gnrXnUKu5qEMWYXhN5FexJv/SAavkZAZRNfn wqD/HRGEhXno/up4vpGODOj38aPiST2X2MVWUnQBDk2WlZ3+P48Ml6o9 2D47EA9YP4dFQAaHPp/83CfUVD7ODHr912AnjamdpcVxTqtcdV/2X2Al Jk0l3pL4qsRwdmtmjj7Z1UiNF0KhinGv0YQ8sJZYa/w+amvQcui6b7n9 ikrCAw==
+</span></span><span class=line><span class=cl>;; Received 526 bytes from 100.100.2.136#53(100.100.2.136) in 0 ms
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>com.                    172800  IN      NS      g.gtld-servers.net.
+</span></span><span class=line><span class=cl>com.                    172800  IN      NS      m.gtld-servers.net.
+</span></span><span class=line><span class=cl>com.                    172800  IN      NS      h.gtld-servers.net.
+</span></span><span class=line><span class=cl>com.                    172800  IN      NS      k.gtld-servers.net.
+</span></span><span class=line><span class=cl>com.                    172800  IN      NS      b.gtld-servers.net.
+</span></span><span class=line><span class=cl>com.                    172800  IN      NS      e.gtld-servers.net.
+</span></span><span class=line><span class=cl>com.                    172800  IN      NS      l.gtld-servers.net.
+</span></span><span class=line><span class=cl>com.                    172800  IN      NS      f.gtld-servers.net.
+</span></span><span class=line><span class=cl>com.                    172800  IN      NS      d.gtld-servers.net.
+</span></span><span class=line><span class=cl>com.                    172800  IN      NS      c.gtld-servers.net.
+</span></span><span class=line><span class=cl>com.                    172800  IN      NS      j.gtld-servers.net.
+</span></span><span class=line><span class=cl>com.                    172800  IN      NS      i.gtld-servers.net.
+</span></span><span class=line><span class=cl>com.                    172800  IN      NS      a.gtld-servers.net.
+</span></span><span class=line><span class=cl>com.                    86400   IN      DS      30909 8 2 E2D3C916F6DEEAC73294E8268FB5885044A833FC5459588F4A9184CF C41A5766
+</span></span><span class=line><span class=cl>com.                    86400   IN      RRSIG   DS 8 1 86400 20220816050000 20220803040000 20826 . S1zeEcF/15kmRlj+0FmE6haZ3ECmcBNPA+PJi4Dor1FxAhIy+1Ab2d79 vkVd9fiUwRdoWOQzJutpkkYGzSfKMITVJ/Ft3YtzqMVfU7Tt1FEBRTPg q3Hxp0rKIGxOkyoM40bee3RgYcKT1B00qf/io816yJYgFk8jYRC+SqhK U6SkuiYmZtj4DApvAa9jjZ3SV2hf4YrnG6tCkhTiMVikPDqjT8YZk3vN u8ZLeOkomKeNQlc5zRV2xFLYq5za+9AnNk3HppZo41HJ/7/zT8cFd+pb azGxC92YDgy5aeJ2hzh5peBmfv56Wf6sBr9rg/mQrMV0WAAxCO++kE7A 4z7/7A==
+</span></span><span class=line><span class=cl>;; Received 1197 bytes from 192.33.4.12#53(c.root-servers.net) in 160 ms
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>fewth.com.              172800  IN      NS      ns1.dnsowl.com.
+</span></span><span class=line><span class=cl>fewth.com.              172800  IN      NS      ns2.dnsowl.com.
+</span></span><span class=line><span class=cl>fewth.com.              172800  IN      NS      ns3.dnsowl.com.
+</span></span><span class=line><span class=cl>CK0POJMG874LJREF7EFN8430QVIT8BSM.com. 86400 IN NSEC3 1 1 0 - CK0Q2D6NI4I7EQH8NA30NS61O48UL8G5 NS SOA RRSIG DNSKEY NSEC3PARAM
+</span></span><span class=line><span class=cl>CK0POJMG874LJREF7EFN8430QVIT8BSM.com. 86400 IN RRSIG NSEC3 8 2 86400 20220807042404 20220731031404 32298 com. nyQi2a7merGRIIDJl6jON9PxWr6N+7GX4hkLZ/SNLZJUig+TtIvbW/Px CmtcvKF4ZLlOuFOfdXdsS7BbXBqLYfSShpe5bhW4V/uPSzL/3oL87cyO e4iupoaBgd/LmMo3CSXIr4PP/Pa2fPmYOW9duARjePBcmNb+mDkxSvo3 GzvQE8duNTYXvykq9BSlI2w7n0q1axdjZLO/Pzvhe2IXhg==
+</span></span><span class=line><span class=cl>GMU5L3FUP7SSAJ81MC3PMO2FGS2TU92F.com. 86400 IN NSEC3 1 1 0 - GMU68LJ414QLM8VS4GP16VA85J8E3BEA NS DS RRSIG
+</span></span><span class=line><span class=cl>GMU5L3FUP7SSAJ81MC3PMO2FGS2TU92F.com. 86400 IN RRSIG NSEC3 8 2 86400 20220809045830 20220802034830 32298 com. H07LLMd/rOYiUYaJJqdEHFJQ6B3/43L/HSvUA0Nt2mzuZM3z6+1Pvd6B 11seQdriS5Hx6TvrDpvyy2ixSKzrtM7bCvT3a6Q4XYtOriW/mmgBRrTi t8diLxiiHeIACwdFwzo/xxomkMvTVEcpE0UZGSYUhqdcA9TU6yuL/BZw zU3PJZ/oCKR1H7M2mjkcyyxmC3j1QhbgNx4Ipe4o/aPLlQ==
+</span></span><span class=line><span class=cl>;; Received 912 bytes from 192.55.83.30#53(m.gtld-servers.net) in 161 ms
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>fewth.com.              7207    IN      A       185.199.108.153
+</span></span><span class=line><span class=cl>fewth.com.              7207    IN      A       185.199.111.153
+</span></span><span class=line><span class=cl>fewth.com.              7207    IN      A       185.199.110.153
+</span></span><span class=line><span class=cl>fewth.com.              7207    IN      A       185.199.109.153
+</span></span><span class=line><span class=cl>fewth.com.              172800  IN      NS      ns1.dnsowl.com.
+</span></span><span class=line><span class=cl>fewth.com.              172800  IN      NS      ns2.dnsowl.com.
+</span></span><span class=line><span class=cl>fewth.com.              172800  IN      NS      ns3.dnsowl.com.
+</span></span><span class=line><span class=cl>;; Received 259 bytes from 162.159.26.234#53(ns3.dnsowl.com) in 163 ms
+</span></span></code></pre></td></tr></table></div></div></details><p>上面的<code>ns1.dnsowl.com</code>就是注册域名时绑定的<code>dns服务器</code>，如果短时间内再查，直接就从<code>dns服务器</code>的缓存返回结果了。</p><h3 id=42-从ip地址解析域名>4.2 从IP地址解析域名</h3><p>域名的管理是分层的，查询的逻辑也很好理解，那么怎么通过IP地址查询域名呢？</p><p>其实在把域名和IP地址绑定并加入互联网时，有2个操作，1个就是相应的顶级域名服务器中增加域名到IP地址的映射，而另一个操作就是把IP地址到域名的映射增加到<code>arpa.in-addr</code>这个2级域名下，借用《tcp/ip详解，卷一》中的一张图：</p><p><img src=%E5%9F%9F%E5%90%8D%E5%B1%82%E6%AC%A1%E5%9B%BE.png alt=域名层次图></p><p>这里需要注意，我们域名的层次查询和保存是从上到下，而书写方式是从下到上，像图上的<code>sun.tuc.noao.edu</code>这个域名，<code>.edu</code>是顶级域名，在最上面，而域名的日常书写顺序是反过来的，所以在查询<code>IP地址</code>的时候也要类似的反过来写。</p><p>我们可以用dig来测试IP地址到域名的查询过程，就用图上的<code>cnri.reston.va.us</code>这个域名，先查到它的IP：</p><p><code>dig cnri.reston.va.us +short</code></p><p>返回:</p><p><code>38.100.128.118</code></p><p>再反过来查域名，注意要添加<code>.in-addr.arpa</code>后缀并把IP地址反过来写，<code>dig ptr</code>表示通过IP地址查域名：</p><p><code>dig ptr 118.128.100.38.in-addr.arpa +short</code></p><p>返回：</p><p><code>www.cnri.reston.va.us.</code></p><p><code>dig</code>提供了一个<code>-x</code>选项来简化ptr查询，不用倒写IP地址，下面的指令效果相同：</p><p><code>dig -x 38.100.128.118 +short</code></p><blockquote><p>注：现在很多网站都使用内容分发服务，查询到的IP地址不是他的主要服务器而是分发内容的服务器，这种情况就不能正确的反向查询</p></blockquote><h4 id=为什么没有对应的arpadomain>为什么没有对应的<code>arpa.domain</code></h4><p>把域名和IP地址分成2类不是更好吗？</p><p>因为域名可以是无限多，而IP地址的数量是有限的(特别是v4)，并且互联网连接的本质身份就是<code>IP地址</code>而不是域名，域名只是上层的一个“接口”，没有必要也做不到让一个机构管理所有的域名</p></div><div class=post-copyright><p class=copyright-item><span class=item-title>版权声明</span>
+<span class=item-content>本博客使用<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh# target=_blank>CC BY-NC-SA 4.0</a>许可协议(创意共享4.0:保留署名-非商业性使用-相同方式共享)。</span></p></div><footer class=post-footer><nav class=post-nav><a class=next href=/%E5%A6%82%E4%BD%95%E6%89%BE%E5%87%BAexcel%E4%B8%AD%E5%92%8C%E6%9C%80%E6%8E%A5%E8%BF%91%E6%9F%90%E4%B8%AA%E5%80%BC%E7%9A%84%E5%8D%95%E5%85%83%E6%A0%BC-%E8%A7%84%E5%88%92%E6%B1%82%E8%A7%A3/><span class="next-text nav-default">如何找出excel中和最接近某个值的单元格-规划求解</span>
+<span class="next-text nav-mobile">下一篇</span>
+<i class="iconfont icon-right"></i></a></nav></footer></article></div></div></main><footer id=footer class=footer><div class=social-links><a href=https://github.com/ozryan class="iconfont icon-github" title=github></a>
+<a href=https://www.fewth.com/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a></div><div class=copyright><span class=copyright-year>&copy;
+2020 -
+2022<span class=heart><i class="iconfont icon-heart"></i></span><span>ozryan</span></span></div></footer><div class=back-to-top id=back-to-top><i class="iconfont icon-up"></i></div></div><script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script>
+<script type=text/javascript src=/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js></script>
+<script type=text/javascript>window.MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]]}}</script><script async src=https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin=anonymous></script></body></html>
