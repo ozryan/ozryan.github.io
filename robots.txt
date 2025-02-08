@@ -1,2 +1,2 @@
 User-agent: *
-Sitemap: https://www.fewth.com/sitemap.xml
+Sitemap: https://ozryan.github.io/sitemap.xml
